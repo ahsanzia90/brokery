@@ -1,12 +1,12 @@
 import "server-only";
 import { and, asc, eq, ilike, inArray, or, sql } from "drizzle-orm";
-import { unstable_cache } from "next/cache";
+import { cached } from "@/lib/cache";
 import { db } from "@/db";
 import { locations } from "@/db/schema";
 
 export type LocationRow = typeof locations.$inferSelect;
 
-export const getAllLocations = unstable_cache(
+export const getAllLocations = cached(
   async (): Promise<LocationRow[]> => db.select().from(locations).where(eq(locations.status, "active")).orderBy(asc(locations.sortOrder), asc(locations.nameEn)),
   ["locations"],
   { tags: ["locations"], revalidate: 600 },

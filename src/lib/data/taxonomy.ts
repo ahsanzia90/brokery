@@ -1,6 +1,6 @@
 import "server-only";
 import { and, asc, eq, inArray, isNull, or, sql } from "drizzle-orm";
-import { unstable_cache } from "next/cache";
+import { cached } from "@/lib/cache";
 import { db } from "@/db";
 import {
   attributeDefinitions,
@@ -23,7 +23,7 @@ export type AttributeRow = typeof attributeDefinitions.$inferSelect;
 export type CategoryNode = CategoryRow & { children: CategoryNode[] };
 
 /** Full active category tree, cached and tagged for invalidation from admin. */
-export const getCategoryTree = unstable_cache(
+export const getCategoryTree = cached(
   async (): Promise<CategoryNode[]> => {
     const rows = await db.select().from(categories).where(eq(categories.status, "active")).orderBy(asc(categories.sortOrder), asc(categories.nameEn));
     const byId = new Map<string, CategoryNode>();
@@ -39,7 +39,7 @@ export const getCategoryTree = unstable_cache(
   { tags: ["taxonomy"], revalidate: 300 },
 );
 
-export const getAllCategories = unstable_cache(
+export const getAllCategories = cached(
   async () => db.select().from(categories).orderBy(asc(categories.sortOrder), asc(categories.nameEn)),
   ["all-categories"],
   { tags: ["taxonomy"], revalidate: 300 },
@@ -101,7 +101,7 @@ export async function getCommodityById(id: string): Promise<CommodityRow | null>
   return row ?? null;
 }
 
-export const getPopularCommodities = unstable_cache(
+export const getPopularCommodities = cached(
   async (limit = 12) =>
     db
       .select()
@@ -145,7 +145,7 @@ export async function getGrades(commodityId: string, varietyId?: string | null):
     .orderBy(asc(commodityGrades.sortOrder), asc(commodityGrades.nameEn));
 }
 
-export const getUnits = unstable_cache(
+export const getUnits = cached(
   async (): Promise<UnitRow[]> => db.select().from(units).where(eq(units.status, "active")).orderBy(asc(units.sortOrder), asc(units.nameEn)),
   ["units"],
   { tags: ["taxonomy"], revalidate: 300 },

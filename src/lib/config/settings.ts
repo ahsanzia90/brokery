@@ -1,7 +1,7 @@
 import "server-only";
 import { db } from "@/db";
 import { siteSettings } from "@/db/schema";
-import { unstable_cache } from "next/cache";
+import { cached } from "@/lib/cache";
 import { BRAND_DEFAULTS, type Brand } from "./brand";
 
 export type SettingsMap = Record<string, unknown>;
@@ -42,7 +42,7 @@ async function loadSettingsUncached(): Promise<SettingsMap> {
   return map;
 }
 
-export const getSettings = unstable_cache(loadSettingsUncached, ["site-settings"], {
+export const getSettings = cached(loadSettingsUncached, ["site-settings"], {
   tags: ["settings"],
   revalidate: 60,
 });

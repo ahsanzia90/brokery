@@ -58,7 +58,7 @@ export function renderMarkdown(md: string): string {
     const h = line.match(/^(#{1,6})\s+(.*)$/);
     if (h) {
       flushPara();
-      const lvl = Math.min(6, h[1].length + 1); // page H1 comes from the title; shift down
+      const lvl = Math.min(6, Math.max(2, h[1].length)); // page H1 comes from the title; "#" and "##" both become h2
       out.push(`<h${lvl}>${inline(h[2])}</h${lvl}>`);
       i++;
       continue;

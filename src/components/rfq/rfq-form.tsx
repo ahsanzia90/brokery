@@ -415,7 +415,7 @@ export function RfqForm({ prefill, cities, isAuthenticated, initialQuery, restor
         {t("rfq.afterSubmit")}
       </Alert>
       {serverError && <Alert tone="danger">{serverError}</Alert>}
-      <Button type="submit" size="xl" className="w-full" loading={submitting}>
+      <Button type="submit" size="xl" className="w-full" loading={submitting || metaLoading}>
         {isAuthenticated ? t("rfq.form.submit") : t("action.continue")}
       </Button>
       {!isAuthenticated && (

@@ -51,7 +51,8 @@ export async function buildMetadata(input: SeoInput): Promise<Metadata> {
   const ogImage = override?.ogImagePath ? `${BRAND_DEFAULTS.siteUrl}/files/public/${override.ogImagePath}` : input.image ? (input.image.startsWith("http") ? input.image : `${BRAND_DEFAULTS.siteUrl}${input.image}`) : `${BRAND_DEFAULTS.siteUrl}/opengraph-image`;
 
   return {
-    title,
+    // Absolute: the root layout's "%s | Brand" template must not be applied a second time.
+    title: { absolute: title },
     description,
     alternates: { canonical },
     robots: { index: !noindex, follow: true },

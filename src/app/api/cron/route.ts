@@ -66,7 +66,15 @@ export async function POST(req: Request) {
     report.contentPublished = { skipped: (e as Error).message };
   }
 
-  // 5. Outbound notifications and housekeeping.
+  // 5. Verification documents past their retention date.
+  try {
+    const mod = await import("@/lib/admin/verifications-service");
+    report.documentsPurged = await mod.purgeExpiredDocuments();
+  } catch (e) {
+    report.documentsPurged = { skipped: (e as Error).message };
+  }
+
+  // 6. Outbound notifications and housekeeping.
   report.notifications = await deliverPendingNotifications(100);
   await pruneRateLimits();
   return NextResponse.json({ ok: true, ranAt: new Date().toISOString(), ...report });

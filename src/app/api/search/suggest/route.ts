@@ -45,8 +45,17 @@ export async function GET(req: Request) {
     )
     .orderBy(commodities.id, desc(sql`greatest(similarity(lower(${commodities.nameEn}), ${norm}), coalesce(similarity(${commodityAliases.normalized}, ${norm}), 0))`))
     .limit(12);
+  // Exact alias/name hits first, then trigram similarity.
+  const exactIds = new Set(
+    (
+      await db
+        .select({ id: commodityAliases.commodityId })
+        .from(commodityAliases)
+        .where(eq(commodityAliases.normalized, norm))
+    ).map((r) => r.id),
+  );
   commodityRows
-    .sort((a, b) => b.score - a.score)
+    .sort((a, b) => Number(exactIds.has(b.c.id) || normalizeText(b.c.nameEn) === norm) - Number(exactIds.has(a.c.id) || normalizeText(a.c.nameEn) === norm) || b.score - a.score)
     .slice(0, 6)
     .forEach((r) => suggestions.push({ type: "commodity", label: name(r.c), href: `/commodities/${r.c.slug}` }));
 

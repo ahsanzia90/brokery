@@ -10,6 +10,7 @@ import { ToastProvider } from "@/components/ui/toast";
 import { Header } from "@/components/layout/header";
 import { Footer } from "@/components/layout/footer";
 import { BottomNav } from "@/components/layout/bottom-nav";
+import { AnnouncementBar } from "@/components/marketplace/announcement-bar";
 import { getCurrentUser } from "@/lib/auth/session";
 import { getBrand, getSettings } from "@/lib/config/settings";
 import { getCategoryTree } from "@/lib/data/taxonomy";
@@ -55,6 +56,7 @@ export default async function RootLayout({ children }: { children: React.ReactNo
         <I18nProvider locale={locale} messages={getMessages(locale)}>
           <ToastProvider>
             {!isAdminArea && <Header t={t} locale={locale} user={user} brandName={brand.name} currentPath={currentPath} unreadCount={unread} logoPath={brand.logoPath} />}
+            {!isAdminArea && <AnnouncementBar locale={locale} />}
             <main id="main" className="flex-1">
               {children}
             </main>

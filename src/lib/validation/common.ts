@@ -18,7 +18,10 @@ export const phoneSchema = z
 export const otpCodeSchema = z.string().trim().regex(/^\d{6}$/, "invalid_code");
 
 export const uuidSchema = z.string().uuid();
-export const optionalUuid = z.union([uuidSchema, z.literal(""), z.null(), z.undefined()]).transform((v) => (v ? v : null));
+export const optionalUuid = z
+  .union([uuidSchema, z.literal(""), z.null()])
+  .optional()
+  .transform((v) => (v ? v : null));
 
 export const positiveDecimal = z
   .union([z.string(), z.number()])
@@ -26,7 +29,8 @@ export const positiveDecimal = z
   .refine((n) => Number.isFinite(n) && n > 0, "must_be_positive");
 
 export const optionalDecimal = z
-  .union([z.string(), z.number(), z.null(), z.undefined()])
+  .union([z.string(), z.number(), z.null()])
+  .optional()
   .transform((v) => {
     if (v === null || v === undefined || v === "") return null;
     const n = typeof v === "number" ? v : Number(String(v).replace(/,/g, "").trim());
@@ -37,7 +41,8 @@ export const optionalDecimal = z
 export const shortText = (max = 200) => z.string().trim().max(max);
 export const optionalText = (max = 2000) =>
   z
-    .union([z.string(), z.null(), z.undefined()])
+    .union([z.string(), z.null()])
+    .optional()
     .transform((v) => (v ? v.trim().slice(0, max) : null));
 
 export const slugSchema = z.string().regex(/^[a-z0-9]+(?:-[a-z0-9]+)*$/, "invalid_slug").max(120);

@@ -15,6 +15,7 @@ export const BUSINESS_TYPES = ["trader", "wholesaler", "manufacturer", "farmer",
 
 const optionalPhone = z
   .union([z.string(), z.null(), z.undefined()])
+  .optional()
   .transform((v, ctx) => {
     if (!v || !v.trim()) return null;
     const n = normalizePakistanPhone(v);
@@ -28,30 +29,33 @@ const optionalPhone = z
 export const businessSchema = z.object({
   name: z.string().trim().min(2, "min").max(120, "max"),
   businessType: z.enum(BUSINESS_TYPES),
-  description: optionalText(2000),
-  contactPersonName: optionalText(100),
-  addressLine: optionalText(300),
-  provinceId: z.string().uuid().nullable(),
-  cityId: z.string().uuid().nullable(),
-  marketId: z.string().uuid().nullable(),
-  publicPhone: phoneSchema.nullable(),
+  description: optionalText(2000).optional(),
+  contactPersonName: optionalText(100).optional(),
+  addressLine: optionalText(300).optional(),
+  provinceId: z.string().uuid().nullable().optional(),
+  cityId: z.string().uuid().nullable().optional(),
+  marketId: z.string().uuid().nullable().optional(),
+  publicPhone: phoneSchema.nullable().optional(),
   whatsappNumber: optionalPhone,
   showPhonePublicly: z.boolean(),
   showWhatsappPublicly: z.boolean(),
   showAddressPublicly: z.boolean(),
   website: z
     .union([z.string().trim().max(200), z.null(), z.undefined()])
+    .optional()
     .transform((v) => (v ? (v.startsWith("http") ? v : `https://${v}`) : null)),
   yearsInBusiness: z
     .union([z.string(), z.number(), z.null(), z.undefined()])
+    .optional()
     .transform((v) => (v === "" || v === null || v === undefined ? null : Number(v)))
     .refine((n) => n === null || (Number.isInteger(n) && n >= 0 && n <= 150), "invalid_number"),
   languages: z.array(z.string().trim().max(30)).max(6).default([]),
   commodityIds: z.array(z.string().uuid()).max(100).default([]),
   logoPath: z
     .union([z.string(), z.null(), z.undefined()])
+    .optional()
     .transform((v) => (v && /^logos\/[a-z0-9/_.-]+$/i.test(v) ? v : null)),
-  registrationNumber: optionalText(60),
+  registrationNumber: optionalText(60).optional(),
 });
 export type BusinessInput = z.input<typeof businessSchema>;
 

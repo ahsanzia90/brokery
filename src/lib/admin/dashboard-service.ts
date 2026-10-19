@@ -18,7 +18,7 @@ import {
   supportCases,
   userRoles,
 } from "@/db/schema";
-import { getSetting } from "@/lib/config/settings";
+import { settingOr } from "./ops-runtime";
 
 export type DateRange = { from: Date; to: Date };
 
@@ -34,7 +34,7 @@ async function one<T extends { n: number }>(q: Promise<T[]>): Promise<number> {
 }
 
 export async function getDashboardMetrics(range: DateRange) {
-  const staleDays = await getSetting<number>("prices.stale_after_days", 7);
+  const staleDays = await settingOr<number>("prices.stale_after_days", 7);
   const inRange = (col: AnyColumn) => and(gte(col, range.from), lte(col, range.to));
 
   const [

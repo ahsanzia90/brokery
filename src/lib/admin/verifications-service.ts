@@ -3,11 +3,11 @@ import { and, count, desc, eq, ilike, inArray, isNull, or, sql, type SQL } from 
 import { db } from "@/db";
 import { businessDocuments, businessVerifications, businesses, listings, locations, profiles } from "@/db/schema";
 import { audit } from "@/lib/audit";
+import { safeRevalidate, safeTrack, settingOr } from "./ops-runtime";
 import { notify } from "@/lib/notifications";
 import { getStorage } from "@/lib/storage";
 import type { Role } from "@/lib/auth/session";
 import { AuthError } from "@/lib/authz/guards";
-import { revalidatePath } from "next/cache";
 
 type VerificationStatus = (typeof businessVerifications.status.enumValues)[number];
 type Level = (typeof businesses.verificationLevel.enumValues)[number];
@@ -58,7 +58,7 @@ export async function approveVerification(actorId: string, id: string, level: Le
     await audit({ actorId, action: "verification.approve", entityType: "business_verification", entityId: id, before: { status: v.status, verificationLevel: b.verificationLevel }, after: { status: "approved", verificationLevel: level }, reason }, tx);
     await notify({ userId: b.ownerId, type: "verification_update", title: `Verification approved: ${b.name}`, body: `Your business is now labelled "${level === "admin_verified" ? "Admin verified" : "Business documents reviewed"}".${reason ? " " + reason : ""}`, linkPath: "/dashboard/seller/verification", entityType: "business", entityId: b.id }, tx);
   });
-  revalidatePath("/suppliers");
+  safeRevalidate("/suppliers");
 }
 
 export async function rejectVerification(actorId: string, id: string, reason: string) {
@@ -156,7 +156,7 @@ export async function setBusinessFeatured(actorId: string, id: string, featured:
     await tx.update(businesses).set({ isFeatured: featured, featuredUntil: featured ? until : null }).where(eq(businesses.id, id));
     await audit({ actorId, action: "business.feature", entityType: "business", entityId: id, before: { isFeatured: b.isFeatured, featuredUntil: b.featuredUntil }, after: { isFeatured: featured, featuredUntil: until } }, tx);
   });
-  revalidatePath("/");
+  safeRevalidate("/");
 }
 
 export async function setBusinessStatus(actorId: string, id: string, status: "active" | "suspended" | "closed", reason: string) {
@@ -168,7 +168,7 @@ export async function setBusinessStatus(actorId: string, id: string, status: "ac
     await audit({ actorId, action: "business.status", entityType: "business", entityId: id, before: { status: b.status }, after: { status }, reason }, tx);
     await notify({ userId: b.ownerId, type: "system", title: `Business ${status === "active" ? "reactivated" : status}: ${b.name}`, body: reason || undefined, linkPath: "/dashboard/seller/business", entityType: "business", entityId: id }, tx);
   });
-  revalidatePath("/suppliers");
+  safeRevalidate("/suppliers");
 }
 
 export async function setVerificationLevel(actor: { id: string; roles: Role[] }, id: string, level: Level, reason: string) {
@@ -181,7 +181,7 @@ export async function setVerificationLevel(actor: { id: string; roles: Role[] },
     await audit({ actorId: actor.id, action: "business.verification_level", entityType: "business", entityId: id, before: { verificationLevel: b.verificationLevel }, after: { verificationLevel: level }, reason }, tx);
     await notify({ userId: b.ownerId, type: "verification_update", title: `Verification label updated: ${b.name}`, body: reason, linkPath: "/dashboard/seller/verification", entityType: "business", entityId: id }, tx);
   });
-  revalidatePath("/suppliers");
+  safeRevalidate("/suppliers");
 }
 
 export const VERIFICATION_STATUSES = ["submitted", "under_review", "more_info_requested", "approved", "rejected"] as const;

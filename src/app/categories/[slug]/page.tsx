@@ -1,7 +1,8 @@
 import type { Metadata } from "next";
 import Link from "next/link";
-import { notFound, permanentRedirect } from "next/navigation";
+import { permanentRedirect } from "next/navigation";
 import { getT } from "@/lib/i18n/server";
+import { redirectOr404 } from "@/lib/seo/redirects";
 import { buildMetadata } from "@/lib/seo/metadata";
 import { getAllCategories, getCategoryAncestors, getCategoryBySlug, getCommoditiesInCategory } from "@/lib/data/taxonomy";
 import { getListingCountsByCommodity, searchListings } from "@/lib/data/listings";
@@ -35,7 +36,7 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
 export default async function CategoryPage({ params }: Props) {
   const { slug } = await params;
   const cat = await getCategoryBySlug(slug);
-  if (!cat) notFound();
+  if (!cat) return redirectOr404();
   if (cat.status === "merged" && cat.mergedIntoId) {
     const all = await getAllCategories();
     const target = all.find((c) => c.id === cat.mergedIntoId);

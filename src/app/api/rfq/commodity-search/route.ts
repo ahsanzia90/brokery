@@ -37,5 +37,5 @@ export async function GET(req: Request) {
     .orderBy(commodities.id, desc(sql`greatest(similarity(lower(${commodities.nameEn}), ${norm}), coalesce(similarity(${commodityAliases.normalized}, ${norm}), 0))`))
     .limit(40);
   rows.sort((a, b) => b.score - a.score || Number(b.isPopular) - Number(a.isPopular));
-  return NextResponse.json({ items: rows.slice(0, 20).map(({ score: _s, ...r }) => r) });
+  return NextResponse.json({ items: rows.slice(0, 20).map((r) => { const { score, ...rest } = r; void score; return rest; }) });
 }

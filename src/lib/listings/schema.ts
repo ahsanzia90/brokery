@@ -3,6 +3,7 @@ import { optionalText, optionalDecimal, positiveDecimal } from "@/lib/validation
 
 const uuidOrNull = z
   .union([z.string().uuid(), z.literal(""), z.null(), z.undefined()])
+  .optional()
   .transform((v) => (v ? v : null));
 
 export const PRICE_TYPES = ["fixed", "negotiable", "quote", "on_contact"] as const;
@@ -47,6 +48,7 @@ export const listingPayloadSchema = z
     packaging: optionalText(120).optional(),
     availableFrom: z
       .union([z.string().regex(/^\d{4}-\d{2}-\d{2}$/), z.literal(""), z.null(), z.undefined()])
+      .optional()
       .transform((v) => (v ? v : null)),
     description: optionalText(4000).optional(),
     images: z.array(listingImageSchema).max(12).default([]),

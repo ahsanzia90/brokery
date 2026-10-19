@@ -60,7 +60,8 @@ export async function verifyOtpAction(_prev: unknown, formData: FormData): Promi
   await createSession(user.id);
   const next = safeNext(formData.get("next"));
   const needsProfile = isNew || !user.name;
-  return { ok: true, data: { next: needsProfile ? `/onboarding?next=${encodeURIComponent(next)}` : next, isNew } };
+  // Redirect server-side so the login page cannot race the client navigation.
+  redirect(needsProfile ? `/onboarding?next=${encodeURIComponent(next)}` : next);
 }
 
 const profileSchema = z.object({
@@ -101,7 +102,7 @@ export async function completeProfileAction(_prev: unknown, formData: FormData):
   });
   const next = safeNext(formData.get("next"));
   const target = isSeller && (next === "/" || next === "/dashboard/buyer") ? "/dashboard/seller" : next;
-  return { ok: true, data: { next: target } };
+  redirect(target);
 }
 
 export async function logoutAction() {

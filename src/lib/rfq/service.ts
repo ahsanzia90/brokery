@@ -21,6 +21,15 @@ import { track } from "@/lib/analytics/track";
 import { makeReference } from "@/lib/utils/ids";
 import { optionalDecimal, optionalText, optionalUuid, positiveDecimal, uuidSchema } from "@/lib/validation/common";
 
+/** getSetting relies on Next's cache runtime; fall back to defaults when called from scripts/tests. */
+async function settingOr<T>(key: string, fallback: T): Promise<T> {
+  try {
+    return await getSetting<T>(key, fallback);
+  } catch {
+    return fallback;
+  }
+}
+
 export class RfqError extends Error {
   constructor(public code: string, public fieldErrors?: Record<string, string>) {
     super(code);
@@ -40,7 +49,8 @@ export const createRfqSchema = z.object({
   marketId: optionalUuid.optional(),
   requiredBy: z
     .union([z.string(), z.null(), z.undefined()])
-    .transform((v) => (v && /^\d{4}-\d{2}-\d{2}$/.test(v) ? v : null)),
+    .transform((v) => (v && /^\d{4}-\d{2}-\d{2}$/.test(v) ? v : null))
+    .optional(),
   targetPrice: optionalDecimal.optional(),
   targetPriceUnitId: optionalUuid.optional(),
   qualityRequirements: optionalText(1000).optional(),
@@ -111,7 +121,7 @@ export async function createRfq(buyerId: string, raw: CreateRfqInput): Promise<{
   }
   if (input.targetPrice != null && !input.targetPriceUnitId) throw new RfqError("validation", { targetPriceUnitId: "required" });
 
-  const perDay = await getSetting<number>("rate_limits.rfq_create_per_day", 20);
+  const perDay = await settingOr<number>("rate_limits.rfq_create_per_day", 20);
   try {
     await enforceRateLimit(`rfq_create:${buyerId}`, perDay, 86_400);
   } catch (e) {
@@ -119,7 +129,7 @@ export async function createRfq(buyerId: string, raw: CreateRfqInput): Promise<{
     throw e;
   }
 
-  const expiryDays = await getSetting<number>("rfq.expiry_days", 14);
+  const expiryDays = await settingOr<number>("rfq.expiry_days", 14);
   const reference = await nextReference();
   const excluded = await buyerBusinessIds(buyerId);
 
@@ -140,7 +150,7 @@ export async function createRfq(buyerId: string, raw: CreateRfqInput): Promise<{
         provinceId: input.provinceId ?? null,
         cityId: input.cityId ?? null,
         marketId: input.marketId ?? null,
-        requiredBy: input.requiredBy,
+        requiredBy: input.requiredBy ?? null,
         targetPrice: input.targetPrice == null ? null : String(input.targetPrice),
         targetPriceUnitId: input.targetPrice == null ? null : (input.targetPriceUnitId ?? null),
         qualityRequirements: input.qualityRequirements ?? null,
@@ -171,21 +181,24 @@ export async function createRfq(buyerId: string, raw: CreateRfqInput): Promise<{
       const [b] = await tx.select({ id: businesses.id, status: businesses.status }).from(businesses).where(eq(businesses.id, targetBusinessId)).limit(1);
       if (b && b.status === "active") consider(b.id, "direct");
     }
-    const declared = await tx
-      .select({ id: businesses.id, cityId: businesses.cityId })
-      .from(businessCommodities)
-      .innerJoin(businesses, eq(businesses.id, businessCommodities.businessId))
-      .where(and(eq(businessCommodities.commodityId, commodity.id), eq(businesses.status, "active")));
-    const listed = await tx
-      .selectDistinct({ id: businesses.id, cityId: listings.cityId })
-      .from(listings)
-      .innerJoin(businesses, eq(businesses.id, listings.businessId))
-      .where(and(eq(listings.commodityId, commodity.id), eq(listings.status, "published"), eq(businesses.status, "active")));
-    // Same city first, then the rest.
-    const sameCity = [...declared, ...listed].filter((b) => input.cityId && b.cityId === input.cityId);
-    const others = [...declared.map((d) => ({ ...d, reason: "commodity" })), ...listed.map((l) => ({ ...l, reason: "listing" }))];
-    for (const b of sameCity) consider(b.id, "commodity+city");
-    for (const b of others) consider(b.id, b.reason);
+    // A direct enquiry (started from a listing or supplier profile) goes only to that supplier.
+    // Open requests are matched to every active supplier of the commodity, same city first.
+    if (!targetBusinessId) {
+      const declared = await tx
+        .select({ id: businesses.id, cityId: businesses.cityId })
+        .from(businessCommodities)
+        .innerJoin(businesses, eq(businesses.id, businessCommodities.businessId))
+        .where(and(eq(businessCommodities.commodityId, commodity.id), eq(businesses.status, "active")));
+      const listed = await tx
+        .selectDistinct({ id: businesses.id, cityId: listings.cityId })
+        .from(listings)
+        .innerJoin(businesses, eq(businesses.id, listings.businessId))
+        .where(and(eq(listings.commodityId, commodity.id), eq(listings.status, "published"), eq(businesses.status, "active")));
+      const sameCity = [...declared, ...listed].filter((b) => input.cityId && b.cityId === input.cityId);
+      const others = [...declared.map((d) => ({ ...d, reason: "commodity" })), ...listed.map((l) => ({ ...l, reason: "listing" }))];
+      for (const b of sameCity) consider(b.id, "commodity+city");
+      for (const b of others) consider(b.id, b.reason);
+    }
 
     const recipientRows = [...matches.entries()].slice(0, 50).map(([businessId, matchReason]) => ({ rfqId: rfq.id, businessId, matchReason, state: "matched" as const }));
     if (recipientRows.length) await tx.insert(rfqRecipients).values(recipientRows).onConflictDoNothing();

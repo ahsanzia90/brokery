@@ -20,11 +20,9 @@ import {
   units,
 } from "@/db/schema";
 import { audit } from "@/lib/audit";
+import { safeRevalidate, safeTrack, settingOr } from "./ops-runtime";
 import { notify } from "@/lib/notifications";
-import { track } from "@/lib/analytics/track";
-import { getSetting } from "@/lib/config/settings";
 import { makeReference } from "@/lib/utils/ids";
-import { revalidatePath } from "next/cache";
 
 type ListingStatus = (typeof listings.status.enumValues)[number];
 
@@ -101,7 +99,7 @@ async function ownerOf(tx: Parameters<Parameters<typeof db.transaction>[0]>[0], 
 }
 
 export async function approveListing(actorId: string, id: string, reason?: string) {
-  const expiryDays = await getSetting<number>("listings.default_expiry_days", 30);
+  const expiryDays = await settingOr<number>("listings.default_expiry_days", 30);
   await db.transaction(async (tx) => {
     const [cur] = await tx.select({ status: listings.status, expiresAt: listings.expiresAt }).from(listings).where(eq(listings.id, id));
     if (!cur) throw new Error("Listing not found");
@@ -112,9 +110,9 @@ export async function approveListing(actorId: string, id: string, reason?: strin
     const b = await ownerOf(tx, l.businessId);
     await notify({ userId: b.ownerId, type: "listing_approved", title: `Listing published: ${l.title}`, body: "Your listing is now visible to buyers.", linkPath: `/listings/${l.slug}`, entityType: "listing", entityId: id }, tx);
   });
-  await track("listing_approved", { entityType: "listing", entityId: id });
-  revalidatePath("/");
-  revalidatePath("/listings");
+  await safeTrack("listing_approved", { entityType: "listing", entityId: id });
+  safeRevalidate("/");
+  safeRevalidate("/listings");
 }
 
 export async function bulkApprove(actorId: string, ids: string[]) {
@@ -139,7 +137,7 @@ export async function rejectListing(actorId: string, id: string, reason: string)
     const b = await ownerOf(tx, l.businessId);
     await notify({ userId: b.ownerId, type: "listing_rejected", title: `Listing not approved: ${l.title}`, body: reason, linkPath: `/dashboard/seller/listings/${id}`, entityType: "listing", entityId: id }, tx);
   });
-  revalidatePath("/listings");
+  safeRevalidate("/listings");
 }
 
 export async function requestListingEdits(actorId: string, id: string, reason: string) {
@@ -150,7 +148,7 @@ export async function requestListingEdits(actorId: string, id: string, reason: s
     const b = await ownerOf(tx, l.businessId);
     await notify({ userId: b.ownerId, type: "listing_edit_requested", title: `Changes needed: ${l.title}`, body: reason, linkPath: `/dashboard/seller/listings/${id}/edit`, entityType: "listing", entityId: id }, tx);
   });
-  revalidatePath("/listings");
+  safeRevalidate("/listings");
 }
 
 export async function hideListing(actorId: string, id: string, reason: string) {
@@ -161,7 +159,7 @@ export async function hideListing(actorId: string, id: string, reason: string) {
     const b = await ownerOf(tx, l.businessId);
     await notify({ userId: b.ownerId, type: "listing_rejected", title: `Listing removed: ${l.title}`, body: reason, linkPath: `/dashboard/seller/listings/${id}`, entityType: "listing", entityId: id }, tx);
   });
-  revalidatePath("/listings");
+  safeRevalidate("/listings");
 }
 
 export async function setListingFeatured(actorId: string, id: string, featured: boolean) {
@@ -169,7 +167,7 @@ export async function setListingFeatured(actorId: string, id: string, featured: 
     await tx.update(listings).set({ isFeatured: featured }).where(eq(listings.id, id));
     await audit({ actorId, action: "listing.feature", entityType: "listing", entityId: id, after: { isFeatured: featured } }, tx);
   });
-  revalidatePath("/");
+  safeRevalidate("/");
 }
 
 export async function setImageModeration(actorId: string, imageId: string, status: "approved" | "rejected") {

@@ -29,7 +29,7 @@ type CommodityInsert = typeof commodities.$inferInsert;
 export class TaxonomyError extends Error {}
 
 async function uniqueSlug(table: "categories" | "commodities", base: string, excludeId?: string): Promise<string> {
-  let slug = slugify(base);
+  const slug = slugify(base);
   for (let i = 0; i < 50; i++) {
     const candidate = i === 0 ? slug : `${slug}-${i + 1}`;
     const rows =

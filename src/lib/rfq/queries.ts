@@ -11,7 +11,6 @@ import {
   listings,
   locations,
   rfqAttributes,
-  rfqRecipients,
   rfqs,
   supplierQuotes,
   units,

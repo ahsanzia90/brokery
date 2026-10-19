@@ -8,6 +8,9 @@ export const s = (sp: SP, k: string) => {
   const v = sp[k];
   return (Array.isArray(v) ? v[0] : v) ?? "";
 };
+const UUID_RE = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
+/** Only accept well-formed ids from the URL; anything else (e.g. a slug) is ignored. */
+const idOrNull = (v: string | undefined): string | null => (v && UUID_RE.test(v) ? v : null);
 
 /** Parse URL search params into search params + filter form values. */
 export function parseListingFilters(sp: SP, base: Partial<ListingSearchParams> = {}): { params: ListingSearchParams; values: ListingFilterValues; page: number } {
@@ -37,9 +40,9 @@ export function parseListingFilters(sp: SP, base: Partial<ListingSearchParams> =
   const params: ListingSearchParams = {
     ...base,
     q: base.q ?? (values.q || null),
-    varietyId: values.variety || base.varietyId || null,
-    gradeId: values.grade || null,
-    cityId: values.city || base.cityId || null,
+    varietyId: base.varietyId ?? idOrNull(values.variety),
+    gradeId: idOrNull(values.grade),
+    cityId: base.cityId ?? idOrNull(values.city),
     minPrice: num("min"),
     maxPrice: num("max"),
     verifiedOnly: values.verified === "1",

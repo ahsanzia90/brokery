@@ -10,3 +10,6 @@ coverage
 test-results
 playwright-report
 .DS_Store
+.scratch/
+tsconfig.tsbuildinfo
+.scratch/
