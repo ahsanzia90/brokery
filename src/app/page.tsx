@@ -11,7 +11,8 @@ import { SearchBar } from "@/components/layout/search-bar";
 import { Section } from "@/components/ui/section";
 import { EmptyState } from "@/components/ui/empty-state";
 import { buttonClass } from "@/components/ui/button";
-import { CategoryCard, ChangeBadge, ListingCard, RateChip, SupplierCard } from "@/components/marketplace/cards";
+import { CategoryCard, ChangeBadge, ListingCard, ListingMedia, RateChip, SupplierCard } from "@/components/marketplace/cards";
+import { Check } from "lucide-react";
 import { HeroActions } from "@/components/marketplace/hero-actions";
 import { CommodityArt } from "@/components/illustrations/commodity-art";
 import { formatDate, formatNumber, formatPKR } from "@/lib/utils/format";
@@ -100,7 +101,7 @@ export default async function HomePage() {
                         </span>
                         <span className="shrink-0 text-end">
                           <span className="block text-[15px] font-extrabold text-ink num">{formatPKR(p.amount)}</span>
-                          <span className="flex items-center justify-end gap-1 text-[11px] text-muted">/ {p.unitSymbol} <ChangeBadge value={p.changePercent} /></span>
+                          <span className="flex items-center justify-end gap-1 text-[11px] text-muted"><span className="num">/ {p.unitSymbol}</span> <ChangeBadge value={p.changePercent} /></span>
                         </span>
                       </li>
                     ))}
@@ -109,7 +110,8 @@ export default async function HomePage() {
                   <p className="px-4 py-4 text-[13px] text-muted">{t("price.notAvailable")}</p>
                 )}
               </div>
-              <Link href="/buy" className={buttonClass("primary", "lg", "mt-5 self-start")} data-track="home_buy_click">
+              <div className="h-5" aria-hidden />
+              <Link href="/buy" className={buttonClass("primary", "lg", "self-start")} data-track="home_buy_click" style={{ marginTop: "auto" }}>
                 {t("home.buy.cta")} <ArrowRight className="h-4 w-4 rtl:rotate-180" aria-hidden />
               </Link>
             </div>
@@ -121,8 +123,8 @@ export default async function HomePage() {
               <div className="mt-6 overflow-hidden rounded-[var(--r-md)] border border-black/5 bg-white shadow-[var(--shadow-sm)]">
                 <div className="border-b border-line px-4 py-2.5 text-[12px] font-bold uppercase tracking-wide text-muted">{t("home.sell.preview")}</div>
                 <div className="flex items-center gap-3 px-4 py-3">
-                  <div className="flex h-16 w-20 shrink-0 items-center justify-center overflow-hidden rounded-[var(--r-sm)] bg-tint-sand">
-                    <CommodityArt artKey="grains" className="h-12 w-12" />
+                  <div className="h-16 w-20 shrink-0 overflow-hidden rounded-[var(--r-sm)]">
+                    {previewListing ? <ListingMedia imagePath={previewListing.imagePath} alt="" commoditySlug={previewListing.commoditySlug} commodityName={previewListing.commodityName} /> : <div className="flex h-full w-full items-center justify-center bg-tint-sand"><CommodityArt artKey="grains" className="h-12 w-12" /></div>}
                   </div>
                   <div className="min-w-0">
                     <p className="truncate text-[15px] font-bold text-ink">{previewListing ? previewListing.title : t("home.sell.previewTitle")}</p>
@@ -133,7 +135,15 @@ export default async function HomePage() {
                   </div>
                 </div>
               </div>
-              <Link href="/sell" className={buttonClass("dark", "lg", "mt-5 self-start")} data-track="home_sell_click">
+              <ul className="mt-5 space-y-2 text-[14px] text-ink-2">
+                {[t("home.sell.point1"), t("home.sell.point2"), t("home.sell.point3")].map((p) => (
+                  <li key={p} className="flex items-start gap-2">
+                    <Check className="mt-0.5 h-4 w-4 shrink-0 text-brand-800" strokeWidth={2.5} aria-hidden /> {p}
+                  </li>
+                ))}
+              </ul>
+              <div className="h-5" aria-hidden />
+              <Link href="/sell" className={buttonClass("dark", "lg", "mt-auto self-start pt-0 [margin-top:auto]")} data-track="home_sell_click" style={{ marginTop: "auto" }}>
                 {t("home.sell.cta")} <ArrowRight className="h-4 w-4 rtl:rotate-180" aria-hidden />
               </Link>
             </div>

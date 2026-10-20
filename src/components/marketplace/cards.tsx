@@ -206,7 +206,7 @@ export function PriceRow({ p, t, locale, staleDays }: { p: PriceRowData; t: Tran
       </div>
       <div className="flex items-center justify-between gap-4 sm:flex-col sm:items-end sm:gap-1">
         <p className="text-[20px] font-extrabold text-ink num">
-          {formatPKR(p.amount)} <span className="text-[13px] font-semibold text-muted">/ {p.unitSymbol}</span>
+          {formatPKR(p.amount)} <span className="text-[13px] font-semibold text-muted num">/ {p.unitSymbol}</span>
           <ChangeBadge value={p.changePercent} />
         </p>
         {p.lowAmount && p.highAmount && (
@@ -232,7 +232,7 @@ export function RateChip({ p, locale }: { p: PriceRowData; locale: Locale }) {
       </span>
       <span className="flex items-baseline gap-2">
         <span className="text-[18px] font-extrabold text-white num">{formatPKR(p.amount)}</span>
-        <span className="text-[12px] text-white/60">/ {p.unitSymbol}</span>
+        <span className="text-[12px] text-white/60 num">/ {p.unitSymbol}</span>
         <ChangeBadge value={p.changePercent} />
       </span>
       <span className="text-[12px] text-white/55 num">

@@ -52,6 +52,7 @@ export async function getRecentListings(locale: Locale, limit = 6, where?: Retur
     slug: r.l.slug,
     title: r.l.title,
     commodityName: name(locale, r.commodity),
+    commoditySlug: r.commodity.slug,
     varietyName: r.variety ? name(locale, r.variety) : r.l.customVariety,
     priceType: r.l.priceType,
     priceAmount: r.l.priceAmount,
