@@ -34,29 +34,29 @@ export default async function CaseDetail({ params }: { params: Promise<{ id: str
       <div className="grid gap-4 lg:grid-cols-3">
         <section className="card p-4 lg:col-span-2">
           <h2 className="mb-2 font-bold">Description</h2>
-          <p className="whitespace-pre-wrap text-sm">{c.description || <span className="text-text-muted">—</span>}</p>
+          <p className="whitespace-pre-wrap text-sm">{c.description || <span className="text-muted">—</span>}</p>
           {c.resolution && <p className="mt-3 rounded bg-primary-soft p-3 text-sm"><strong>Resolution:</strong> {c.resolution}</p>}
-          <h2 className="mb-2 mt-5 font-bold">Notes</h2>
-          {c.notes.length ? <ul className="space-y-2 text-sm">{c.notes.map((n, i) => <li key={i} className="rounded border border-border p-2"><span className="text-xs text-text-muted num">{formatDateTime(n.at)} · {n.by ? byId.get(n.by) ?? n.by.slice(0, 8) : "system"}</span><br />{n.text}</li>)}</ul> : <p className="text-sm text-text-muted">No notes yet.</p>}
+          <h2 className="adm-section">Notes</h2>
+          {c.notes.length ? <ul className="space-y-2 text-sm">{c.notes.map((n, i) => <li key={i} className="rounded border border-line p-2"><span className="text-xs text-muted num">{formatDateTime(n.at)} · {n.by ? byId.get(n.by) ?? n.by.slice(0, 8) : "system"}</span><br />{n.text}</li>)}</ul> : <p className="text-sm text-muted">No notes yet.</p>}
           <ActionForm action={addNoteAction} payload={{ id }} submitLabel="Add note" successMessage="Note added" className="mt-3">
-            <textarea name="text" required rows={3} placeholder="Internal note (visible to admins only)" className="w-full rounded border border-border-strong p-2 text-sm" />
+            <textarea name="text" required rows={3} placeholder="Internal note (visible to admins only)" className="adm-control w-full" />
           </ActionForm>
         </section>
         <div className="space-y-4">
           <section className="card p-4">
             <h2 className="mb-2 font-bold">Linked entity</h2>
-            {d.linked ? <p className="text-sm">{d.linked.kind}: <Link href={d.linked.adminHref} className="text-primary hover:underline">{d.linked.label}</Link>{d.linked.href !== d.linked.adminHref && <> · <Link href={d.linked.href} className="text-primary hover:underline">public</Link></>}</p> : <p className="text-sm text-text-muted">None</p>}
-            {d.linked?.kind === "listing" && <p className="mt-2 text-xs text-text-muted">Quick action: open the listing in admin to hide it.</p>}
-            {d.linked?.kind === "business" && <p className="mt-2 text-xs text-text-muted">Quick action: open the business in admin to suspend it.</p>}
+            {d.linked ? <p className="text-sm">{d.linked.kind}: <Link href={d.linked.adminHref} className="adm-link">{d.linked.label}</Link>{d.linked.href !== d.linked.adminHref && <> · <Link href={d.linked.href} className="adm-link">public</Link></>}</p> : <p className="text-sm text-muted">None</p>}
+            {d.linked?.kind === "listing" && <p className="mt-2 text-xs text-muted">Quick action: open the listing in admin to hide it.</p>}
+            {d.linked?.kind === "business" && <p className="mt-2 text-xs text-muted">Quick action: open the business in admin to suspend it.</p>}
           </section>
           <section className="card p-4">
             <h2 className="mb-2 font-bold">Reporter</h2>
-            {d.reporter ? <p className="text-sm"><Link href={`/admin/users/${d.reporter.id}`} className="text-primary hover:underline">{d.reporter.name}</Link> · <span className="num">{formatPhoneDisplay(d.reporter.phone)}</span></p> : <p className="text-sm">{c.reporterContact ?? "Guest / unknown"}</p>}
+            {d.reporter ? <p className="text-sm"><Link href={`/admin/users/${d.reporter.id}`} className="adm-link">{d.reporter.name}</Link> · <span className="num">{formatPhoneDisplay(d.reporter.phone)}</span></p> : <p className="text-sm">{c.reporterContact ?? "Guest / unknown"}</p>}
           </section>
           <section className="card p-4">
             <h2 className="mb-2 font-bold">Assignment</h2>
             <p className="text-sm">{d.assignee?.name ?? "Unassigned"}</p>
-            {c.resolvedAt && <p className="mt-1 text-sm text-text-muted num">Resolved {formatDateTime(c.resolvedAt)}</p>}
+            {c.resolvedAt && <p className="mt-1 text-sm text-muted num">Resolved {formatDateTime(c.resolvedAt)}</p>}
           </section>
         </div>
       </div>

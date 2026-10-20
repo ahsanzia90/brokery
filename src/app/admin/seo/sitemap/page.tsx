@@ -35,18 +35,18 @@ export default async function SitemapInspectionPage() {
         <thead><tr><Th>Section</Th><Th>Inclusion rule</Th><Th>Eligible count</Th></tr></thead>
         <tbody>
           {rows.map((r) => (
-            <tr key={r.section}><Td>{r.section}</Td><Td className="text-sm text-text-muted">{r.rule}</Td><Td className="num">{r.count}</Td></tr>
+            <tr key={r.section}><Td>{r.section}</Td><Td className="text-sm text-muted">{r.rule}</Td><Td className="num">{r.count}</Td></tr>
           ))}
         </tbody>
       </Table>
-      <h2 className="mb-2 mt-8 text-lg font-bold">Manual exclusions</h2>
-      {excluded.length === 0 && noindex.length === 0 && <p className="text-sm text-text-muted">No pages are manually excluded from the sitemap or marked noindex.</p>}
+      <h2 className="adm-section">Manual exclusions</h2>
+      {excluded.length === 0 && noindex.length === 0 && <p className="text-sm text-muted">No pages are manually excluded from the sitemap or marked noindex.</p>}
       <ul className="space-y-1 text-sm">
         {excluded.map((e) => (
-          <li key={e.id}><Link href={`/admin/seo/${e.id}`} className="text-primary hover:underline">{e.path ?? `${e.entityType} ${e.entityId}`}</Link> — excluded from sitemap</li>
+          <li key={e.id}><Link href={`/admin/seo/${e.id}`} className="adm-link">{e.path ?? `${e.entityType} ${e.entityId}`}</Link> — excluded from sitemap</li>
         ))}
         {noindex.map((e) => (
-          <li key={`n-${e.id}`}><Link href={`/admin/seo/${e.id}`} className="text-primary hover:underline">{e.path ?? `${e.entityType} ${e.entityId}`}</Link> — {e.robots}</li>
+          <li key={`n-${e.id}`}><Link href={`/admin/seo/${e.id}`} className="adm-link">{e.path ?? `${e.entityType} ${e.entityId}`}</Link> — {e.robots}</li>
         ))}
       </ul>
     </div>

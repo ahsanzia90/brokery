@@ -19,12 +19,12 @@ export async function AttributePicker({ selected, overrideToggle, defaultOverrid
             <div key={a.id} className="flex items-center gap-2 text-sm">
               <input type="checkbox" name="attr" value={a.id} defaultChecked={Boolean(sel)} id={`attr-${a.id}`} />
               <label htmlFor={`attr-${a.id}`} className="flex-1">
-                {a.nameEn} <span className="text-text-muted">({a.key}, {a.type})</span>
+                {a.nameEn} <span className="text-muted">({a.key}, {a.type})</span>
               </label>
               <label className="flex items-center gap-1 text-xs">
                 <input type="checkbox" name={`attr_required_${a.id}`} defaultChecked={sel?.isRequired} /> req
               </label>
-              <input type="number" name={`attr_order_${a.id}`} defaultValue={sel?.displayOrder ?? 0} className="w-14 rounded border border-border px-1 text-xs" aria-label="order" />
+              <input type="number" name={`attr_order_${a.id}`} defaultValue={sel?.displayOrder ?? 0} className="w-14 rounded border border-line px-1 text-xs" aria-label="order" />
             </div>
           );
         })}
@@ -43,13 +43,13 @@ export async function UnitPicker({ selected, defaultUnitId, overrideToggle, defa
           <input type="checkbox" name="overrideUnits" defaultChecked={defaultOverride} /> Override the category&apos;s units for this commodity (unchecked = inherit)
         </label>
       )}
-      <p className="mb-2 text-xs text-text-muted">Tick the units sellers and buyers can choose; pick one as the default. Leave all unticked to allow every active unit.</p>
+      <p className="mb-2 text-xs text-muted">Tick the units sellers and buyers can choose; pick one as the default. Leave all unticked to allow every active unit.</p>
       <div className="grid gap-1 sm:grid-cols-3">
         {rows.map((u) => (
           <div key={u.id} className="flex items-center gap-2 text-sm">
             <input type="checkbox" name="unit" value={u.id} defaultChecked={selected.has(u.id)} id={`unit-${u.id}`} />
             <label htmlFor={`unit-${u.id}`} className="flex-1">
-              {u.nameEn} <span className="text-text-muted">({u.symbol})</span>
+              {u.nameEn} <span className="text-muted">({u.symbol})</span>
             </label>
             <label className="flex items-center gap-1 text-xs">
               <input type="radio" name="unit_default" value={u.id} defaultChecked={defaultUnitId === u.id} /> default
@@ -66,7 +66,7 @@ export async function UnitSelect({ name, value, label = "Default unit" }: { name
   return (
     <label className="block">
       <span className="block text-sm font-semibold">{label}</span>
-      <select name={name} defaultValue={value ?? ""} className="mt-1 w-full rounded-[var(--radius)] border border-border-strong px-3 py-2">
+      <select name={name} defaultValue={value ?? ""} className="adm-control mt-1 w-full">
         <option value="">— none —</option>
         {rows.map((u) => (
           <option key={u.id} value={u.id}>

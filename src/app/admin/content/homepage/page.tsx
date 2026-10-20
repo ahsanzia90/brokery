@@ -12,7 +12,7 @@ import { saveFooterLinksAction, saveHomepageSectionsAction } from "../actions";
 import type { SearchParams } from "@/lib/admin/params";
 import { str } from "@/lib/admin/params";
 
-const inp = "min-h-[40px] w-full rounded-[var(--radius)] border border-border-strong bg-surface px-2 py-1 text-sm";
+const inp = "min-h-[40px] w-full rounded-[var(--radius)] border border-line-strong bg-surface px-2 py-1 text-sm";
 const HINTS: Record<string, string> = {
   hero: "Buyer / seller choice. Always shown first.",
   search: "Commodity search box with popular chips.",
@@ -48,7 +48,7 @@ export default async function HomepageAdminPage({ searchParams }: { searchParams
             {sections.map((s) => (
               <tr key={s.key}>
                 <Td><input type="hidden" name="key" value={s.key} /><input type="number" name={`sort_${s.key}`} defaultValue={s.sortOrder} className={`${inp} w-16`} aria-label="Sort order" /></Td>
-                <Td><code>{s.key}</code><span className="block text-xs text-text-muted">{HINTS[s.key] ?? ""}</span></Td>
+                <Td><code>{s.key}</code><span className="block text-xs text-muted">{HINTS[s.key] ?? ""}</span></Td>
                 <Td><input type="checkbox" name={`enabled_${s.key}`} defaultChecked={s.isEnabled} className="h-5 w-5" aria-label="Enabled" /></Td>
                 <Td><input name={`titleEn_${s.key}`} defaultValue={s.titleEn ?? ""} className={inp} aria-label="Title EN" /></Td>
                 <Td><input name={`titleUr_${s.key}`} defaultValue={s.titleUr ?? ""} dir="rtl" className={inp} aria-label="Title UR" /></Td>
@@ -63,25 +63,25 @@ export default async function HomepageAdminPage({ searchParams }: { searchParams
       <div className="mt-8 grid gap-6 lg:grid-cols-2">
         <section className="card p-4">
           <h2 className="font-bold">Featured categories</h2>
-          <p className="mb-2 text-sm text-text-muted">Toggle “Featured on homepage” on the category edit page.</p>
+          <p className="mb-2 text-sm text-muted">Toggle “Featured on homepage” on the category edit page.</p>
           <ul className="flex flex-wrap gap-2">
-            {featuredCats.length === 0 && <li className="text-sm text-text-muted">None flagged — the homepage falls back to the first main categories.</li>}
-            {featuredCats.map((c) => <li key={c.id}><Link href={`/admin/taxonomy/categories/${c.id}/edit`} className="rounded-full border border-border px-3 py-1 text-sm hover:border-primary">{c.nameEn}</Link></li>)}
+            {featuredCats.length === 0 && <li className="text-sm text-muted">None flagged — the homepage falls back to the first main categories.</li>}
+            {featuredCats.map((c) => <li key={c.id}><Link href={`/admin/taxonomy/categories/${c.id}/edit`} className="rounded-full border border-line px-3 py-1 text-sm hover:border-primary">{c.nameEn}</Link></li>)}
           </ul>
         </section>
         <section className="card p-4">
           <h2 className="font-bold">Featured suppliers</h2>
-          <p className="mb-2 text-sm text-text-muted">Managed under <Link href="/admin/businesses" className="text-primary underline">Businesses</Link>. Only document-verified or admin-verified suppliers appear publicly.</p>
+          <p className="mb-2 text-sm text-muted">Managed under <Link href="/admin/businesses" className="text-primary underline">Businesses</Link>. Only document-verified or admin-verified suppliers appear publicly.</p>
           <ul className="space-y-1 text-sm">
-            {featuredSuppliers.length === 0 && <li className="text-text-muted">No featured suppliers.</li>}
-            {featuredSuppliers.map((b) => <li key={b.id}>{b.name} <Badge tone="neutral">{b.verificationLevel}</Badge>{b.featuredUntil && <span className="text-text-muted"> until {b.featuredUntil.toDateString()}</span>}</li>)}
+            {featuredSuppliers.length === 0 && <li className="text-muted">No featured suppliers.</li>}
+            {featuredSuppliers.map((b) => <li key={b.id}>{b.name} <Badge tone="neutral">{b.verificationLevel}</Badge>{b.featuredUntil && <span className="text-muted"> until {b.featuredUntil.toDateString()}</span>}</li>)}
           </ul>
         </section>
       </div>
 
       <section className="card mt-6 p-4">
         <h2 className="font-bold">Extra footer links</h2>
-        <p className="mb-2 text-sm text-text-muted">Shown in the footer in addition to the built-in links. Leave a row blank to remove it.</p>
+        <p className="mb-2 text-sm text-muted">Shown in the footer in addition to the built-in links. Leave a row blank to remove it.</p>
         <form action={saveFooterLinksAction}>
           <div className="space-y-2">
             {footerLinks.map((l, i) => (

@@ -62,7 +62,7 @@ export function SourceToggle({ id, active }: { id: string; active: boolean }) {
         setBusy(false);
         router.refresh();
       }}
-      className={`min-h-[32px] rounded-full px-3 text-sm font-semibold ${active ? "bg-primary-soft text-primary-strong" : "bg-surface-muted text-text-muted"}`}
+      className={`min-h-[32px] rounded-full px-3 text-sm font-semibold ${active ? "bg-primary-soft text-primary-strong" : "bg-surface-2 text-muted"}`}
     >
       {active ? "Active" : "Inactive"}
     </button>

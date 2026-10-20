@@ -37,16 +37,16 @@ export default async function UserDetailPage({ params }: { params: Promise<{ id:
         <section className="card p-4 lg:col-span-1">
           <h2 className="mb-2 font-bold">Profile</h2>
           <dl className="space-y-1 text-sm">
-            <div><dt className="inline font-semibold">Phone: </dt><dd className="inline num">{formatPhoneDisplay(u.phone)} {u.phoneVerifiedAt ? <Badge tone="success">verified</Badge> : <Badge tone="warning">unverified</Badge>}</dd></div>
-            <div><dt className="inline font-semibold">Email: </dt><dd className="inline">{u.email ?? "—"}</dd></div>
-            <div><dt className="inline font-semibold">Language: </dt><dd className="inline">{u.language}</dd></div>
-            <div><dt className="inline font-semibold">Status: </dt><dd className="inline"><Badge tone={u.status === "active" ? "success" : u.status === "suspended" ? "danger" : "neutral"}>{u.status}</Badge> {u.statusReason && <span className="text-text-muted">— {u.statusReason}</span>}</dd></div>
-            <div><dt className="inline font-semibold">Buyer / Seller: </dt><dd className="inline">{u.isBuyer ? "buyer" : ""}{u.isBuyer && u.isSeller ? " + " : ""}{u.isSeller ? "seller" : ""}</dd></div>
-            <div><dt className="inline font-semibold">Joined: </dt><dd className="inline num">{formatDateTime(u.createdAt)}</dd></div>
-            <div><dt className="inline font-semibold">Last active: </dt><dd className="inline num">{formatDateTime(u.lastActiveAt) || "—"}</dd></div>
-            <div><dt className="inline font-semibold">Active sessions: </dt><dd className="inline num">{d.activeSessions}</dd></div>
-            <div><dt className="inline font-semibold">Listings created: </dt><dd className="inline num">{d.listingCount}</dd></div>
-            <div><dt className="inline font-semibold">RFQs posted: </dt><dd className="inline num">{d.rfqCount}</dd></div>
+            <div><dt className="inline font-semibold">Phone</dt><dd className="inline num">{formatPhoneDisplay(u.phone)} {u.phoneVerifiedAt ? <Badge tone="success">verified</Badge> : <Badge tone="warning">unverified</Badge>}</dd></div>
+            <div><dt className="inline font-semibold">Email</dt><dd className="inline">{u.email ?? "—"}</dd></div>
+            <div><dt className="inline font-semibold">Language</dt><dd className="inline">{u.language}</dd></div>
+            <div><dt className="inline font-semibold">Status</dt><dd className="inline"><Badge tone={u.status === "active" ? "success" : u.status === "suspended" ? "danger" : "neutral"}>{u.status}</Badge> {u.statusReason && <span className="text-muted">— {u.statusReason}</span>}</dd></div>
+            <div><dt className="inline font-semibold">Buyer / Seller</dt><dd className="inline">{u.isBuyer ? "buyer" : ""}{u.isBuyer && u.isSeller ? " + " : ""}{u.isSeller ? "seller" : ""}</dd></div>
+            <div><dt className="inline font-semibold">Joined</dt><dd className="inline num">{formatDateTime(u.createdAt)}</dd></div>
+            <div><dt className="inline font-semibold">Last active</dt><dd className="inline num">{formatDateTime(u.lastActiveAt) || "—"}</dd></div>
+            <div><dt className="inline font-semibold">Active sessions</dt><dd className="inline num">{d.activeSessions}</dd></div>
+            <div><dt className="inline font-semibold">Listings created</dt><dd className="inline num">{d.listingCount}</dd></div>
+            <div><dt className="inline font-semibold">RFQs posted</dt><dd className="inline num">{d.rfqCount}</dd></div>
           </dl>
         </section>
         <section className="card p-4">
@@ -60,7 +60,7 @@ export default async function UserDetailPage({ params }: { params: Promise<{ id:
             ))}
           </ul>
           {canRoles && grantable.length > 0 && (
-            <div className="mt-3 border-t border-border pt-3">
+            <div className="mt-3 border-t border-line pt-3">
               <ActionButton action={assignRoleAction} payload={{ userId: u.id }} variant="primary" select={{ name: "role", label: "Role to assign", options: grantable.map((r) => ({ value: r, label: ROLE_LABELS[r as keyof typeof ROLE_LABELS] })) }} confirm={{ title: "Assign role", body: isSuper ? "Admin roles grant access to the admin panel. Recorded in the audit log." : "Only a super admin can grant admin roles." }}>Assign role</ActionButton>
             </div>
           )}
@@ -70,21 +70,21 @@ export default async function UserDetailPage({ params }: { params: Promise<{ id:
           {d.businesses.length ? (
             <ul className="space-y-1 text-sm">
               {d.businesses.map((b) => (
-                <li key={b.id}><Link href={`/admin/businesses/${b.id}`} className="text-primary hover:underline">{b.name}</Link> <Badge tone={b.status === "active" ? "success" : "danger"}>{b.status}</Badge> <span className="text-text-muted">{b.verificationLevel}</span></li>
+                <li key={b.id}><Link href={`/admin/businesses/${b.id}`} className="adm-link">{b.name}</Link> <Badge tone={b.status === "active" ? "success" : "danger"}>{b.status}</Badge> <span className="text-muted">{b.verificationLevel}</span></li>
               ))}
             </ul>
-          ) : <p className="text-sm text-text-muted">None</p>}
+          ) : <p className="text-sm text-muted">None</p>}
         </section>
       </div>
-      <h2 className="mb-2 mt-6 font-bold">Recent audit entries</h2>
+      <h2 className="adm-section">Recent audit entries</h2>
       <Table>
         <thead><tr><Th>When</Th><Th>Action</Th><Th>Entity</Th><Th>Reason</Th><Th>Changes</Th></tr></thead>
         <tbody>
           {d.audit.length ? d.audit.map((a) => (
             <tr key={a.id}>
               <Td className="num">{formatDateTime(a.createdAt)}</Td>
-              <Td>{a.action}{a.actorId === u.id && <span className="ms-1 text-xs text-text-muted">(as actor)</span>}</Td>
-              <Td>{a.entityType} <span className="text-xs text-text-muted">{a.entityId?.slice(0, 8)}</span></Td>
+              <Td>{a.action}{a.actorId === u.id && <span className="ms-1 text-xs text-muted">(as actor)</span>}</Td>
+              <Td>{a.entityType} <span className="text-xs text-muted">{a.entityId?.slice(0, 8)}</span></Td>
               <Td>{a.reason ?? "—"}</Td>
               <Td><JsonDetails label="before" value={a.before} /><JsonDetails label="after" value={a.after} /></Td>
             </tr>

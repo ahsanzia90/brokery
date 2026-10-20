@@ -14,11 +14,11 @@ export function MarkdownEditor({ name, label, initial, dir }: { name: string; la
     <div className="grid gap-3 lg:grid-cols-2">
       <label className="block">
         <span className="block text-sm font-semibold">{label} (Markdown)</span>
-        <textarea name={name} value={value} onChange={(e) => setValue(e.target.value)} dir={dir} rows={22} className="mt-1 w-full rounded-[var(--radius)] border border-border-strong bg-surface px-3 py-2 font-mono text-sm" />
+        <textarea name={name} value={value} onChange={(e) => setValue(e.target.value)} dir={dir} rows={22} className="mt-1 w-full rounded-[var(--radius)] border border-line-strong bg-surface px-3 py-2 font-mono text-sm" />
       </label>
       <div>
         <span className="block text-sm font-semibold">Preview</span>
-        <div dir={dir} className="prose-simple mt-1 max-h-[560px] min-h-[200px] overflow-auto rounded-[var(--radius)] border border-border bg-surface p-4" dangerouslySetInnerHTML={{ __html: html }} />
+        <div dir={dir} className="prose-simple mt-1 max-h-[560px] min-h-[200px] overflow-auto rounded-[var(--radius)] border border-line bg-surface p-4" dangerouslySetInnerHTML={{ __html: html }} />
       </div>
     </div>
   );
@@ -53,7 +53,7 @@ export function CommodityMultiSelect({ name, initial }: { name: string; initial:
     <div>
       <ul className="mb-2 flex flex-wrap gap-2">
         {selected.map((s) => (
-          <li key={s.id} className="inline-flex items-center gap-1 rounded-full border border-border px-3 py-1 text-sm">
+          <li key={s.id} className="inline-flex items-center gap-1 rounded-full border border-line px-3 py-1 text-sm">
             <input type="hidden" name={name} value={s.id} />
             {s.nameEn}
             <button type="button" onClick={() => setSelected((x) => x.filter((y) => y.id !== s.id))} className="text-danger" aria-label={`Remove ${s.nameEn}`}>
@@ -62,20 +62,20 @@ export function CommodityMultiSelect({ name, initial }: { name: string; initial:
           </li>
         ))}
       </ul>
-      <input value={q} onChange={(e) => setQ(e.target.value)} placeholder="Search commodities to link…" className="min-h-[44px] w-full rounded-[var(--radius)] border border-border-strong px-3" />
+      <input value={q} onChange={(e) => setQ(e.target.value)} placeholder="Search commodities to link…" className="min-h-[44px] w-full rounded-[var(--radius)] border border-line-strong px-3" />
       {results.length > 0 && (
-        <ul className="mt-1 max-h-48 overflow-auto rounded-[var(--radius)] border border-border bg-surface">
+        <ul className="mt-1 max-h-48 overflow-auto rounded-[var(--radius)] border border-line bg-surface">
           {results.map((r) => (
             <li key={r.id}>
               <button
                 type="button"
-                className="block w-full px-3 py-2 text-start text-sm hover:bg-surface-muted"
+                className="block w-full px-3 py-2 text-start text-sm hover:bg-surface-2"
                 onClick={() => {
                   setSelected((x) => [...x, r]);
                   setQ("");
                 }}
               >
-                {r.nameEn} <span className="text-text-muted">· {r.categoryName}</span>
+                {r.nameEn} <span className="text-muted">· {r.categoryName}</span>
               </button>
             </li>
           ))}

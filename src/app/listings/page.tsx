@@ -10,8 +10,8 @@ import { PageHeader } from "@/components/ui/section";
 import { LinkButton } from "@/components/ui/button";
 import { ListingFilters } from "@/components/marketplace/listing-filters";
 import { ListingResults } from "@/components/marketplace/listing-results";
+import { Chip, ChipRow } from "@/components/public/chip";
 import { JsonLd, breadcrumbJsonLd } from "@/lib/seo/jsonld";
-import Link from "next/link";
 
 type Props = { searchParams: Promise<SP> };
 
@@ -29,18 +29,26 @@ export default async function ListingsPage({ searchParams }: Props) {
   const [result, cities, major, tree] = await Promise.all([searchListings(params, locale), getCities(), getMajorCities(), getCategoryTree()]);
   const cityOptions = [...major, ...cities.filter((c) => !c.isMajorMarket)].map((c) => ({ value: c.id, label: lname(locale, c) }));
   const hidden = { category: s(sp, "category") || undefined, commodity: s(sp, "commodity") || undefined };
+  const title = commodity ? t("browse.listingsFor", { name: lname(locale, commodity) }) : category ? t("browse.listingsFor", { name: lname(locale, category) }) : t("browse.allListings");
   return (
-    <div className="container-page py-6">
+    <div className="container-page py-5 md:py-6">
       <Breadcrumbs items={[{ label: t("browse.allListings") }]} homeLabel={t("common.home")} />
       <JsonLd data={breadcrumbJsonLd([{ name: t("common.home"), path: "/" }, { name: t("browse.allListings"), path: "/listings" }])} />
-      <PageHeader title={commodity ? t("browse.listingsFor", { name: lname(locale, commodity) }) : category ? t("browse.listingsFor", { name: lname(locale, category) }) : t("browse.allListings")} subtitle={t("browse.listingsSub")}>
-        <div className="mt-3 flex flex-wrap gap-2">
-          {tree.slice(0, 8).map((c) => (
-            <Link key={c.id} href={`/listings?category=${c.slug}`} className={`inline-block min-h-[40px] rounded-full border px-3 py-1.5 text-sm ${category?.id === c.id ? "border-primary bg-primary-soft text-primary-strong" : "border-border bg-surface hover:border-primary"}`}>
-              {lname(locale, c)}
-            </Link>
+      <PageHeader eyebrow={t("home.listings.eyebrow")} title={title} subtitle={t("browse.listingsSub")}>
+        <ChipRow className="mt-5" scroll>
+          <li>
+            <Chip href="/listings" size="sm" active={!category}>
+              {t("common.all")}
+            </Chip>
+          </li>
+          {tree.map((c) => (
+            <li key={c.id}>
+              <Chip href={`/listings?category=${c.slug}`} size="sm" active={category?.id === c.id}>
+                {lname(locale, c)}
+              </Chip>
+            </li>
           ))}
-        </div>
+        </ChipRow>
       </PageHeader>
       <ListingFilters t={t} action="/listings" values={values} cities={cityOptions} hidden={hidden} showQuery />
       <ListingResults
@@ -52,7 +60,7 @@ export default async function ListingsPage({ searchParams }: Props) {
             <LinkButton href="/rfq/new" variant="primary">
               {t("action.createRfq")}
             </LinkButton>
-            <LinkButton href="/sell" variant="accent">
+            <LinkButton href="/sell" variant="outline">
               {t("action.createListing")}
             </LinkButton>
           </>

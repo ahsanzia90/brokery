@@ -28,7 +28,7 @@ export default async function SeoPage({ searchParams }: { searchParams: Promise<
       <AdminPageHeader title="SEO metadata" description="Overrides for titles, descriptions, canonical URLs, robots directives and social sharing. Pages without an override use their generated defaults." actions={<><Link href="/admin/seo/redirects" className={buttonClass("outline", "sm")}>Redirects</Link><Link href="/admin/seo/sitemap" className={buttonClass("outline", "sm")}>Sitemap inspection</Link></>} />
       <Flash ok={str(sp, "ok")} error={str(sp, "error")} />
       <form method="get" className="mb-4 flex gap-2">
-        <input name="q" defaultValue={q} placeholder="Search path, title, entity type…" className="min-h-[44px] w-80 max-w-full rounded-[var(--radius)] border border-border-strong px-3" />
+        <input name="q" defaultValue={q} placeholder="Search path, title, entity type…" className="min-h-[44px] w-80 max-w-full rounded-[var(--radius)] border border-line-strong px-3" />
         <button className={buttonClass("outline", "sm")}>Search</button>
       </form>
       <Table>
@@ -38,17 +38,17 @@ export default async function SeoPage({ searchParams }: { searchParams: Promise<
           {rows.map((r) => (
             <tr key={r.id}>
               <Td>{r.path ? <code className="text-xs">{r.path}</code> : <span className="text-sm">{r.entityType} <code className="text-xs">{r.entityId?.slice(0, 8)}…</code></span>}</Td>
-              <Td className="text-sm">{r.title ?? <span className="text-text-muted">default</span>}</Td>
-              <Td>{r.robots ? <Badge tone={r.robots.includes("noindex") ? "warning" : "success"}>{r.robots}</Badge> : <span className="text-text-muted text-sm">default</span>}</Td>
+              <Td className="text-sm">{r.title ?? <span className="text-muted">default</span>}</Td>
+              <Td>{r.robots ? <Badge tone={r.robots.includes("noindex") ? "warning" : "success"}>{r.robots}</Badge> : <span className="text-muted text-sm">default</span>}</Td>
               <Td className="text-sm">{r.includeInSitemap === null ? "by rules" : r.includeInSitemap ? "yes" : <Badge tone="warning">excluded</Badge>}</Td>
               <Td className="num text-sm">{formatDateTime(r.updatedAt)}</Td>
-              <Td><Link href={`/admin/seo/${r.id}`} className="text-primary hover:underline">Edit</Link></Td>
+              <Td><Link href={`/admin/seo/${r.id}`} className="adm-link">Edit</Link></Td>
             </tr>
           ))}
         </tbody>
       </Table>
       <AdminPagination page={page} totalPages={Math.ceil(total / pageSize)} makeHref={(p) => qs("/admin/seo", { q, page: p })} />
-      <h2 className="mb-3 mt-8 text-xl font-bold">Add override</h2>
+      <h2 className="adm-section">Add override</h2>
       <SeoForm action={saveSeoAction} siteUrl={BRAND_DEFAULTS.siteUrl} />
     </div>
   );

@@ -34,15 +34,15 @@ export default async function FlagsPage({ searchParams }: { searchParams: Promis
               <div>
                 <p className="font-bold font-latin">{f.key}</p>
                 <p className="mt-1"><Badge tone={f.enabled ? "success" : "neutral"}>{f.enabled ? "enabled" : "disabled"}</Badge>{PAYMENT_FLAGS.has(f.key) && <Badge tone="warning" className="ms-1">future</Badge>}</p>
-                <p className="mt-1 text-xs text-text-muted">updated {formatDateTime(f.updatedAt)}</p>
+                <p className="mt-1 text-xs text-muted">updated {formatDateTime(f.updatedAt)}</p>
               </div>
               <label className="block">
                 <span className="text-sm font-semibold">Description</span>
-                <input name="description" defaultValue={f.description ?? ""} disabled={locked} className="mt-1 w-full rounded-[var(--radius)] border border-border-strong px-3 py-2 disabled:opacity-60" />
+                <input name="description" defaultValue={f.description ?? ""} disabled={locked} className="adm-control mt-1 w-full disabled:opacity-60" />
               </label>
               <label className="block">
                 <span className="text-sm font-semibold">Config (JSON)</span>
-                <input name="config" defaultValue={f.config ? JSON.stringify(f.config) : ""} disabled={locked} className="mt-1 w-full rounded-[var(--radius)] border border-border-strong px-3 py-2 font-mono text-sm disabled:opacity-60" />
+                <input name="config" defaultValue={f.config ? JSON.stringify(f.config) : ""} disabled={locked} className="adm-control mt-1 w-full font-mono text-sm disabled:opacity-60" />
               </label>
               <div className="flex flex-col gap-2">
                 <label className="flex items-center gap-2 text-sm"><input type="checkbox" name="enabled" defaultChecked={f.enabled} disabled={locked} className="h-5 w-5" /> enabled</label>

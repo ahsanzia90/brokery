@@ -42,9 +42,9 @@ export default async function RequestDetailPage({ params, searchParams }: { para
         {commodityName && <p>For commodity: {commodityName}</p>}
         {r.region && <p>Region: {r.region}</p>}
         {r.notes && <p>Notes: {r.notes}</p>}
-        <p className="text-text-muted">Submitted {formatDateTime(r.createdAt)} by {requester?.name || "guest"}</p>
+        <p className="text-muted">Submitted {formatDateTime(r.createdAt)} by {requester?.name || "guest"}</p>
         {listing && <p>Triggered by listing: <Link href={`/listings/${listing.slug}`} className="text-primary underline" target="_blank">{listing.title}</Link> (will be linked automatically on approval)</p>}
-        {r.status !== "pending" && <p className="text-text-muted">Reviewed by {reviewer?.name ?? "—"}: {r.reviewNotes ?? "no notes"}</p>}
+        {r.status !== "pending" && <p className="text-muted">Reviewed by {reviewer?.name ?? "—"}: {r.reviewNotes ?? "no notes"}</p>}
       </div>
       {r.status === "pending" ? (
         <div className="grid gap-4 md:grid-cols-2">

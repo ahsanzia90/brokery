@@ -1,6 +1,6 @@
 import type { ReactNode } from "react";
 
-const cls = "mt-1 w-full rounded-[var(--radius)] border border-border-strong bg-surface px-3 py-2 min-h-[44px]";
+const cls = "mt-1 w-full rounded-[var(--radius)] border border-line-strong bg-surface px-3 py-2 min-h-[44px]";
 
 export function F({ label, name, value, type = "text", required, help, dir, placeholder }: { label: string; name: string; value?: string | number | null; type?: string; required?: boolean; help?: string; dir?: "rtl" | "ltr"; placeholder?: string }) {
   return (
@@ -10,7 +10,7 @@ export function F({ label, name, value, type = "text", required, help, dir, plac
         {required && <span className="text-danger"> *</span>}
       </span>
       <input name={name} type={type} defaultValue={value ?? ""} required={required} dir={dir} placeholder={placeholder} className={cls} />
-      {help && <span className="block text-xs text-text-muted">{help}</span>}
+      {help && <span className="block text-xs text-muted">{help}</span>}
     </label>
   );
 }
@@ -20,7 +20,7 @@ export function TA({ label, name, value, rows = 3, help, dir }: { label: string;
     <label className="block">
       <span className="block text-sm font-semibold">{label}</span>
       <textarea name={name} defaultValue={value ?? ""} rows={rows} dir={dir} className={cls} />
-      {help && <span className="block text-xs text-text-muted">{help}</span>}
+      {help && <span className="block text-xs text-muted">{help}</span>}
     </label>
   );
 }
@@ -37,7 +37,7 @@ export function Sel({ label, name, value, options, help, allowEmpty }: { label: 
           </option>
         ))}
       </select>
-      {help && <span className="block text-xs text-text-muted">{help}</span>}
+      {help && <span className="block text-xs text-muted">{help}</span>}
     </label>
   );
 }
@@ -48,7 +48,7 @@ export function Cb({ label, name, checked, help }: { label: string; name: string
       <input type="checkbox" name={name} defaultChecked={checked} className="mt-1 h-5 w-5" />
       <span>
         <span className="font-semibold">{label}</span>
-        {help && <span className="block text-xs text-text-muted">{help}</span>}
+        {help && <span className="block text-xs text-muted">{help}</span>}
       </span>
     </label>
   );

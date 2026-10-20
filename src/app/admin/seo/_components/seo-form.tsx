@@ -17,7 +17,7 @@ type Seo = {
   includeInSitemap: boolean | null;
 };
 
-const inp = "mt-1 w-full rounded-[var(--radius)] border border-border-strong bg-surface px-3 py-2 min-h-[44px]";
+const inp = "mt-1 w-full rounded-[var(--radius)] border border-line-strong bg-surface px-3 py-2 min-h-[44px]";
 
 export function SeoForm({ seo, action, siteUrl, defaultTitle, defaultDescription, entityLabel }: { seo?: Seo; action: (fd: FormData) => Promise<void>; siteUrl: string; defaultTitle?: string; defaultDescription?: string; entityLabel?: string }) {
   const [mode, setMode] = useState<"path" | "entity">(seo?.entityType ? "entity" : "path");
@@ -57,11 +57,11 @@ export function SeoForm({ seo, action, siteUrl, defaultTitle, defaultDescription
           </div>
         )}
         <label className="block">
-          <span className="text-sm font-semibold">Title <span className={`num text-xs ${title.length > 60 ? "text-danger" : "text-text-muted"}`}>{title.length}/60</span></span>
+          <span className="text-sm font-semibold">Title <span className={`num text-xs ${title.length > 60 ? "text-danger" : "text-muted"}`}>{title.length}/60</span></span>
           <input name="title" value={title} onChange={(e) => setTitle(e.target.value)} className={inp} placeholder={defaultTitle ?? "Leave blank to use the default"} />
         </label>
         <label className="block">
-          <span className="text-sm font-semibold">Meta description <span className={`num text-xs ${desc.length > 160 ? "text-danger" : "text-text-muted"}`}>{desc.length}/160</span></span>
+          <span className="text-sm font-semibold">Meta description <span className={`num text-xs ${desc.length > 160 ? "text-danger" : "text-muted"}`}>{desc.length}/160</span></span>
           <textarea name="description" value={desc} onChange={(e) => setDesc(e.target.value)} rows={3} className={inp} placeholder={defaultDescription ?? "Leave blank to use the default"} />
         </label>
         <div className="grid gap-3 sm:grid-cols-2">
@@ -110,12 +110,12 @@ export function SeoForm({ seo, action, siteUrl, defaultTitle, defaultDescription
       </div>
       <aside className="card h-fit p-4">
         <p className="mb-2 text-sm font-semibold">Search snippet preview</p>
-        <div className="rounded border border-border bg-white p-3 font-latin" dir="ltr">
+        <div className="rounded border border-line bg-white p-3 font-latin" dir="ltr">
           <p className="truncate text-xs text-[#202124]">{siteUrl}{mode === "path" ? path || "/…" : "/…"}</p>
           <p className="truncate text-lg text-[#1a0dab]">{previewTitle}</p>
           <p className="line-clamp-2 text-sm text-[#4d5156]">{previewDesc}</p>
         </div>
-        <p className="mt-2 text-xs text-text-muted">Google typically shows ~60 characters of a title and ~160 of a description. The brand suffix from Settings is appended automatically unless the title already contains the brand name.</p>
+        <p className="mt-2 text-xs text-muted">Google typically shows ~60 characters of a title and ~160 of a description. The brand suffix from Settings is appended automatically unless the title already contains the brand name.</p>
       </aside>
     </form>
   );

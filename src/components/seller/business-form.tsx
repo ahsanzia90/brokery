@@ -10,6 +10,7 @@ import { useToast } from "@/components/ui/toast";
 import { CommodityChecklist, type CommodityOption } from "./commodity-picker";
 import { ImageUploader, type UploadedImage } from "./uploaders";
 import { formatPhoneLocal } from "@/lib/utils/phone";
+import { FormSection, StickyActions } from "@/components/flows/form-section";
 
 export type LocationOption = { id: string; nameEn: string; nameUr: string | null; parentId: string | null; type: string; isMajorMarket?: boolean };
 
@@ -120,7 +121,8 @@ export function BusinessForm({ initial, initialCommodities, provinces, userPhone
 
   return (
     <form onSubmit={submit} noValidate className="max-w-2xl">
-      {generalError && <Alert tone="danger" className="mb-4">{generalError}</Alert>}
+      {generalError && <Alert tone="danger" className="mb-6">{generalError}</Alert>}
+      <FormSection first title={t("biz.section.about")}>
       <Field label={t("biz.name")} required htmlFor="bname" error={err("name")}>
         <Input id="bname" value={v.name} onChange={(e) => set("name", e.target.value)} maxLength={120} required aria-invalid={Boolean(errors.name) || undefined} />
       </Field>
@@ -136,13 +138,13 @@ export function BusinessForm({ initial, initialCommodities, provinces, userPhone
       <Field label={t("biz.description")} htmlFor="bdesc" hint={t("common.optional")}>
         <Textarea id="bdesc" value={v.description} onChange={(e) => set("description", e.target.value)} maxLength={2000} rows={4} />
       </Field>
+      </FormSection>
 
-      <fieldset className="mb-5">
-        <legend className="mb-2 text-base font-semibold">{t("biz.commodities")}</legend>
-        <p className="mb-2 text-sm text-text-muted">{t("biz.commoditiesHint")}</p>
+      <FormSection title={t("biz.commodities")} description={t("biz.commoditiesHint")}>
         <CommodityChecklist selected={commodities} onChange={setCommodities} />
-      </fieldset>
+      </FormSection>
 
+      <FormSection title={t("biz.section.location")}>
       <div className="grid gap-x-4 sm:grid-cols-2">
         <Field label={t("common.province")} htmlFor="prov">
           <Select id="prov" value={v.provinceId} onChange={(e) => { set("provinceId", e.target.value); set("cityId", ""); set("marketId", ""); }}>
@@ -174,6 +176,9 @@ export function BusinessForm({ initial, initialCommodities, provinces, userPhone
       <Field label={t("biz.address")} htmlFor="addr" hint={t("common.optional")}>
         <Input id="addr" value={v.addressLine} onChange={(e) => set("addressLine", e.target.value)} maxLength={300} />
       </Field>
+      </FormSection>
+
+      <FormSection title={t("biz.section.contact")} description={t("biz.privacyNote")}>
       <Field label={t("biz.contactPerson")} htmlFor="cp" hint={t("common.optional")}>
         <Input id="cp" value={v.contactPersonName} onChange={(e) => set("contactPersonName", e.target.value)} maxLength={100} />
       </Field>
@@ -185,12 +190,14 @@ export function BusinessForm({ initial, initialCommodities, provinces, userPhone
           <Input id="wa" type="tel" inputMode="tel" dir="ltr" className="font-latin" value={v.whatsappNumber} onChange={(e) => set("whatsappNumber", e.target.value)} placeholder="0300 1234567" />
         </Field>
       </div>
-      <div className="card mb-5 p-4">
+      <div className="mb-2 divide-y divide-line rounded-[var(--r-md)] border border-line px-4">
         <Checkbox label={t("biz.showPhone")} checked={v.showPhonePublicly} onChange={(e) => set("showPhonePublicly", e.target.checked)} />
         <Checkbox label={t("biz.showWhatsapp")} checked={v.showWhatsappPublicly} onChange={(e) => set("showWhatsappPublicly", e.target.checked)} disabled={!v.whatsappNumber} />
         <Checkbox label={t("biz.showAddress")} checked={v.showAddressPublicly} onChange={(e) => set("showAddressPublicly", e.target.checked)} />
-        <p className="mt-2 text-sm text-text-muted">{t("biz.privacyNote")}</p>
       </div>
+      </FormSection>
+
+      <FormSection title={t("biz.section.more")}>
       <div className="grid gap-x-4 sm:grid-cols-2">
         <Field label={t("biz.website")} htmlFor="web" hint={t("common.optional")}>
           <Input id="web" type="url" dir="ltr" className="font-latin" value={v.website} onChange={(e) => set("website", e.target.value)} placeholder="www.example.com" />
@@ -200,11 +207,11 @@ export function BusinessForm({ initial, initialCommodities, provinces, userPhone
         </Field>
       </div>
       <fieldset className="mb-5">
-        <legend className="mb-2 text-base font-semibold">{t("biz.languages")}</legend>
+        <legend className="mb-1.5 block text-[14px] font-semibold text-ink">{t("biz.languages")}</legend>
         <div className="flex flex-wrap gap-2">
           {LANGS.map((l) => (
-            <label key={l.v} className="inline-flex min-h-[44px] cursor-pointer items-center gap-2 rounded-full border border-border bg-surface px-3 has-[:checked]:border-primary has-[:checked]:bg-primary-soft">
-              <input type="checkbox" className="h-4 w-4 accent-[var(--color-primary)]" checked={v.languages.includes(l.v)} onChange={(e) => set("languages", e.target.checked ? [...v.languages, l.v] : v.languages.filter((x) => x !== l.v))} />
+            <label key={l.v} className="inline-flex h-10 cursor-pointer items-center gap-2 rounded-full border border-line bg-surface px-3.5 text-[14px] font-medium has-[:checked]:border-brand-800 has-[:checked]:bg-brand-50 has-[:checked]:text-brand-900">
+              <input type="checkbox" className="h-4 w-4 accent-[var(--brand-800)]" checked={v.languages.includes(l.v)} onChange={(e) => set("languages", e.target.checked ? [...v.languages, l.v] : v.languages.filter((x) => x !== l.v))} />
               {l.l}
             </label>
           ))}
@@ -213,13 +220,16 @@ export function BusinessForm({ initial, initialCommodities, provinces, userPhone
       <Field label={t("biz.registration")} htmlFor="reg" hint={t("common.optional")}>
         <Input id="reg" dir="ltr" className="font-latin" value={v.registrationNumber} onChange={(e) => set("registrationNumber", e.target.value)} maxLength={60} />
       </Field>
-      <fieldset className="mb-6">
-        <legend className="mb-2 text-base font-semibold">{t("biz.logo")}</legend>
+      </FormSection>
+
+      <FormSection title={t("biz.logo")}>
         <ImageUploader kind="logo" max={1} maxBytes={maxImageBytes} images={v.logoPath ? [{ path: v.logoPath }] : []} onChange={(imgs: UploadedImage[]) => set("logoPath", imgs[0]?.path ?? null)} />
-      </fieldset>
-      <Button type="submit" size="lg" loading={pending} className="w-full sm:w-auto">
-        {isNew ? t("action.continue") : t("action.save")}
-      </Button>
+      </FormSection>
+      <StickyActions>
+        <Button type="submit" size="lg" loading={pending} className="w-full sm:w-auto">
+          {isNew ? t("action.continue") : t("action.save")}
+        </Button>
+      </StickyActions>
     </form>
   );
 }

@@ -8,6 +8,8 @@ import type { ListingPayload } from "@/lib/listings/schema";
 import { Button } from "@/components/ui/button";
 import { Checkbox, Field, Input, RadioCard, Select, Textarea } from "@/components/ui/form";
 import { Alert } from "@/components/ui/alert";
+import { Check, ChevronLeft, ChevronRight, Save } from "lucide-react";
+import { Facts } from "@/components/flows/form-section";
 import { formatNumber, formatPKR } from "@/lib/utils/format";
 import { formatPhoneLocal } from "@/lib/utils/phone";
 import { CommodityPicker, commodityLabel, type CommodityOption } from "./commodity-picker";
@@ -348,11 +350,32 @@ export function ListingWizard({
 
   return (
     <div className="max-w-2xl">
-      <p className="text-sm font-semibold text-text-muted num">{t("wizard.stepOf", { n: step, total: TOTAL })}</p>
-      <div className="mt-1 h-2 w-full overflow-hidden rounded-full bg-surface-muted" aria-hidden>
-        <div className="h-full bg-primary transition-all" style={{ width: `${(step / TOTAL) * 100}%` }} />
+      {/* stepper */}
+      <ol className="hidden items-center gap-1 sm:flex" aria-label={t("wizard.stepOf", { n: step, total: TOTAL })}>
+        {stepTitles.map((_, i) => {
+          const n = i + 1;
+          const title = t(`wizard.short.${n}`);
+          const state = n < step ? "done" : n === step ? "current" : "todo";
+          return (
+            <li key={title} className="flex min-w-0 flex-1 items-center gap-1">
+              <button type="button" disabled={n > step} onClick={() => setStep(n)} className={`flex min-w-0 items-center gap-2 rounded-full py-1 pe-2 text-start ${n > step ? "cursor-default" : "hover:bg-surface-2"}`}>
+                <span className={`flex h-6 w-6 shrink-0 items-center justify-center rounded-full text-[11px] font-bold num ${state === "done" ? "bg-brand-800 text-white" : state === "current" ? "bg-ink text-white" : "border border-line-strong text-muted"}`}>
+                  {state === "done" ? <Check className="h-3.5 w-3.5" aria-hidden /> : n}
+                </span>
+                <span className={`truncate text-[12px] font-semibold ${state === "current" ? "text-ink" : "text-muted"}`}>{title}</span>
+              </button>
+              {n < TOTAL && <span className={`h-px flex-1 ${n < step ? "bg-brand-800" : "bg-line"}`} aria-hidden />}
+            </li>
+          );
+        })}
+      </ol>
+      <div className="sm:hidden">
+        <p className="text-[12px] font-bold uppercase tracking-wide text-muted num">{t("wizard.stepOf", { n: step, total: TOTAL })}</p>
+        <div className="mt-1.5 h-1.5 w-full overflow-hidden rounded-full bg-surface-2" aria-hidden>
+          <div className="h-full rounded-full bg-brand-800 transition-all" style={{ width: `${(step / TOTAL) * 100}%` }} />
+        </div>
       </div>
-      <h2 className="mt-3 text-xl font-bold">{stepTitles[step - 1]}</h2>
+      <h2 className="mt-5 text-[22px] font-extrabold leading-tight text-ink md:text-[26px]">{stepTitles[step - 1]}</h2>
       {restored && (
         <Alert tone="info" className="mt-3">
           {t("wizard.draftRestored")}{" "}
@@ -376,7 +399,7 @@ export function ListingWizard({
       {editNote && mode === "edit" && <Alert tone="info" className="mt-3">{t("wizard.editNote")}</Alert>}
       {general && <Alert tone="danger" className="mt-3">{general}</Alert>}
 
-      <div className="card mt-4 p-5">
+      <div className="mt-5 border-t border-line pt-6">
         {/* ---------- Step 1 ---------- */}
         {step === 1 && (
           <div>
@@ -385,7 +408,7 @@ export function ListingWizard({
                 <Select id="cat" value={s.categoryId} onChange={(e) => set("categoryId", e.target.value)}>
                   <option value="">{t("common.all")}</option>
                   {topCats.map((c) => (
-                    <optgroup key={c.id} label={`${c.icon ? c.icon + " " : ""}${name(c)}`}>
+                    <optgroup key={c.id} label={name(c)}>
                       <option value={c.id}>{name(c)} — {t("common.all")}</option>
                       {categories
                         .filter((x) => x.parentId === c.id)
@@ -410,7 +433,7 @@ export function ListingWizard({
                 }}
               />
             </Field>
-            {formLoading && <p className="text-text-muted">{t("wizard.loading")}</p>}
+            {formLoading && <p className="flex items-center gap-2 text-[14px] text-muted"><span className="h-4 w-4 animate-spin rounded-full border-2 border-current border-t-transparent" aria-hidden /> {t("wizard.loading")}</p>}
             {form && prohibited && <Alert tone="danger">{t("wizard.prohibited")} <Link href="/prohibited-items" className="underline">{t("footer.prohibited")}</Link></Alert>}
             {form && restricted && <Alert tone="warning" className="mb-4">{t("wizard.restricted")}</Alert>}
             {form && !prohibited && (
@@ -437,7 +460,7 @@ export function ListingWizard({
                     {!s.varietyId && s.customVariety !== "" && (
                       <div className="mt-2">
                         <Input value={s.customVariety.trim()} onChange={(e) => set("customVariety", e.target.value || " ")} placeholder={t("listing.custom.variety")} maxLength={100} aria-label={t("listing.custom.variety")} />
-                        <p className="mt-1 text-sm text-text-muted">{t("wizard.customReview")}</p>
+                        <p className="mt-1 text-[13px] text-muted">{t("wizard.customReview")}</p>
                       </div>
                     )}
                   </Field>
@@ -464,7 +487,7 @@ export function ListingWizard({
                     {!s.gradeId && s.customGrade !== "" && (
                       <div className="mt-2">
                         <Input value={s.customGrade.trim()} onChange={(e) => set("customGrade", e.target.value || " ")} placeholder={t("listing.custom.grade")} maxLength={100} aria-label={t("listing.custom.grade")} />
-                        <p className="mt-1 text-sm text-text-muted">{t("wizard.customReview")}</p>
+                        <p className="mt-1 text-[13px] text-muted">{t("wizard.customReview")}</p>
                       </div>
                     )}
                   </Field>
@@ -472,8 +495,8 @@ export function ListingWizard({
                 <Field label={t("wizard.title")} required htmlFor="title" error={errors.title} hint={t("wizard.titleHint")}>
                   <Input id="title" value={s.title} onChange={(e) => set("title", e.target.value)} placeholder={suggestedTitle} maxLength={120} aria-invalid={Boolean(errors.title) || undefined} />
                   {!s.title && suggestedTitle && (
-                    <button type="button" className="mt-1 text-sm font-semibold text-primary underline" onClick={() => set("title", suggestedTitle)}>
-                      “{suggestedTitle}”
+                    <button type="button" className="mt-1.5 inline-flex max-w-full items-center gap-1.5 rounded-full bg-brand-50 px-3 py-1 text-[13px] font-semibold text-brand-900 hover:bg-brand-100" onClick={() => set("title", suggestedTitle)}>
+                      <span className="truncate">“{suggestedTitle}”</span>
                     </button>
                   )}
                 </Field>
@@ -499,12 +522,16 @@ export function ListingWizard({
                 </Select>
               </Field>
             </div>
-            {form.units.find((u) => u.id === s.unitId)?.code === "maund" && <p className="mb-4 text-sm text-text-muted">{t("unit.maundNote", { kg: form.maundKg })}</p>}
-            {s.quantity && s.unitId && (
-              <p className="mb-4 font-semibold num">
-                = {formatNumber(s.quantity)} {unitSymbol(s.unitId)}
-              </p>
-            )}
+            {(s.quantity && s.unitId) || form.units.find((u) => u.id === s.unitId)?.code === "maund" ? (
+              <div className="mb-5 rounded-[var(--r-md)] bg-tint-sand px-4 py-3 text-[14px]">
+                {s.quantity && s.unitId && (
+                  <p className="text-[18px] font-extrabold text-ink num">
+                    {formatNumber(s.quantity)} {unitSymbol(s.unitId)}
+                  </p>
+                )}
+                {form.units.find((u) => u.id === s.unitId)?.code === "maund" && <p className="text-[13px] text-ink-2">{t("unit.maundNote", { kg: form.maundKg })}</p>}
+              </div>
+            ) : null}
             <div className="grid gap-x-4 sm:grid-cols-2">
               <Field label={t("wizard.minOrder")} htmlFor="moq">
                 <Input id="moq" type="number" inputMode="decimal" min={0} step="any" className="font-latin" value={s.minOrderQuantity} onChange={(e) => setS((p) => ({ ...p, minOrderQuantity: e.target.value, minOrderUnitId: p.minOrderUnitId || p.unitId }))} />
@@ -528,7 +555,7 @@ export function ListingWizard({
         {step === 3 && form && (
           <div>
             <fieldset className="mb-5">
-              <legend className="mb-2 font-semibold">{t("wizard.priceType")}</legend>
+              <legend className="mb-2 text-[14px] font-semibold text-ink">{t("wizard.priceType")}</legend>
               <div className="grid gap-2 sm:grid-cols-2">
                 {(["fixed", "negotiable", "quote", "on_contact"] as const).map((pt) => (
                   <RadioCard key={pt} name="priceType" value={pt} checked={s.priceType === pt} onChange={() => set("priceType", pt)} label={t(`wizard.price.${pt}`)} description={t(`wizard.price.${pt}Sub`)} />
@@ -599,7 +626,7 @@ export function ListingWizard({
               <Input id="pickup" value={s.pickupLocation} onChange={(e) => set("pickupLocation", e.target.value)} maxLength={200} />
             </Field>
             <fieldset>
-              <legend className="mb-2 font-semibold">{t("wizard.delivery")}</legend>
+              <legend className="mb-2 text-[14px] font-semibold text-ink">{t("wizard.delivery")}</legend>
               <div className="grid gap-2 sm:grid-cols-3">
                 <RadioCard name="delivery" value="yes" checked={s.deliveryAvailable === "yes"} onChange={() => set("deliveryAvailable", "yes")} label={t("common.yes")} />
                 <RadioCard name="delivery" value="no" checked={s.deliveryAvailable === "no"} onChange={() => set("deliveryAvailable", "no")} label={t("common.no")} />
@@ -613,7 +640,7 @@ export function ListingWizard({
         {step === 5 && form && (
           <div>
             <fieldset className="mb-5">
-              <legend className="mb-2 font-semibold">{t("wizard.photos")}</legend>
+              <legend className="mb-2 text-[14px] font-semibold text-ink">{t("wizard.photos")}</legend>
               <ImageUploader images={s.images} onChange={(imgs) => set("images", imgs)} max={form.maxImages} maxBytes={maxImageBytes} />
             </fieldset>
             <div className="grid gap-x-4 sm:grid-cols-2">
@@ -631,8 +658,8 @@ export function ListingWizard({
               </Field>
             </div>
             {form.attributes.length > 0 && (
-              <fieldset className="mb-5">
-                <legend className="mb-2 font-semibold">{t("wizard.specs")}</legend>
+              <fieldset className="mb-5 mt-2 border-t border-line pt-5">
+                <legend className="mb-3 translate-y-[-1px] text-[14px] font-semibold text-ink">{t("wizard.specs")}</legend>
                 <div className="grid gap-x-4 sm:grid-cols-2">
                   {form.attributes.map((a) => {
                     const val = s.attributes[a.id] ?? "";
@@ -674,13 +701,13 @@ export function ListingWizard({
             <Field label={t("wizard.description")} htmlFor="desc" hint={t("wizard.descriptionHint")}>
               <Textarea id="desc" value={s.description} onChange={(e) => set("description", e.target.value)} maxLength={4000} rows={5} />
             </Field>
-            <fieldset>
-              <legend className="mb-1 font-semibold">
-                {t("wizard.documents")} {restricted ? <span className="text-danger">*</span> : <span className="text-sm font-normal text-text-muted">({t("common.optional")})</span>}
+            <fieldset className="border-t border-line pt-5">
+              <legend className="mb-1 translate-y-[-1px] text-[14px] font-semibold text-ink">
+                {t("wizard.documents")} {restricted ? <span className="text-danger">*</span> : <span className="text-[13px] font-normal text-muted">({t("common.optional")})</span>}
               </legend>
-              {restricted && <p className="mb-2 text-sm text-warning">{t("wizard.documentsRequired")}</p>}
+              {restricted && <p className="mb-2 text-[13px] font-medium text-warning">{t("wizard.documentsRequired")}</p>}
               <ListingDocumentUploader docs={s.documents} onChange={(d) => set("documents", d)} maxBytes={maxDocBytes} />
-              {errors.documents && <p role="alert" className="mt-1 text-sm font-medium text-danger">{errors.documents}</p>}
+              {errors.documents && <p role="alert" className="mt-1 text-[13px] font-medium text-danger">{errors.documents}</p>}
             </fieldset>
           </div>
         )}
@@ -688,40 +715,41 @@ export function ListingWizard({
         {/* ---------- Step 6 ---------- */}
         {step === 6 && form && commodity && (
           <div>
-            <dl className="divide-y divide-border">
-              {[
-                { k: t("wizard.summary.what"), v: [commodityLabel(commodity, locale), varietyName ? name(varietyName) : s.customVariety.trim(), gradeName ? name(gradeName) : s.customGrade.trim()].filter(Boolean).join(" · ") + ` — “${s.title || suggestedTitle}”`, step: 1 },
-                { k: t("wizard.summary.howMuch"), v: `${formatNumber(s.quantity)} ${unitSymbol(s.unitId)}${s.minOrderQuantity ? ` · ${t("common.minOrder")}: ${formatNumber(s.minOrderQuantity)} ${unitSymbol(s.minOrderUnitId)}` : ""}`, step: 2 },
-                { k: t("wizard.summary.price"), v: s.priceType === "fixed" || s.priceType === "negotiable" ? `${formatPKR(s.priceAmount)} / ${unitSymbol(s.priceUnitId)} (${t(`wizard.price.${s.priceType}`)})` : t(`wizard.price.${s.priceType}`), step: 3 },
-                { k: t("wizard.summary.where"), v: [cities.find((c) => c.id === s.cityId) && name(cities.find((c) => c.id === s.cityId)!), markets.find((m) => m.id === s.marketId) && name(markets.find((m) => m.id === s.marketId)!), s.pickupLocation, t(`listing.delivery.${s.deliveryAvailable}`)].filter(Boolean).join(" · "), step: 4 },
-                { k: t("wizard.summary.details"), v: `${s.images.length} ${t("common.photos").toLowerCase()} · ${s.documents.length} ${t("wizard.documents").toLowerCase()}${s.packaging ? ` · ${s.packaging}` : ""}`, step: 5 },
-              ].map((row) => (
-                <div key={row.k} className="flex items-start justify-between gap-3 py-3">
-                  <div>
-                    <dt className="text-sm font-semibold text-text-muted">{row.k}</dt>
-                    <dd className="num">{row.v}</dd>
-                  </div>
-                  <button type="button" onClick={() => setStep(row.step)} className="min-h-[40px] shrink-0 text-sm font-semibold text-primary underline">
-                    {t("wizard.editStep")}
+            <div className="panel panel-mint">
+              <Facts
+                items={[
+                  { label: t("wizard.summary.what"), value: <span>{[commodityLabel(commodity, locale), varietyName ? name(varietyName) : s.customVariety.trim(), gradeName ? name(gradeName) : s.customGrade.trim()].filter(Boolean).join(" · ")}<span className="block text-[14px] font-normal text-ink-2">“{s.title || suggestedTitle}”</span></span> },
+                  { label: t("wizard.summary.howMuch"), value: <span className="num">{formatNumber(s.quantity)} {unitSymbol(s.unitId)}{s.minOrderQuantity ? <span className="block text-[13px] font-normal text-ink-2">{t("common.minOrder")}: {formatNumber(s.minOrderQuantity)} {unitSymbol(s.minOrderUnitId)}</span> : null}</span> },
+                  { label: t("wizard.summary.price"), value: <span className="num">{s.priceType === "fixed" || s.priceType === "negotiable" ? `${formatPKR(s.priceAmount)} / ${unitSymbol(s.priceUnitId)}` : t(`wizard.price.${s.priceType}`)}<span className="block text-[13px] font-normal text-ink-2">{t(`wizard.price.${s.priceType}`)}</span></span> },
+                  { label: t("wizard.summary.where"), value: [cities.find((c) => c.id === s.cityId) && name(cities.find((c) => c.id === s.cityId)!), markets.find((m) => m.id === s.marketId) && name(markets.find((m) => m.id === s.marketId)!), s.pickupLocation, t(`listing.delivery.${s.deliveryAvailable}`)].filter(Boolean).join(" · ") },
+                  { label: t("wizard.summary.details"), value: `${s.images.length} ${t("common.photos").toLowerCase()} · ${s.documents.length} ${t("wizard.documents").toLowerCase()}${s.packaging ? ` · ${s.packaging}` : ""}` },
+                ]}
+              />
+              <div className="mt-4 flex flex-wrap gap-2 border-t border-black/5 pt-4">
+                {[1, 2, 3, 4, 5].map((n) => (
+                  <button key={n} type="button" onClick={() => setStep(n)} className="inline-flex h-9 items-center gap-1.5 rounded-full bg-white/80 px-3 text-[13px] font-semibold text-ink hover:bg-white">
+                    <span className="num">0{n}.</span> {stepTitles[n - 1]}
                   </button>
-                </div>
-              ))}
-            </dl>
+                ))}
+              </div>
+            </div>
             {s.images.length > 0 && (
-              <ul className="mt-3 flex gap-2 overflow-x-auto">
+              <ul className="mt-4 flex gap-2 overflow-x-auto">
                 {s.images.map((i) => (
                   <li key={i.path} className="shrink-0">
                     {/* eslint-disable-next-line @next/next/no-img-element */}
-                    <img src={i.url ?? `/files/public/${i.path}`} alt="" className="h-20 w-24 rounded-lg object-cover" />
+                    <img src={i.url ?? `/files/public/${i.path}`} alt="" className="h-20 w-24 rounded-[var(--r-sm)] border border-line object-cover" />
                   </li>
                 ))}
               </ul>
             )}
-            <fieldset className="card mt-5 p-4">
-              <legend className="px-1 font-semibold">{t("wizard.contactTitle")}</legend>
-              {business.phone ? <Checkbox label={t("wizard.contactPhone", { phone: formatPhoneLocal(business.phone) })} checked={s.contactPhoneEnabled} onChange={(e) => set("contactPhoneEnabled", e.target.checked)} /> : null}
-              {business.whatsapp ? <Checkbox label={t("wizard.contactWhatsapp", { phone: formatPhoneLocal(business.whatsapp) })} checked={s.contactWhatsappEnabled} onChange={(e) => set("contactWhatsappEnabled", e.target.checked)} /> : null}
-              {!business.phone && !business.whatsapp && <p className="text-sm text-text-muted">{t("wizard.contactNone")}</p>}
+            <fieldset className="mt-6 border-t border-line pt-5">
+              <legend className="translate-y-[-1px] text-[14px] font-semibold text-ink">{t("wizard.contactTitle")}</legend>
+              <div className="mt-2 divide-y divide-line rounded-[var(--r-md)] border border-line px-4">
+                {business.phone ? <Checkbox label={t("wizard.contactPhone", { phone: formatPhoneLocal(business.phone) })} checked={s.contactPhoneEnabled} onChange={(e) => set("contactPhoneEnabled", e.target.checked)} /> : null}
+                {business.whatsapp ? <Checkbox label={t("wizard.contactWhatsapp", { phone: formatPhoneLocal(business.whatsapp) })} checked={s.contactWhatsappEnabled} onChange={(e) => set("contactWhatsappEnabled", e.target.checked)} /> : null}
+                {!business.phone && !business.whatsapp && <p className="py-3 text-[14px] text-muted">{t("wizard.contactNone")}</p>}
+              </div>
             </fieldset>
             <Alert tone={form.moderationLevel === "auto" ? "success" : "info"} className="mt-5">
               {form.moderationLevel === "auto" ? t("listing.create.autoPublish") : t("listing.create.afterSubmit")}
@@ -730,27 +758,36 @@ export function ListingWizard({
         )}
       </div>
 
-      <div className="mt-5 flex flex-col-reverse gap-3 sm:flex-row sm:justify-between">
-        <div className="flex gap-3">
-          {step > 1 && (
-            <Button type="button" variant="outline" size="lg" onClick={() => setStep((x) => x - 1)}>
-              ‹ {t("action.back")}
+      <div className="sticky bottom-[64px] z-30 -mx-4 mt-6 border-t border-line bg-white/95 px-4 py-3 backdrop-blur md:static md:mx-0 md:mt-8 md:border-t md:bg-transparent md:px-0 md:pt-5 md:backdrop-blur-none">
+        <div className="flex items-center justify-between gap-3">
+          <div className="flex gap-2">
+            {step > 1 && (
+              <Button type="button" variant="outline" size="md" onClick={() => setStep((x) => x - 1)}>
+                <ChevronLeft className="h-4 w-4 rtl:rotate-180" aria-hidden /> {t("action.back")}
+              </Button>
+            )}
+            {commodity && !prohibited && (
+              <span className="hidden sm:inline-flex">
+                <Button type="button" variant="ghost" size="md" loading={pending} onClick={() => send(false)}>
+                  <Save className="h-4 w-4" aria-hidden /> {t("wizard.saveDraft")}
+                </Button>
+              </span>
+            )}
+          </div>
+          {step < TOTAL ? (
+            <Button type="button" size="md" onClick={next} disabled={!commodity || prohibited || formLoading} className="min-w-[140px]">
+              {t("action.next")} <ChevronRight className="h-4 w-4 rtl:rotate-180" aria-hidden />
             </Button>
-          )}
-          {commodity && !prohibited && (
-            <Button type="button" variant="ghost" size="lg" loading={pending} onClick={() => send(false)}>
-              {t("wizard.saveDraft")}
+          ) : (
+            <Button type="button" size="md" loading={pending} onClick={() => send(true)} disabled={prohibited} className="min-w-[160px]">
+              {t("wizard.submit")}
             </Button>
           )}
         </div>
-        {step < TOTAL ? (
-          <Button type="button" size="lg" onClick={next} disabled={!commodity || prohibited || formLoading}>
-            {t("action.next")} ›
-          </Button>
-        ) : (
-          <Button type="button" size="lg" loading={pending} onClick={() => send(true)} disabled={prohibited}>
-            {t("wizard.submit")}
-          </Button>
+        {commodity && !prohibited && (
+          <button type="button" disabled={pending} onClick={() => send(false)} className="mt-2 text-[13px] font-semibold text-muted underline underline-offset-4 sm:hidden">
+            {t("wizard.saveDraft")}
+          </button>
         )}
       </div>
     </div>

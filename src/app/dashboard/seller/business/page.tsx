@@ -4,6 +4,7 @@ import { getProvinces } from "@/lib/data/locations";
 import { MAX_IMAGE_BYTES } from "@/lib/storage/images";
 import { BusinessForm } from "@/components/seller/business-form";
 import { formatPhoneLocal } from "@/lib/utils/phone";
+import { DashHeader } from "@/components/flows/dashboard-shell";
 
 export default async function BusinessProfilePage({ searchParams }: { searchParams: Promise<{ next?: string }> }) {
   const { next } = await searchParams;
@@ -32,8 +33,7 @@ export default async function BusinessProfilePage({ searchParams }: { searchPara
   const safeNext = next && next.startsWith("/") && !next.startsWith("//") ? next : undefined;
   return (
     <div>
-      <h1 className="text-2xl font-bold">{t("biz.title")}</h1>
-      <p className="mb-6 mt-1 max-w-2xl text-text-muted">{t("biz.sub")}</p>
+      <DashHeader title={t("biz.title")} description={t("biz.sub")} />
       <BusinessForm initial={initial} initialCommodities={comms} provinces={provinces.map((p) => ({ id: p.id, nameEn: p.nameEn, nameUr: p.nameUr, parentId: p.parentId, type: p.type }))} userPhone={user.phone} maxImageBytes={MAX_IMAGE_BYTES} isNew={!business} nextPath={safeNext} />
     </div>
   );

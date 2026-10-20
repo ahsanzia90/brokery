@@ -3,7 +3,8 @@ import { asc, count, eq, sql } from "drizzle-orm";
 import { db } from "@/db";
 import { categories, commodities, listings } from "@/db/schema";
 import { requireAdminPage } from "@/lib/authz/guards";
-import { AdminPageHeader } from "@/components/admin/ui";
+import { AdminPageHeader, Chip, FilterBar, Panel, RowActions, SearchInput } from "@/components/admin/ui";
+import { ChevronRight } from "lucide-react";
 import { Flash } from "@/components/admin/flash";
 import { Badge } from "@/components/ui/badge";
 import { buttonClass } from "@/components/ui/button";
@@ -54,15 +55,16 @@ export default async function TaxonomyPage({ searchParams }: { searchParams: Pro
         }
       />
       <Flash ok={str(sp, "ok")} error={str(sp, "error")} />
-      <form method="get" className="mb-4 flex gap-2">
-        <input name="q" defaultValue={str(sp, "q")} placeholder="Filter categories…" className="min-h-[44px] rounded-[var(--radius)] border border-border-strong px-3" />
-        <button className={buttonClass("outline", "sm")}>Filter</button>
-      </form>
-      <div className="space-y-2">
-        {roots.filter(matches).map((c) => (
-          <CategoryNode key={c.id} c={c} depth={0} openAll={Boolean(q)} />
-        ))}
-      </div>
+      <FilterBar resetHref="/admin/taxonomy">
+        <SearchInput value={str(sp, "q")} placeholder="Filter categories…" />
+      </FilterBar>
+      <Panel padded={false} className="overflow-hidden [&>div>details:last-child>summary]:border-b-0">
+        <div>
+          {roots.filter(matches).map((c) => (
+            <CategoryNode key={c.id} c={c} depth={0} openAll={Boolean(q)} />
+          ))}
+        </div>
+      </Panel>
     </div>
   );
 }
@@ -70,58 +72,57 @@ export default async function TaxonomyPage({ searchParams }: { searchParams: Pro
 function CategoryNode({ c, depth, openAll }: { c: Cat; depth: number; openAll: boolean }) {
   const inactive = c.status !== "active";
   return (
-    <details id={`cat-${c.id}`} open={openAll || depth === 0} className="card">
-      <summary className="flex cursor-pointer flex-wrap items-center gap-2 px-4 py-3">
-        <span className="font-bold">
-          {c.icon ? <span aria-hidden>{c.icon} </span> : null}
-          {c.nameEn}
+    <div className="relative">
+    <details id={`cat-${c.id}`} open={openAll || depth === 0} className="group/cat">
+      <summary className="flex cursor-pointer list-none items-center gap-3 border-b border-line py-2.5 pe-16 ps-4 hover:bg-surface-2/70 [&::-webkit-details-marker]:hidden">
+        <ChevronRight className="h-4 w-4 shrink-0 text-muted-2 transition-transform group-open/cat:rotate-90" aria-hidden />
+        <span className="flex min-w-0 flex-1 flex-wrap items-center gap-x-3 gap-y-1">
+          <span className={`text-[14px] font-semibold ${inactive ? "text-muted line-through" : "text-ink"}`}>{c.nameEn}</span>
+          {c.nameUr && <span className="text-[13px] text-muted" lang="ur" dir="rtl">{c.nameUr}</span>}
+          <span className="adm-kbd">/{c.slug}</span>
+          <Badge tone={inactive ? "neutral" : "success"}>{c.status}</Badge>
+          {c.listingKind !== "commodity" && <Chip>{c.listingKind.replace(/_/g, " ")}</Chip>}
+          {c.moderationLevel !== "review" && <Badge tone={c.moderationLevel === "restricted" ? "warning" : c.moderationLevel === "prohibited" ? "danger" : "info"}>{c.moderationLevel}</Badge>}
         </span>
-        {c.nameUr && <span className="text-text-muted" lang="ur" dir="rtl">{c.nameUr}</span>}
-        <code className="text-xs text-text-muted">/{c.slug}</code>
-        <Badge tone={inactive ? "neutral" : "success"}>{c.status}</Badge>
-        <Badge tone="info">{c.listingKind}</Badge>
-        <Badge tone={c.moderationLevel === "restricted" ? "warning" : c.moderationLevel === "prohibited" ? "danger" : "neutral"}>{c.moderationLevel}</Badge>
-        <span className="text-sm text-text-muted num">
+        <span className="hidden shrink-0 text-[12px] text-muted num sm:block">
           {c.children.length} sub · {c.commodityCount} commodities · {c.listingCount} listings
         </span>
-        <span className="ms-auto flex flex-wrap gap-1.5">
-          <Link href={`/admin/taxonomy/categories/${c.id}/edit`} className={buttonClass("outline", "sm")}>
-            Edit
-          </Link>
-          <Link href={`/admin/taxonomy/categories/new?parent=${c.id}`} className={buttonClass("ghost", "sm")}>
-            + Sub
-          </Link>
-          <Link href={`/admin/taxonomy/commodities/new?category=${c.id}`} className={buttonClass("ghost", "sm")}>
-            + Commodity
-          </Link>
-          <form action={reorderCategoryAction} className="inline-flex gap-1">
-            <input type="hidden" name="id" value={c.id} />
-            <button name="direction" value="up" className={buttonClass("ghost", "sm")} aria-label={`Move ${c.nameEn} up`}>
-              ↑ Up
-            </button>
-            <button name="direction" value="down" className={buttonClass("ghost", "sm")} aria-label={`Move ${c.nameEn} down`}>
-              ↓ Down
-            </button>
-          </form>
-          <Link href={`/admin/taxonomy/categories/${c.id}/confirm?action=${inactive ? "active" : "inactive"}`} className={buttonClass("ghost", "sm")}>
-            {inactive ? "Reactivate" : "Deactivate"}
-          </Link>
-          <Link href={`/admin/taxonomy/categories/${c.id}/confirm?action=merge`} className={buttonClass("ghost", "sm")}>
-            Merge…
-          </Link>
-        </span>
       </summary>
-      <div className="border-t border-border px-4 py-3 ps-8">
-        <CommodityList categoryId={c.id} />
-        {c.children.length > 0 && (
-          <div className="mt-2 space-y-2">
-            {c.children.map((ch) => (
-              <CategoryNode key={ch.id} c={ch} depth={depth + 1} openAll={openAll} />
-            ))}
+      <div className="adm-tree border-b border-line bg-surface-2/40 py-2 ps-6">
+        {(c.commodityCount > 0 || c.children.length === 0) && (
+          <div className="px-4 py-1.5">
+            <CommodityList categoryId={c.id} />
           </div>
+        )}
+        {c.children.length > 0 && (
+          <ul className="mt-1 bg-surface">
+            {c.children.map((ch) => (
+              <li key={ch.id}>
+                <CategoryNode c={ch} depth={depth + 1} openAll={openAll} />
+              </li>
+            ))}
+          </ul>
         )}
       </div>
     </details>
+    <div className="absolute end-4 top-1.5">
+          <RowActions label={`Actions for ${c.nameEn}`}>
+            <Link href={`/admin/taxonomy/categories/${c.id}/edit`}>Edit</Link>
+            <Link href={`/admin/taxonomy/categories/new?parent=${c.id}`}>Add subcategory</Link>
+            <Link href={`/admin/taxonomy/commodities/new?category=${c.id}`}>Add commodity</Link>
+            <form action={reorderCategoryAction}>
+              <input type="hidden" name="id" value={c.id} />
+              <button name="direction" value="up">Move up</button>
+            </form>
+            <form action={reorderCategoryAction}>
+              <input type="hidden" name="id" value={c.id} />
+              <button name="direction" value="down">Move down</button>
+            </form>
+            <Link href={`/admin/taxonomy/categories/${c.id}/confirm?action=${inactive ? "active" : "inactive"}`}>{inactive ? "Reactivate" : "Deactivate"}</Link>
+            <Link href={`/admin/taxonomy/categories/${c.id}/confirm?action=merge`} className="text-danger">Merge into…</Link>
+          </RowActions>
+    </div>
+    </div>
   );
 }
 
@@ -131,14 +132,14 @@ async function CommodityList({ categoryId }: { categoryId: string }) {
     .from(commodities)
     .where(eq(commodities.categoryId, categoryId))
     .orderBy(asc(commodities.sortOrder), asc(commodities.nameEn));
-  if (!rows.length) return <p className="text-sm text-text-muted">No commodities directly in this category.</p>;
+  if (!rows.length) return <p className="text-[12px] text-muted-2">No commodities directly in this category.</p>;
   return (
     <ul className="flex flex-wrap gap-2">
       {rows.map((r) => (
         <li key={r.id}>
-          <Link href={`/admin/taxonomy/commodities/${r.id}/edit`} className={`inline-flex items-center gap-1 rounded-full border px-3 py-1 text-sm hover:border-primary ${r.status !== "active" ? "border-border text-text-muted line-through" : "border-border"}`}>
+          <Link href={`/admin/taxonomy/commodities/${r.id}/edit`} className={`inline-flex h-7 items-center gap-1 rounded-full border bg-surface px-2.5 text-[12px] font-medium hover:border-brand-700 hover:text-brand-900 ${r.status !== "active" ? "border-line text-muted line-through" : "border-line text-ink-2"}`}>
             {r.nameEn}
-            {r.nameUr && <span className="text-text-muted" lang="ur">({r.nameUr})</span>}
+            {r.nameUr && <span className="text-muted" lang="ur">({r.nameUr})</span>}
             {r.isPopular && <span title="Popular">★</span>}
             {r.moderationLevel && <span className="text-xs text-warning">{r.moderationLevel}</span>}
           </Link>

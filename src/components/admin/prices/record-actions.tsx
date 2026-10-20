@@ -55,7 +55,7 @@ export function PriceRecordActions({ id, status, canPublish, hasSource }: { id: 
           <ConfirmButton title="Expire this rate now?" body="It disappears from today's rates and remains visible in the history as expired." confirmLabel="Expire now" cancelLabel="Cancel" requireReason reasonLabel="Reason (optional note)" onConfirm={(reason) => run(() => expirePriceAction(id, reason), "Expired")}>
             Expire now
           </ConfirmButton>
-          <div className="border-t border-border pt-3">
+          <div className="border-t border-line pt-3">
             <label className="block text-sm font-semibold">Schedule expiry</label>
             <div className="mt-1 flex gap-2">
               <Input type="datetime-local" value={until} onChange={(e) => setUntil(e.target.value)} className="font-latin" />
@@ -66,7 +66,7 @@ export function PriceRecordActions({ id, status, canPublish, hasSource }: { id: 
           </div>
         </>
       )}
-      {["superseded", "expired", "rejected"].includes(status) && <p className="text-sm text-text-muted">This record is {status} and read-only.</p>}
+      {["superseded", "expired", "rejected"].includes(status) && <p className="text-sm text-muted">This record is {status} and read-only.</p>}
     </div>
   );
 }

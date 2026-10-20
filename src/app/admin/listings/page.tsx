@@ -1,8 +1,9 @@
 import Link from "next/link";
 import { requireAdminPage } from "@/lib/authz/guards";
 import { listListings, LISTING_STATUSES } from "@/lib/admin/listings-service";
-import { AdminPageHeader, AdminPagination, EmptyRow, FilterBar, Table, Td, Th } from "@/components/admin/ui";
+import { AdminPageHeader, AdminPagination, EmptyRow, FilterBar, FilterCheck, Labeled, SearchInput, Table, Td, Th } from "@/components/admin/ui";
 import { Badge, listingStatusTone, verificationTone } from "@/components/ui/badge";
+import { humanize } from "@/lib/utils/labels";
 import { Alert } from "@/components/ui/alert";
 import { int, qs, str, type SearchParams } from "@/lib/admin/params";
 import { formatDate, formatNumber, formatPKR } from "@/lib/utils/format";
@@ -15,7 +16,7 @@ export default async function AdminListingsPage({ searchParams }: { searchParams
   const sp = await searchParams;
   const f = { status: str(sp, "status", "pending_review"), q: str(sp, "q"), city: str(sp, "city"), business: str(sp, "business"), flagged: str(sp, "flagged"), restricted: str(sp, "restricted"), page: int(sp, "page") };
   const res = await listListings(f);
-  const sel = "rounded border border-border-strong p-2 text-sm";
+  const sel = "adm-control";
   const ok = str(sp, "ok");
   const error = str(sp, "error");
   return (
@@ -23,21 +24,20 @@ export default async function AdminListingsPage({ searchParams }: { searchParams
       <AdminPageHeader title="Listings" description="Review submitted listings before they go public. Restricted categories (chemicals, fuels, crop protection…) need documents and a manual check." />
       {ok && <Alert tone="success" className="mb-4">{ok}</Alert>}
       {error && <Alert tone="danger" className="mb-4">{error}</Alert>}
-      <FilterBar>
-        <select name="status" defaultValue={f.status} className={sel}>
+      <FilterBar resetHref="/admin/listings">
+        <Labeled label="Status"><select name="status" defaultValue={f.status} className="adm-control">
           <option value="all">All statuses</option>
           {LISTING_STATUSES.map((s) => <option key={s} value={s}>{s.replace(/_/g, " ")}</option>)}
-        </select>
-        <input name="q" defaultValue={f.q} placeholder="Title, commodity or business" className={sel} />
-        <input name="city" defaultValue={f.city} placeholder="City" className={sel} />
-        <label className="text-sm"><input type="checkbox" name="flagged" value="1" defaultChecked={f.flagged === "1"} /> Reported</label>
-        <label className="text-sm"><input type="checkbox" name="restricted" value="1" defaultChecked={f.restricted === "1"} /> Restricted categories</label>
-        <button type="submit" className="rounded-[8px] bg-primary px-4 py-2 text-sm font-semibold text-white">Filter</button>
+        </select></Labeled>
+        <SearchInput value={f.q} placeholder="Title, commodity or business" />
+        <input name="city" defaultValue={f.city} placeholder="City" className="adm-control" />
+        <FilterCheck name="flagged" label="Reported" checked={f.flagged === "1"} />
+        <FilterCheck name="restricted" label="Restricted categories" checked={f.restricted === "1"} />
       </FilterBar>
       <form action={bulkApproveAction}>
         <div className="mb-2 flex items-center justify-between">
-          <p className="text-sm text-text-muted num">{res.total} listings</p>
-          {f.status === "pending_review" && res.rows.length > 0 && <button type="submit" className="rounded-[8px] border border-primary px-3 py-1.5 text-sm font-semibold text-primary">Approve selected</button>}
+          <p className="text-sm text-muted num">{res.total} listings</p>
+          {f.status === "pending_review" && res.rows.length > 0 && <button type="submit" className="adm-btn-outline">Approve selected</button>}
         </div>
         <Table>
           <thead><tr>{f.status === "pending_review" && <Th />}<Th>Listing</Th><Th>Commodity</Th><Th>Qty</Th><Th>Price</Th><Th>City</Th><Th>Business</Th><Th>Status</Th><Th>Created</Th></tr></thead>
@@ -45,10 +45,10 @@ export default async function AdminListingsPage({ searchParams }: { searchParams
             {res.rows.length ? res.rows.map(({ l, commodity, biz, city, unit, reports }) => (
               <tr key={l.id} className={Number(reports) > 0 ? "bg-danger-soft/40" : ""}>
                 {f.status === "pending_review" && <Td><input type="checkbox" name="ids" value={l.id} aria-label={`Select ${l.title}`} /></Td>}
-                <Td><Link href={`/admin/listings/${l.id}`} className="font-semibold text-primary hover:underline">{l.title}</Link>{Number(reports) > 0 && <Badge tone="danger" className="ms-2">{Number(reports)} reports</Badge>}</Td>
+                <Td><Link href={`/admin/listings/${l.id}`} className="font-semibold adm-link">{l.title}</Link>{Number(reports) > 0 && <Badge tone="danger" className="ms-2">{Number(reports)} reports</Badge>}</Td>
                 <Td>{commodity.nameEn}</Td>
                 <Td className="num">{formatNumber(l.quantity)} {unit.symbol}</Td>
-                <Td className="num">{l.priceAmount ? formatPKR(l.priceAmount) : l.priceType}</Td>
+                <Td className="num">{l.priceAmount ? formatPKR(l.priceAmount) : <span className="text-muted">{humanize(l.priceType)}</span>}</Td>
                 <Td>{city?.nameEn ?? "—"}</Td>
                 <Td><Link href={`/admin/businesses/${biz.id}`} className="hover:underline">{biz.name}</Link> <Badge tone={verificationTone(biz.verificationLevel)}>{biz.verificationLevel.replace(/_/g, " ")}</Badge></Td>
                 <Td><Badge tone={listingStatusTone(l.status)}>{l.status.replace(/_/g, " ")}</Badge></Td>

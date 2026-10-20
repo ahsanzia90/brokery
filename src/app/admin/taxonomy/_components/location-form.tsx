@@ -24,7 +24,7 @@ export async function LocationForm({ loc, parentId }: { loc?: typeof locations.$
         <Sel label="Status" name="status" value={loc?.status ?? "active"} options={[{ value: "active", label: "active" }, { value: "inactive", label: "inactive" }]} />
       </Grid>
       <Cb label="Major market city (shown on homepage and directory chips)" name="isMajorMarket" checked={loc?.isMajorMarket} />
-      {loc && <p className="text-sm text-text-muted">Current path: <code>/{loc.path}</code></p>}
+      {loc && <p className="text-sm text-muted">Current path: <code>/{loc.path}</code></p>}
       <div className="flex gap-3">
         <Button type="submit">{loc ? "Save location" : "Create location"}</Button>
         <Link href="/admin/taxonomy/locations" className={buttonClass("outline")}>Cancel</Link>

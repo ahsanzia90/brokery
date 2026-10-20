@@ -1,11 +1,15 @@
 import Link from "next/link";
 import { notFound, redirect } from "next/navigation";
+import { ChevronLeft, MessageCircle, PhoneCall } from "lucide-react";
 import { getSellerContext } from "@/lib/business/context";
 import { getIncomingRfqDetail, markRecipientViewed } from "@/lib/business/quote-service";
 import { getUnits } from "@/lib/data/taxonomy";
 import { Badge, rfqStatusTone } from "@/components/ui/badge";
 import { Alert } from "@/components/ui/alert";
+import { buttonClass } from "@/components/ui/button";
 import { QuoteForm } from "@/components/seller/quote-form";
+import { Facts } from "@/components/flows/form-section";
+import { CommodityArt, artKeyFor, artTint } from "@/components/illustrations/commodity-art";
 import { formatDate, formatNumber, formatPKR } from "@/lib/utils/format";
 import { formatPhoneDisplay, whatsappLink } from "@/lib/utils/phone";
 
@@ -19,65 +23,70 @@ export default async function SellerEnquiryDetailPage({ params }: { params: Prom
   await markRecipientViewed(actor, rfqId);
   const units = await getUnits();
   const name = (r: { nameEn: string; nameUr: string | null }) => (locale === "ur" && r.nameUr ? r.nameUr : r.nameEn);
-  const rows: Array<[string, string | null]> = [
-    [t("common.commodity"), [name(d.commodity), d.varietyName, d.gradeName, d.rfq.customSpecification].filter(Boolean).join(" · ")],
-    [t("common.quantity"), `${formatNumber(d.rfq.quantity)} ${d.unitSymbol}`],
-    [t("common.city"), d.city ? name(d.city) : null],
-    [t("rfq.requiredBy"), d.rfq.requiredBy ? formatDate(d.rfq.requiredBy, locale) : null],
-    [t("enq.targetPrice"), d.rfq.targetPrice ? `${formatPKR(d.rfq.targetPrice)}${d.targetUnitSymbol ? ` / ${d.targetUnitSymbol}` : ""}` : null],
-    [t("enq.quality"), d.rfq.qualityRequirements],
-    [t("common.notes"), d.rfq.notes],
-  ];
+  const artKey = artKeyFor(d.commodity.slug ?? null, d.commodity.nameEn);
+  const facts = [
+    { label: t("common.commodity"), value: [name(d.commodity), d.varietyName, d.gradeName, d.rfq.customSpecification].filter(Boolean).join(" · ") },
+    { label: t("common.quantity"), value: <span className="num">{formatNumber(d.rfq.quantity)} {d.unitSymbol}</span> },
+    { label: t("common.city"), value: d.city ? name(d.city) : null },
+    { label: t("rfq.requiredBy"), value: d.rfq.requiredBy ? formatDate(d.rfq.requiredBy, locale) : null },
+    { label: t("enq.targetPrice"), value: d.rfq.targetPrice ? <span className="num">{formatPKR(d.rfq.targetPrice)}{d.targetUnitSymbol ? ` / ${d.targetUnitSymbol}` : ""}</span> : null },
+    { label: t("enq.quality"), value: d.rfq.qualityRequirements },
+  ].filter((f) => f.value);
   return (
     <div className="max-w-3xl">
-      <Link href="/dashboard/seller/enquiries" className="text-sm font-semibold text-primary">
-        ‹ {t("enq.title")}
+      <Link href="/dashboard/seller/enquiries" className="mb-4 inline-flex items-center gap-1 text-[13px] font-semibold text-muted hover:text-ink">
+        <ChevronLeft className="h-4 w-4 rtl:rotate-180" aria-hidden /> {t("enq.title")}
       </Link>
-      <div className="mt-2 flex flex-wrap items-start justify-between gap-2">
-        <h1 className="text-2xl font-bold">
-          {t("enq.needs", { name: d.buyerFirstName })}: {name(d.commodity)}
-        </h1>
-        <div className="flex gap-2">
-          {d.isDirect ? <Badge tone="accent">{t("enq.direct")}</Badge> : <Badge tone="neutral">{t("enq.matched")}</Badge>}
-          <Badge tone={rfqStatusTone(d.rfq.status)}>{t(`rfq.status.${d.rfq.status}`)}</Badge>
+      <header className="flex gap-4 border-b border-line pb-5">
+        <span className={`flex h-16 w-16 shrink-0 items-center justify-center rounded-[var(--r-md)] ${artTint[artKey]}`}>
+          <CommodityArt artKey={artKey} className="h-11 w-11" />
+        </span>
+        <div className="min-w-0 flex-1">
+          <div className="flex flex-wrap items-center gap-2">
+            {d.isDirect ? <Badge tone="accent">{t("enq.direct")}</Badge> : <Badge tone="info">{t("enq.matched")}</Badge>}
+            <Badge tone={rfqStatusTone(d.rfq.status)}>{t(`rfq.status.${d.rfq.status}`)}</Badge>
+          </div>
+          <h1 className="mt-1 text-[24px] font-extrabold leading-tight text-ink">
+            {t("enq.needs", { name: d.buyerFirstName })} {name(d.commodity)}
+          </h1>
+          <p className="mt-1 text-[13px] text-muted num">
+            <span className="font-latin">{d.rfq.reference}</span> · {formatDate(d.rfq.createdAt, locale)}
+          </p>
         </div>
-      </div>
-      <p className="text-sm text-text-muted num">
-        {t("enq.reference")}: {d.rfq.reference} · {formatDate(d.rfq.createdAt, locale)}
-      </p>
-      <dl className="card mt-4 divide-y divide-border">
-        {rows
-          .filter(([, v]) => v)
-          .map(([k, v]) => (
-            <div key={k} className="grid gap-1 px-4 py-3 sm:grid-cols-[180px_1fr]">
-              <dt className="text-sm font-semibold text-text-muted">{k}</dt>
-              <dd className="whitespace-pre-line num">{v}</dd>
-            </div>
-          ))}
-      </dl>
+      </header>
 
-      <section className="card mt-4 p-4">
-        <h2 className="font-bold">{t("enq.buyerContact")}</h2>
+      <div className="mt-6">
+        <Facts columns={2} items={facts} />
+        {d.rfq.notes && (
+          <div className="mt-5 rounded-[var(--r-md)] bg-tint-sand px-4 py-3">
+            <p className="text-[12px] font-semibold uppercase tracking-wide text-muted">{t("common.notes")}</p>
+            <p className="mt-1 whitespace-pre-line text-[15px] text-ink-2">{d.rfq.notes}</p>
+          </div>
+        )}
+      </div>
+
+      <section className="mt-6 border-t border-line pt-5">
+        <h2 className="text-[14px] font-bold uppercase tracking-wide text-muted">{t("enq.buyerContact")}</h2>
         {!d.buyerAllowsContact ? (
-          <p className="mt-1 text-text-muted">{t("enq.platformOnly")}</p>
+          <p className="mt-2 text-[14px] text-muted">{t("enq.platformOnly")}</p>
         ) : d.buyerPhone ? (
-          <div className="mt-2 flex flex-wrap gap-3">
-            <a href={`tel:${d.buyerPhone}`} className="inline-flex min-h-[48px] items-center gap-2 rounded-[var(--radius)] bg-primary px-4 font-semibold text-white">
-              📞 {t("action.call")} <span className="font-latin">{formatPhoneDisplay(d.buyerPhone)}</span>
+          <div className="mt-3 flex flex-wrap gap-2">
+            <a href={`tel:${d.buyerPhone}`} className={buttonClass("primary", "md")}>
+              <PhoneCall className="h-4 w-4" aria-hidden /> {t("action.call")} <span className="font-latin">{formatPhoneDisplay(d.buyerPhone)}</span>
             </a>
             {(d.contactPreference === "whatsapp" || d.contactPreference === "any") && (
-              <a href={whatsappLink(d.buyerPhone, `${d.rfq.reference}: ${name(d.commodity)}`)} target="_blank" rel="noopener" className="inline-flex min-h-[48px] items-center gap-2 rounded-[var(--radius)] border border-primary px-4 font-semibold text-primary">
-                💬 {t("action.whatsapp")}
+              <a href={whatsappLink(d.buyerPhone, `${d.rfq.reference}: ${name(d.commodity)}`)} target="_blank" rel="noopener" className={buttonClass("outline", "md")}>
+                <MessageCircle className="h-4 w-4" aria-hidden /> {t("action.whatsapp")}
               </a>
             )}
           </div>
         ) : (
-          <p className="mt-1 text-text-muted">{t("enq.contactAfterReply")}</p>
+          <p className="mt-2 text-[14px] text-muted">{t("enq.contactAfterReply")}</p>
         )}
       </section>
 
-      {d.recipient?.state === "declined" && <Alert tone="warning" className="mt-4">{t("enq.declined")}</Alert>}
-      <div className="mt-4">
+      {d.recipient?.state === "declined" && <Alert tone="warning" className="mt-5">{t("enq.declined")}</Alert>}
+      <div className="mt-6">
         <QuoteForm
           rfqId={rfqId}
           units={units.map((u) => ({ id: u.id, symbol: u.symbol, nameEn: u.nameEn, nameUr: u.nameUr }))}

@@ -10,8 +10,9 @@ import { getCities, getMajorCities } from "@/lib/data/locations";
 import { enableSellerAction, logoutAction } from "@/lib/auth/actions";
 import { formatPhoneDisplay } from "@/lib/utils/phone";
 import { buttonClass } from "@/components/ui/button";
-import { PageHeader } from "@/components/ui/section";
-import { Alert } from "@/components/ui/alert";
+import { DashHeader } from "@/components/flows/dashboard-shell";
+import { WithDashboardShell } from "@/components/flows/shell-page";
+import { FormSection } from "@/components/flows/form-section";
 import { DeactivateButton, NotificationPrefsForm, ProfileForm } from "./account-forms";
 import { signOutEverywhereAction } from "./actions";
 
@@ -27,22 +28,15 @@ export default async function AccountPage() {
     email: (process.env.EMAIL_PROVIDER ?? "none") !== "none" && Boolean(process.env.SMTP_HOST),
     whatsapp: (process.env.WHATSAPP_PROVIDER ?? "none") !== "none" && Boolean(process.env.WHATSAPP_API_TOKEN),
   };
-  const section = "card p-5";
   return (
-    <div className="container-page max-w-2xl py-6">
-      <PageHeader title={t("account.title")} />
-      <div className="flex flex-col gap-5">
-        <section className={section} aria-labelledby="profile-h">
-          <h2 id="profile-h" className="mb-1 text-lg font-bold">{t("account.profile")}</h2>
-          <p className="mb-4 text-sm text-text-muted">
-            {t("common.phone")}: <span className="font-latin font-semibold">{formatPhoneDisplay(user.phone)}</span> · {t("account.phoneNote")}
-          </p>
+    <WithDashboardShell user={user} t={t}>
+      <DashHeader title={t("account.title")} description={<span>{t("common.phone")}: <span className="font-latin font-semibold text-ink">{formatPhoneDisplay(user.phone)}</span> · {t("account.phoneNote")}</span>} />
+      <div className="max-w-2xl">
+        <FormSection first title={t("account.profile")}>
           <ProfileForm defaults={{ name: user.name, email: user.email, language: user.language, cityId: user.cityId }} cities={cities} />
-        </section>
+        </FormSection>
 
-        <section className={section} aria-labelledby="roles-h">
-          <h2 id="roles-h" className="mb-1 text-lg font-bold">{t("account.roles")}</h2>
-          <p className="mb-3 text-text-muted">{t("account.rolesNote")}</p>
+        <FormSection title={t("account.roles")} description={t("account.rolesNote")}>
           <div className="flex flex-wrap gap-2">
             <Link href="/dashboard/buyer" className={buttonClass("outline", "md")}>{t("account.switch.buyer")}</Link>
             {user.isSeller ? (
@@ -53,17 +47,14 @@ export default async function AccountPage() {
               </form>
             )}
           </div>
-          {user.isSeller && <p className="mt-2 text-sm text-primary">{t("account.sellerEnabled")}</p>}
-        </section>
+          {user.isSeller && <p className="mt-2 text-[13px] font-medium text-brand-800">{t("account.sellerEnabled")}</p>}
+        </FormSection>
 
-        <section className={section} aria-labelledby="notif-h">
-          <h2 id="notif-h" className="mb-3 text-lg font-bold">{t("account.notificationPrefs")}</h2>
+        <FormSection title={t("account.notificationPrefs")}>
           <NotificationPrefsForm prefs={{ sms: prefs?.sms ?? true, email: prefs?.email ?? false, whatsapp: prefs?.whatsapp ?? false, rfqAlerts: prefs?.rfqAlerts ?? true, listingUpdates: prefs?.listingUpdates ?? true }} configured={configured} />
-        </section>
+        </FormSection>
 
-        <section className={section} aria-labelledby="sessions-h">
-          <h2 id="sessions-h" className="mb-1 text-lg font-bold">{t("account.sessions")}</h2>
-          <p className="mb-3 text-text-muted">{t("account.signOutAllNote")}</p>
+        <FormSection title={t("account.sessions")} description={t("account.signOutAllNote")}>
           <div className="flex flex-wrap gap-2">
             <form action={logoutAction}>
               <button type="submit" className={buttonClass("outline", "md")}>{t("nav.logout")}</button>
@@ -72,14 +63,14 @@ export default async function AccountPage() {
               <button type="submit" className={buttonClass("outline", "md")}>{t("account.signOutAll")}</button>
             </form>
           </div>
-        </section>
+        </FormSection>
 
-        <section className={`${section} border-danger/40`} aria-labelledby="deact-h">
-          <h2 id="deact-h" className="mb-1 text-lg font-bold">{t("account.deactivate")}</h2>
-          <Alert tone="warning" className="mb-3">{t("account.deactivateNote")}</Alert>
+        <section className="mt-10 rounded-[var(--r-lg)] border border-danger/30 bg-danger-bg/40 p-5">
+          <h2 className="text-[17px] font-bold text-danger">{t("account.deactivate")}</h2>
+          <p className="mt-1 mb-4 max-w-xl text-[14px] text-ink-2">{t("account.deactivateNote")}</p>
           <DeactivateButton />
         </section>
       </div>
-    </div>
+    </WithDashboardShell>
   );
 }

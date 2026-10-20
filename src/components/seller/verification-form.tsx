@@ -37,7 +37,7 @@ export function VerificationForm({ maxBytes, types }: { maxBytes: number; types:
     >
       {error && <Alert tone="danger" className="mb-4">{error}</Alert>}
       <fieldset className="mb-5">
-        <legend className="mb-2 font-semibold">{t("verify.docs")}</legend>
+        <legend className="mb-2 text-[14px] font-semibold text-ink">{t("verify.docs")}</legend>
         <BusinessDocumentUploader docs={docs} onChange={setDocs} maxBytes={maxBytes} types={types} />
       </fieldset>
       <Field label={t("verify.notes")} htmlFor="vnotes" hint={t("common.optional")}>

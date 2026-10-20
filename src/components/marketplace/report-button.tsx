@@ -1,5 +1,6 @@
 "use client";
 import { useId, useRef, useState, useTransition } from "react";
+import { Flag } from "lucide-react";
 import { submitReportAction } from "@/lib/reports/actions";
 import { useI18n } from "@/lib/i18n/client";
 import { Button } from "@/components/ui/button";
@@ -21,12 +22,12 @@ export function ReportButton({ kind, id, isGuest, title }: { kind: "listing" | "
 
   return (
     <>
-      <button type="button" onClick={() => ref.current?.showModal()} className="inline-flex min-h-[44px] items-center gap-1.5 px-2 text-sm font-semibold text-text-muted hover:text-danger">
-        <span aria-hidden>⚑</span> {t("action.report")}
+      <button type="button" onClick={() => ref.current?.showModal()} className="inline-flex h-9 items-center gap-1.5 rounded-[var(--r-sm)] px-2 text-[13px] font-semibold text-muted hover:bg-surface-2 hover:text-danger">
+        <Flag className="h-4 w-4" aria-hidden /> {t("action.report")}
       </button>
-      <dialog ref={ref} className="m-auto w-[min(94vw,480px)] rounded-[var(--radius-lg)] border border-border bg-surface p-0 backdrop:bg-black/40" aria-labelledby={hid}>
+      <dialog ref={ref} className="m-auto w-[min(94vw,480px)] rounded-[var(--r-lg)] border border-line bg-surface p-0 shadow-[var(--shadow-lg)]" aria-labelledby={hid}>
         <form
-          className="p-5"
+          className="p-6"
           onSubmit={(e) => {
             e.preventDefault();
             start(async () => {
@@ -35,11 +36,11 @@ export function ReportButton({ kind, id, isGuest, title }: { kind: "listing" | "
             });
           }}
         >
-          <h2 id={hid} className="text-lg font-bold">
+          <h2 id={hid} className="text-[18px] font-bold text-ink">
             {title}
           </h2>
           {result?.ok ? (
-            <Alert tone="success" className="mt-3">
+            <Alert tone="success" className="mt-4">
               {t("report.success")} <span className="num font-latin">({result.ref})</span>
             </Alert>
           ) : (
@@ -71,7 +72,7 @@ export function ReportButton({ kind, id, isGuest, title }: { kind: "listing" | "
               </div>
             </>
           )}
-          <div className="mt-4 flex justify-end gap-3">
+          <div className="mt-4 flex justify-end gap-2">
             <Button type="button" variant="outline" onClick={() => ref.current?.close()}>
               {t("action.close")}
             </Button>

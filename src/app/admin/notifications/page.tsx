@@ -19,7 +19,7 @@ export default async function NotificationsMonitor() {
       <div className="mb-6 grid gap-3 sm:grid-cols-3">
         {(["sms", "email", "whatsapp"] as const).map((c) => (
           <div key={c} className="card p-4">
-            <p className="text-sm font-semibold text-text-muted uppercase">{c}</p>
+            <p className="text-sm font-semibold text-muted uppercase">{c}</p>
             <p className="font-semibold">{providers[c]}</p>
           </div>
         ))}

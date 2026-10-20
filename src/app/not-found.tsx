@@ -3,6 +3,7 @@ import { getT } from "@/lib/i18n/server";
 import { NOINDEX } from "@/lib/seo/metadata";
 import { SearchBar } from "@/components/layout/search-bar";
 import { LinkButton } from "@/components/ui/button";
+import { CommodityArt } from "@/components/illustrations/commodity-art";
 
 export const metadata: Metadata = { title: "Page not found", ...NOINDEX };
 
@@ -10,24 +11,27 @@ export const metadata: Metadata = { title: "Page not found", ...NOINDEX };
 export default async function NotFound() {
   const { t } = await getT();
   return (
-    <div className="container-page max-w-xl py-16 text-center">
-      <p className="text-6xl font-extrabold text-primary-strong num" aria-hidden>
-        404
-      </p>
-      <h1 className="mt-2 text-2xl font-bold">{t("error.404.title")}</h1>
-      <p className="mt-2 text-text-muted">{t("error.404.body")}</p>
-      <p className="mt-6 mb-2 font-semibold">{t("browse.404Hint")}</p>
-      <SearchBar />
-      <div className="mt-6 flex flex-wrap justify-center gap-3">
-        <LinkButton href="/" variant="primary">
-          {t("error.goHome")}
-        </LinkButton>
-        <LinkButton href="/categories" variant="outline">
-          {t("category.title")}
-        </LinkButton>
-        <LinkButton href="/suppliers" variant="outline">
-          {t("nav.suppliers")}
-        </LinkButton>
+    <div className="container-page py-10 md:py-16">
+      <div className="panel panel-sand mx-auto max-w-2xl text-center !py-12">
+        <CommodityArt artKey="generic" className="mx-auto h-24 w-24" />
+        <p className="eyebrow mt-4">404</p>
+        <h1 className="mt-2 text-[28px] font-extrabold text-ink md:text-[36px]">{t("error.404.title")}</h1>
+        <p className="mx-auto mt-2 max-w-md text-[15px] text-ink-2">{t("error.404.body")}</p>
+        <p className="mt-8 mb-2 text-[14px] font-semibold text-ink">{t("browse.404Hint")}</p>
+        <div className="mx-auto max-w-md">
+          <SearchBar />
+        </div>
+        <div className="mt-6 flex flex-wrap justify-center gap-3">
+          <LinkButton href="/" variant="primary">
+            {t("error.goHome")}
+          </LinkButton>
+          <LinkButton href="/categories" variant="outline" className="bg-white/70">
+            {t("category.title")}
+          </LinkButton>
+          <LinkButton href="/suppliers" variant="outline" className="bg-white/70">
+            {t("nav.suppliers")}
+          </LinkButton>
+        </div>
       </div>
     </div>
   );

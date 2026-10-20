@@ -1,16 +1,17 @@
 import type { Metadata } from "next";
 import { and, count, desc, eq } from "drizzle-orm";
+import { Bell, CheckCheck } from "lucide-react";
 import { db } from "@/db";
 import { notifications } from "@/db/schema";
 import { requireUserPage } from "@/lib/authz/guards";
 import { getT } from "@/lib/i18n/server";
 import { NOINDEX } from "@/lib/seo/metadata";
 import { formatDateTime } from "@/lib/utils/format";
-import { Badge } from "@/components/ui/badge";
 import { EmptyState } from "@/components/ui/empty-state";
 import { Pagination } from "@/components/ui/pagination";
-import { PageHeader } from "@/components/ui/section";
 import { buttonClass } from "@/components/ui/button";
+import { DashHeader } from "@/components/flows/dashboard-shell";
+import { WithDashboardShell } from "@/components/flows/shell-page";
 import { markAllReadAction, openNotificationAction } from "./actions";
 
 export const metadata: Metadata = { title: "Notifications", ...NOINDEX };
@@ -36,31 +37,34 @@ export default async function NotificationsPage({ searchParams }: { searchParams
   const unread = rows.filter((r) => !r.readAt).length;
 
   return (
-    <div className="container-page max-w-3xl py-6">
-      <PageHeader title={t("notif.title")}>
-        {total > 0 && (
-          <form action={markAllReadAction} className="mt-3">
-            <button type="submit" className={buttonClass("outline", "sm")} disabled={unread === 0}>
-              {t("notif.markRead")}
-            </button>
-          </form>
-        )}
-      </PageHeader>
+    <WithDashboardShell user={user} t={t}>
+      <DashHeader
+        title={t("notif.title")}
+        actions={
+          total > 0 ? (
+            <form action={markAllReadAction}>
+              <button type="submit" className={buttonClass("outline", "sm")} disabled={unread === 0}>
+                <CheckCheck className="h-4 w-4" aria-hidden /> {t("notif.markRead")}
+              </button>
+            </form>
+          ) : undefined
+        }
+      />
       {rows.length === 0 ? (
-        <EmptyState icon="🔔" title={t("notif.empty")} />
+        <EmptyState icon={<Bell className="h-5 w-5" />} title={t("notif.empty")} />
       ) : (
-        <ul className="flex flex-col gap-2">
+        <ul className="divide-y divide-line rounded-[var(--r-md)] border border-line bg-surface">
           {rows.map((n) => (
-            <li key={n.id} className={`card p-4 ${n.readAt ? "" : "border-primary bg-primary-soft/40"}`}>
+            <li key={n.id} className={n.readAt ? "" : "bg-brand-50/50"}>
               <form action={openNotificationAction}>
                 <input type="hidden" name="id" value={n.id} />
-                <button type="submit" className="w-full text-start">
-                  <div className="flex items-start justify-between gap-3">
-                    <p className="font-semibold">{n.title}</p>
-                    {!n.readAt && <Badge tone="primary">{t("notif.unread")}</Badge>}
-                  </div>
-                  {n.body && <p className="mt-1 text-[0.95rem] text-text-muted">{n.body}</p>}
-                  <p className="mt-1 text-sm text-text-muted num">{formatDateTime(n.createdAt, locale)}</p>
+                <button type="submit" className="flex w-full items-start gap-3 px-4 py-3.5 text-start hover:bg-surface-2">
+                  <span className={`mt-2 h-2 w-2 shrink-0 rounded-full ${n.readAt ? "bg-transparent" : "bg-brand-800"}`} aria-hidden />
+                  <span className="min-w-0 flex-1">
+                    <span className={`block text-[15px] ${n.readAt ? "font-medium text-ink-2" : "font-bold text-ink"}`}>{n.title}</span>
+                    {n.body && <span className="mt-0.5 block text-[14px] text-muted">{n.body}</span>}
+                  </span>
+                  <span className="shrink-0 text-[12px] text-muted num">{formatDateTime(n.createdAt, locale)}</span>
                 </button>
               </form>
             </li>
@@ -69,8 +73,8 @@ export default async function NotificationsPage({ searchParams }: { searchParams
       )}
       <Pagination page={page} totalPages={totalPages} hrefFor={(p) => `/notifications?page=${p}`} labels={{ prev: t("common.prev"), next: t("action.next"), page: t("common.page", { page: "" }).trim() }} />
       {external.length > 0 && (
-        <div className="card mt-6 p-4 text-sm text-text-muted">
-          <p className="font-semibold text-text">{t("notif.channels")}</p>
+        <div className="mt-6 rounded-[var(--r-md)] bg-surface-2 px-4 py-3 text-[13px] text-muted">
+          <p className="font-semibold text-ink-2">{t("notif.channels")}</p>
           <ul className="mt-1 flex flex-wrap gap-x-4 gap-y-1">
             {external.map((e) => (
               <li key={`${e.channel}-${e.deliveryStatus}`} className="num">
@@ -80,6 +84,6 @@ export default async function NotificationsPage({ searchParams }: { searchParams
           </ul>
         </div>
       )}
-    </div>
+    </WithDashboardShell>
   );
 }

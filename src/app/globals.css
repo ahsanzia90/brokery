@@ -41,13 +41,13 @@
 
   /* semantic */
   --success: #0f7a4a;
-  --success-bg: #e3f5eb;
+  --success-bg: #d8efe1;
   --warning: #9a6300;
-  --warning-bg: #fff3d6;
+  --warning-bg: #fdefc9;
   --danger: #c0392b;
-  --danger-bg: #fdecea;
+  --danger-bg: #fbe4e1;
   --info: #2457c5;
-  --info-bg: #e7eefb;
+  --info-bg: #e1eafb;
 
   /* shape */
   --r-sm: 8px;
@@ -106,6 +106,10 @@
   --color-warning-soft: var(--warning-bg);
   --color-info: var(--info);
   --color-info-soft: var(--info-bg);
+  --color-success-bg: var(--success-bg);
+  --color-warning-bg: var(--warning-bg);
+  --color-danger-bg: var(--danger-bg);
+  --color-info-bg: var(--info-bg);
   --color-brand-50: var(--brand-50);
   --color-brand-100: var(--brand-100);
   --color-brand-600: var(--brand-600);

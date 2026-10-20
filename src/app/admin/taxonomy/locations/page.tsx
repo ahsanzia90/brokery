@@ -36,7 +36,7 @@ export default async function LocationsPage({ searchParams }: { searchParams: Pr
       <AdminPageHeader title="Locations" description={`${rows.length} locations: country → province → district → city → market. Paths drive /markets/… URLs; renaming a slug updates descendants and adds redirects.`} breadcrumbs={[{ label: "Taxonomy", href: "/admin/taxonomy" }, { label: "Locations" }]} actions={<Link href="/admin/taxonomy/locations/new" className={buttonClass("primary", "sm")}>+ New location</Link>} />
       <Flash ok={str(sp, "ok")} error={str(sp, "error")} />
       <form method="get" className="mb-4 flex gap-2">
-        <input name="q" defaultValue={str(sp, "q")} placeholder="Search locations…" className="min-h-[44px] rounded-[var(--radius)] border border-border-strong px-3" />
+        <input name="q" defaultValue={str(sp, "q")} placeholder="Search locations…" className="adm-control" />
         <button className={buttonClass("outline", "sm")}>Search</button>
       </form>
       <div className="space-y-2">
@@ -53,12 +53,12 @@ function Node({ l, depth, open, filter }: { l: Loc; depth: number; open: boolean
   const row = (
     <span className="flex flex-wrap items-center gap-2">
       <span className="font-semibold">{l.nameEn}</span>
-      {l.nameUr && <span className="text-text-muted" lang="ur" dir="rtl">{l.nameUr}</span>}
+      {l.nameUr && <span className="text-muted" lang="ur" dir="rtl">{l.nameUr}</span>}
       <Badge tone="info">{l.type}</Badge>
-      <code className="text-xs text-text-muted">/{l.path}</code>
+      <code className="text-xs text-muted">/{l.path}</code>
       {l.isMajorMarket && <Badge tone="accent">major market</Badge>}
       {l.status !== "active" && <Badge tone="neutral">{l.status}</Badge>}
-      <span className="text-xs text-text-muted num">{l.businessCount} suppliers · {l.listingCount} listings</span>
+      <span className="text-xs text-muted num">{l.businessCount} suppliers · {l.listingCount} listings</span>
       <span className="ms-auto flex gap-1">
         <Link href={`/admin/taxonomy/locations/${l.id}/edit`} className={buttonClass("outline", "sm")}>Edit</Link>
         {l.type !== "market" && <Link href={`/admin/taxonomy/locations/new?parent=${l.id}`} className={buttonClass("ghost", "sm")}>+ Child</Link>}
@@ -69,7 +69,7 @@ function Node({ l, depth, open, filter }: { l: Loc; depth: number; open: boolean
   return (
     <details open={open || depth < 1} className={`card ${depth ? "ms-4" : ""}`}>
       <summary className="cursor-pointer px-4 py-2">{row}</summary>
-      <div className="space-y-2 border-t border-border p-2">
+      <div className="space-y-2 border-t border-line p-2">
         {kids.map((k) => (
           <Node key={k.id} l={k} depth={depth + 1} open={open} filter={filter} />
         ))}

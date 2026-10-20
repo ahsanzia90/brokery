@@ -40,7 +40,7 @@ export default async function PriceSourcesPage({ searchParams }: { searchParams:
                 <Td className="text-sm">{s.sourceType.replace(/_/g, " ")}</Td>
                 <Td className="text-sm break-all">
                   {s.url && <a href={s.url} target="_blank" rel="noopener" className="text-primary underline">{s.url}</a>}
-                  {s.reference && <span className="block text-text-muted">{s.reference}</span>}
+                  {s.reference && <span className="block text-muted">{s.reference}</span>}
                 </Td>
                 <Td className="text-end num">{usageMap.get(s.id) ?? 0}</Td>
                 <Td><SourceToggle id={s.id} active={Boolean(s.isActive)} /></Td>

@@ -6,6 +6,7 @@ import { getPageBySlug } from "@/lib/data/content";
 import { markdownExcerpt, renderMarkdown } from "@/lib/content/markdown";
 import { formatDate } from "@/lib/utils/format";
 import { Breadcrumbs } from "@/components/ui/breadcrumbs";
+import { ArticleToc } from "@/components/public/toc";
 import { JsonLd, breadcrumbJsonLd } from "@/lib/seo/jsonld";
 
 type Props = { params: Promise<{ slug: string }> };
@@ -29,17 +30,24 @@ export default async function ContentPage({ params }: Props) {
   if (!p) return redirectOr404();
   const title = locale === "ur" && p.titleUr ? p.titleUr : p.titleEn;
   const body = locale === "ur" && p.bodyUr ? p.bodyUr : p.bodyEn;
+  const excerpt = locale === "ur" && p.excerptUr ? p.excerptUr : p.excerptEn;
   return (
-    <div className="container-page py-6">
+    <div className="container-page py-5 md:py-6">
       <Breadcrumbs items={[{ label: title }]} homeLabel={t("common.home")} />
       <JsonLd data={breadcrumbJsonLd([{ name: t("common.home"), path: "/" }, { name: p.titleEn, path: `/${p.slug}` }])} />
-      <article className="mx-auto max-w-3xl">
-        <h1 className="text-2xl font-bold md:text-3xl">{title}</h1>
-        <p className="mt-1 text-sm text-text-muted">
+      <header className="border-b border-line pb-6 md:pb-8">
+        <h1 className="max-w-3xl text-[30px] font-extrabold leading-[1.1] text-ink md:text-[40px]">{title}</h1>
+        {excerpt && <p className="mt-3 max-w-2xl text-[16px] text-ink-2">{excerpt}</p>}
+        <p className="mt-3 text-[13px] text-muted">
           {t("common.updated")}: <span className="num">{formatDate(p.updatedAt, locale)}</span>
         </p>
-        <div className="prose-simple mt-4" dangerouslySetInnerHTML={{ __html: renderMarkdown(body) }} />
-      </article>
+      </header>
+      <div className="mt-8 grid gap-10 lg:grid-cols-[minmax(0,1fr)_220px] lg:gap-16">
+        <article id="page-body" className="prose-simple min-w-0 text-[16px]" dangerouslySetInnerHTML={{ __html: renderMarkdown(body) }} />
+        <aside className="hidden lg:block lg:sticky lg:top-24 lg:self-start">
+          <ArticleToc articleId="page-body" label={t("browse.toc")} />
+        </aside>
+      </div>
     </div>
   );
 }

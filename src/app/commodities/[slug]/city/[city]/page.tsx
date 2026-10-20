@@ -12,11 +12,14 @@ import { countPublishedRates, getLatestPublishedRates } from "@/lib/data/rates-s
 import { getSetting } from "@/lib/config/settings";
 import { lname, pageHref, parseListingFilters, type SP } from "@/lib/data/browse-helpers";
 import { Breadcrumbs } from "@/components/ui/breadcrumbs";
-import { PageHeader, Section } from "@/components/ui/section";
+import { Section } from "@/components/ui/section";
 import { LinkButton } from "@/components/ui/button";
-import { PriceRow, SupplierCard } from "@/components/marketplace/cards";
+import { SupplierCard } from "@/components/marketplace/cards";
 import { ListingFilters } from "@/components/marketplace/listing-filters";
 import { ListingResults } from "@/components/marketplace/listing-results";
+import { PageHero } from "@/components/public/page-hero";
+import { RatesBand } from "@/components/public/rates-band";
+import { Chip, ChipRow } from "@/components/public/chip";
 import { JsonLd, breadcrumbJsonLd } from "@/lib/seo/jsonld";
 
 type Props = { params: Promise<{ slug: string; city: string }>; searchParams: Promise<SP> };
@@ -49,7 +52,7 @@ export default async function CommodityCityPage({ params, searchParams }: Props)
   const { params: sparams, values } = parseListingFilters(sp, { commodityId: ctx.commodity.id, cityId: loc.id, pageSize: 12 });
   const [result, rates, suppliers, majorCities] = await Promise.all([
     searchListings(sparams, locale),
-    getLatestPublishedRates({ commodityId: ctx.commodity.id, locationIds: locIds, limit: 8 }, locale, staleDays),
+    getLatestPublishedRates({ commodityId: ctx.commodity.id, locationIds: locIds, limit: 10 }, locale, staleDays),
     searchSuppliers({ commodityId: ctx.commodity.id, cityId: loc.id, pageSize: 6 }, locale),
     getMajorCities(),
   ]);
@@ -59,29 +62,34 @@ export default async function CommodityCityPage({ params, searchParams }: Props)
   const title = t("browse.inCityTitle", { name: cname, city: cityName });
   const crumbPaths = [{ name: t("common.home"), path: "/" }, { name: cname, path: `/commodities/${ctx.commodity.slug}` }, { name: cityName, path: base }];
   return (
-    <div className="container-page py-6">
+    <div className="container-page py-5 md:py-6">
       <Breadcrumbs items={[{ label: cname, href: `/commodities/${ctx.commodity.slug}` }, { label: cityName }]} homeLabel={t("common.home")} />
       <JsonLd data={breadcrumbJsonLd(crumbPaths)} />
-      <PageHeader title={title} subtitle={t("browse.intro.commodity", { name: cname })}>
-        <div className="mt-4 flex flex-wrap gap-3">
-          <LinkButton href={`/rfq/new?commodity=${ctx.commodity.slug}&city=${loc.slug}`} variant="primary">
-            {t("category.buyThis", { name: cname })}
-          </LinkButton>
-          <LinkButton href={`/dashboard/seller/listings/new?commodity=${ctx.commodity.slug}`} variant="accent">
-            {t("category.sellThis", { name: cname })}
-          </LinkButton>
+      <PageHero
+        eyebrow={`${cname} · ${t("browse.heroEyebrow.city")}`}
+        title={title}
+        altName={locale === "ur" ? loc.nameEn : loc.nameUr}
+        intro={t("browse.intro.commodity", { name: cname })}
+        slug={ctx.commodity.slug}
+        name={ctx.commodity.nameEn}
+        imagePath={ctx.commodity.imagePath}
+        actions={
+          <>
+            <LinkButton href={`/rfq/new?commodity=${ctx.commodity.slug}&city=${loc.slug}`} variant="primary" size="lg">
+              {t("action.requestQuote")}
+            </LinkButton>
+            <LinkButton href={`/dashboard/seller/listings/new?commodity=${ctx.commodity.slug}`} variant="outline" size="lg" className="bg-white/70">
+              {t("category.sellThis", { name: cname })}
+            </LinkButton>
+          </>
+        }
+      />
+      {ctx.commodity.supportsPriceBenchmark && (
+        <div className="mt-5 md:mt-6">
+          <RatesBand rates={rates} t={t} locale={locale} title={t("browse.ratesIn", { name: cityName })} href={`/prices/${ctx.commodity.slug}/${loc.slug}`} empty={<>{t("browse.noRates")} <Link href={`/prices/${ctx.commodity.slug}`} className="font-semibold text-lime-400 underline underline-offset-4">{t("browse.allRates")}</Link></>} />
         </div>
-      </PageHeader>
-      {rates.length > 0 && (
-        <Section title={t("browse.ratesIn", { name: cityName })} action={{ href: `/prices/${ctx.commodity.slug}/${loc.slug}`, label: t("browse.allRates") }}>
-          <div className="grid gap-3 md:grid-cols-2">
-            {rates.map((p) => (
-              <PriceRow key={p.id} p={p} t={t} locale={locale} staleDays={staleDays} />
-            ))}
-          </div>
-        </Section>
       )}
-      <Section title={t("browse.listingsIn", { name: cityName })} id="listings">
+      <Section title={t("browse.listingsIn", { name: cityName })} id="listings" subtitle={result.total > 0 ? t("browse.resultsCount", { count: result.total }) : undefined}>
         <ListingFilters t={t} action={`${base}#listings`} values={{ ...values, city: "" }} varieties={ctx.varietyOptions} grades={ctx.gradeOptions} cities={[]} attributes={ctx.attributeFilters} />
         <ListingResults
           t={t}
@@ -89,9 +97,9 @@ export default async function CommodityCityPage({ params, searchParams }: Props)
           hrefFor={(p) => pageHref(base, sp, p) + "#listings"}
           emptyAction={
             <>
-              <Link href={`/commodities/${ctx.commodity.slug}#listings`} className="font-semibold text-primary underline">
+              <LinkButton href={`/commodities/${ctx.commodity.slug}#listings`} variant="outline">
                 {t("browse.allListings")}: {cname}
-              </Link>
+              </LinkButton>
               <LinkButton href={`/rfq/new?commodity=${ctx.commodity.slug}&city=${loc.slug}`} variant="primary">
                 {t("action.createRfq")}
               </LinkButton>
@@ -100,7 +108,7 @@ export default async function CommodityCityPage({ params, searchParams }: Props)
         />
       </Section>
       {suppliers.items.length > 0 && (
-        <Section title={t("supplier.inCity", { city: cityName })} action={{ href: `/suppliers/${loc.slug}?commodity=${ctx.commodity.slug}`, label: t("action.viewAll") }}>
+        <Section eyebrow={t("common.suppliers")} title={t("supplier.inCity", { city: cityName })} action={{ href: `/suppliers/${loc.slug}?commodity=${ctx.commodity.slug}`, label: t("action.viewAll") }}>
           <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
             {suppliers.items.map((s) => (
               <SupplierCard key={s.id} s={s} t={t} />
@@ -108,19 +116,18 @@ export default async function CommodityCityPage({ params, searchParams }: Props)
           </div>
         </Section>
       )}
-      <Section title={t("browse.otherCities")}>
-        <ul className="flex flex-wrap gap-2">
-          {majorCities
-            .filter((c) => c.id !== loc.id)
-            .map((c) => (
-              <li key={c.id}>
-                <Link href={`/commodities/${ctx.commodity.slug}/city/${c.slug}`} className="inline-block min-h-[40px] rounded-full border border-border bg-surface px-3 py-1.5 hover:border-primary hover:text-primary">
-                  {lname(locale, c)}
-                </Link>
-              </li>
-            ))}
-        </ul>
-      </Section>
+      <section className="border-t border-line py-10">
+        <h2 className="text-[18px] font-bold text-ink">{t("browse.otherCities")}</h2>
+        <ChipRow className="mt-3">
+          {majorCities.map((c) => (
+            <li key={c.id}>
+              <Chip href={`/commodities/${ctx.commodity.slug}/city/${c.slug}`} size="sm" active={c.id === loc.id}>
+                {lname(locale, c)}
+              </Chip>
+            </li>
+          ))}
+        </ChipRow>
+      </section>
     </div>
   );
 }

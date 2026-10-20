@@ -102,7 +102,7 @@ export function PriceForm({ initial, locations, sources, priceTypes, canPublish 
 
   return (
     <div className="grid gap-6 lg:grid-cols-[1fr_320px]">
-      <form ref={formRef} action={action} noValidate className="card p-5">
+      <form ref={formRef} action={action} noValidate className="card p-4">
         {initial.id && <input type="hidden" name="id" value={initial.id} />}
         {state && !state.ok && (
           <Alert tone="danger" className="mb-4">
@@ -130,12 +130,12 @@ export function PriceForm({ initial, locations, sources, priceTypes, canPublish 
             <div className="relative">
               <Input value={query} onChange={(e) => setQuery(e.target.value)} placeholder="Type a commodity name, e.g. rice, chawal, cement" autoComplete="off" />
               {results.length > 0 && query && (
-                <ul className="absolute z-20 mt-1 max-h-64 w-full overflow-auto rounded-[var(--radius)] border border-border bg-surface shadow-md">
+                <ul className="absolute z-20 mt-1 max-h-64 w-full overflow-auto rounded-[var(--radius)] border border-line bg-surface shadow-md">
                   {results.map((r) => (
                     <li key={r.id}>
-                      <button type="button" className="flex w-full items-center justify-between px-3 py-2 text-start hover:bg-surface-muted" onClick={() => { setCommodity({ id: r.id, name: r.nameEn }); setQuery(""); setResults([]); }}>
+                      <button type="button" className="flex w-full items-center justify-between px-3 py-2 text-start hover:bg-surface-2" onClick={() => { setCommodity({ id: r.id, name: r.nameEn }); setQuery(""); setResults([]); }}>
                         <span>{r.nameEn}</span>
-                        <span className="text-xs text-text-muted">{r.categoryName}</span>
+                        <span className="text-xs text-muted">{r.categoryName}</span>
                       </button>
                     </li>
                   ))}
@@ -298,7 +298,7 @@ export function PriceForm({ initial, locations, sources, priceTypes, canPublish 
             </Button>
           </form>
         )}
-        <div className="card p-4 text-sm text-text-muted">
+        <div className="card p-4 text-sm text-muted">
           <p className="font-semibold text-text">Publishing rules</p>
           <ul className="mt-2 list-disc space-y-1 ps-5">
             <li>A rate needs a unit, an observation date (not in the future), a positive amount and a source.</li>

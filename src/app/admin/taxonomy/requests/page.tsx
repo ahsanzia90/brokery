@@ -61,15 +61,15 @@ export default async function RequestsPage({ searchParams }: { searchParams: Pro
               <Td><Badge tone="info">{r.requestType}</Badge></Td>
               <Td>
                 <strong>{r.proposedName}</strong>
-                {r.proposedNameUr && <span className="ms-1 text-text-muted" lang="ur">({r.proposedNameUr})</span>}
-                {r.region && <span className="block text-xs text-text-muted">region: {r.region}</span>}
+                {r.proposedNameUr && <span className="ms-1 text-muted" lang="ur">({r.proposedNameUr})</span>}
+                {r.region && <span className="block text-xs text-muted">region: {r.region}</span>}
               </Td>
               <Td className="text-sm">
                 {commodity ? `Commodity: ${commodity.nameEn}` : category ? `Category: ${category.nameEn}` : "—"}
-                {r.notes && <span className="block text-xs text-text-muted">{r.notes}</span>}
+                {r.notes && <span className="block text-xs text-muted">{r.notes}</span>}
               </Td>
               <Td className="text-sm">{requester?.name || (requester ? "User" : "Guest")}</Td>
-              <Td><Link href={`/admin/taxonomy/requests/${r.id}`} className="text-primary hover:underline">Review</Link></Td>
+              <Td><Link href={`/admin/taxonomy/requests/${r.id}`} className="adm-link">Review</Link></Td>
             </tr>
           ))}
         </tbody>

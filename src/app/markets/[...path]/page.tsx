@@ -1,5 +1,4 @@
 import type { Metadata } from "next";
-import Link from "next/link";
 import { getT } from "@/lib/i18n/server";
 import { redirectOr404 } from "@/lib/seo/redirects";
 import { buildMetadata } from "@/lib/seo/metadata";
@@ -10,10 +9,13 @@ import { getLatestPublishedRates } from "@/lib/data/rates-summary";
 import { getSetting } from "@/lib/config/settings";
 import { lname, pageHref, type SP } from "@/lib/data/browse-helpers";
 import { Breadcrumbs } from "@/components/ui/breadcrumbs";
-import { PageHeader, Section } from "@/components/ui/section";
+import { Section } from "@/components/ui/section";
 import { LinkButton } from "@/components/ui/button";
-import { PriceRow, SupplierCard } from "@/components/marketplace/cards";
+import { SupplierCard } from "@/components/marketplace/cards";
 import { ListingResults } from "@/components/marketplace/listing-results";
+import { PageHero } from "@/components/public/page-hero";
+import { RatesBand } from "@/components/public/rates-band";
+import { Chip, ChipRow } from "@/components/public/chip";
 import { JsonLd, breadcrumbJsonLd } from "@/lib/seo/jsonld";
 
 type Props = { params: Promise<{ path: string[] }>; searchParams: Promise<SP> };
@@ -24,10 +26,11 @@ async function descendantIds(id: string): Promise<string[]> {
   const stack = [id];
   while (stack.length) {
     const cur = stack.pop()!;
-    for (const l of all) if (l.parentId === cur) {
-      out.push(l.id);
-      stack.push(l.id);
-    }
+    for (const l of all)
+      if (l.parentId === cur) {
+        out.push(l.id);
+        stack.push(l.id);
+      }
   }
   return out;
 }
@@ -63,7 +66,7 @@ export default async function MarketPage({ params, searchParams }: Props) {
   const { t, locale } = await getT();
   const data = await load(path, locale);
   if (!data) return redirectOr404();
-  const { loc, listings, suppliers, rates, staleDays } = data;
+  const { loc, listings, suppliers, rates } = data;
   const chain = await resolveLocationChain(loc.id);
   const all = await getAllLocations();
   const children = all.filter((l) => l.parentId === loc.id && l.type !== "district");
@@ -72,49 +75,56 @@ export default async function MarketPage({ params, searchParams }: Props) {
   const name = lname(locale, loc);
   const base = `/markets/${loc.path}`;
   const crumbs = [chain.province, chain.city, chain.market].filter((x): x is NonNullable<typeof x> => Boolean(x) && x!.id !== loc.id).map((x) => ({ label: lname(locale, x), href: `/markets/${x.path}` }));
+  const kindLabel = loc.type === "market" ? t("common.market") : loc.type === "province" ? t("common.province") : t("common.city");
   return (
-    <div className="container-page py-6">
+    <div className="container-page py-5 md:py-6">
       <Breadcrumbs items={[{ label: t("market.title"), href: "/markets" }, ...crumbs, { label: name }]} homeLabel={t("common.home")} />
       <JsonLd data={breadcrumbJsonLd([{ name: t("common.home"), path: "/" }, { name: t("market.title"), path: "/markets" }, ...crumbs.map((c) => ({ name: c.label, path: c.href })), { name, path: base }])} />
-      <PageHeader title={name} subtitle={t("market.sub")}>
-        <div className="mt-3 flex flex-wrap gap-3">
-          {loc.type === "city" && (
-            <LinkButton href={`/suppliers/${loc.slug}`} variant="primary">
-              {t("supplier.inCity", { city: name })}
+      <PageHero
+        eyebrow={kindLabel}
+        title={name}
+        altName={locale === "ur" ? loc.nameEn : loc.nameUr}
+        intro={t("market.sub")}
+        artKey="generic"
+        tint="bg-tint-sky"
+        actions={
+          <>
+            {loc.type === "city" && (
+              <LinkButton href={`/suppliers/${loc.slug}`} variant="primary" size="lg">
+                {t("supplier.inCity", { city: name })}
+              </LinkButton>
+            )}
+            <LinkButton href={`/rfq/new${loc.type === "city" ? `?city=${loc.slug}` : ""}`} variant="outline" size="lg" className="bg-white/70">
+              {t("action.createRfq")}
             </LinkButton>
-          )}
-          <LinkButton href={`/rfq/new${loc.type === "city" ? `?city=${loc.slug}` : ""}`} variant="outline">
-            {t("action.createRfq")}
-          </LinkButton>
-        </div>
-      </PageHeader>
-      {sub.length > 0 && (
-        <Section title={loc.type === "city" ? t("browse.marketsIn", { city: name }) : t("common.city")}>
-          <ul className="flex flex-wrap gap-2">
-            {sub.map((c) => (
-              <li key={c.id}>
-                <Link href={`/markets/${c.path}`} className="inline-block min-h-[40px] rounded-full border border-border bg-surface px-3 py-1.5 hover:border-primary hover:text-primary">
-                  {lname(locale, c)}
-                </Link>
-              </li>
-            ))}
-          </ul>
-        </Section>
-      )}
-      {rates.length > 0 && (
-        <Section title={t("browse.ratesIn", { name })} subtitle={t("price.disclaimer")}>
-          <div className="grid gap-3 md:grid-cols-2">
-            {rates.map((p) => (
-              <PriceRow key={p.id} p={p} t={t} locale={locale} staleDays={staleDays} />
-            ))}
+          </>
+        }
+      >
+        {sub.length > 0 && (
+          <div className="mt-6">
+            <p className="mb-2 text-[12px] font-bold uppercase tracking-wide text-muted">{loc.type === "city" ? t("browse.marketsIn", { city: name }) : t("common.city")}</p>
+            <ChipRow scroll>
+              {sub.map((c) => (
+                <li key={c.id}>
+                  <Chip href={`/markets/${c.path}`} size="sm" className="bg-white/80">
+                    {lname(locale, c)}
+                  </Chip>
+                </li>
+              ))}
+            </ChipRow>
           </div>
-        </Section>
+        )}
+      </PageHero>
+      {rates.length > 0 && (
+        <div className="mt-5 md:mt-6">
+          <RatesBand rates={rates} t={t} locale={locale} title={t("browse.ratesIn", { name })} href="/prices" />
+        </div>
       )}
-      <Section title={t("browse.listingsIn", { name })}>
+      <Section title={t("browse.listingsIn", { name })} subtitle={listings.total > 0 ? t("browse.resultsCount", { count: listings.total }) : undefined}>
         <ListingResults t={t} result={listings} hrefFor={(p) => pageHref(base, sp, p)} emptyAction={<LinkButton href="/rfq/new" variant="primary">{t("action.createRfq")}</LinkButton>} />
       </Section>
       {suppliers.items.length > 0 && (
-        <Section title={t("common.suppliers")} action={loc.type === "city" ? { href: `/suppliers/${loc.slug}`, label: t("action.viewAll") } : undefined}>
+        <Section eyebrow={t("common.suppliers")} title={t("common.suppliers")} action={loc.type === "city" ? { href: `/suppliers/${loc.slug}`, label: t("action.viewAll") } : undefined}>
           <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
             {suppliers.items.map((s) => (
               <SupplierCard key={s.id} s={s} t={t} />

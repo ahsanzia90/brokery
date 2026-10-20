@@ -41,14 +41,14 @@ export default async function UnitsPage({ searchParams }: { searchParams: Promis
           {rows.length === 0 && <EmptyRow colSpan={8}>No units yet.</EmptyRow>}
           {rows.map((u) => (
             <tr key={u.id}>
-              <Td>{u.nameEn} {u.nameUr && <span className="text-text-muted" lang="ur">({u.nameUr})</span>}</Td>
+              <Td>{u.nameEn} {u.nameUr && <span className="text-muted" lang="ur">({u.nameUr})</span>}</Td>
               <Td><code className="text-xs">{u.code}</code></Td>
               <Td>{u.symbol}</Td>
               <Td>{u.unitType}</Td>
-              <Td className="num">{u.code === "maund" ? `${maundKg} (from settings)` : u.baseFactor ?? <span className="text-text-muted">— not convertible</span>}</Td>
+              <Td className="num">{u.code === "maund" ? `${maundKg} (from settings)` : u.baseFactor ?? <span className="text-muted">— not convertible</span>}</Td>
               <Td className="text-xs">{u.applicableKinds.length ? u.applicableKinds.join(", ") : "all"}</Td>
               <Td><Badge tone={u.status === "active" ? "success" : "neutral"}>{u.status}</Badge></Td>
-              <Td><Link href={`/admin/taxonomy/units/${u.id}/edit`} className="text-primary hover:underline">Edit</Link></Td>
+              <Td><Link href={`/admin/taxonomy/units/${u.id}/edit`} className="adm-link">Edit</Link></Td>
             </tr>
           ))}
         </tbody>

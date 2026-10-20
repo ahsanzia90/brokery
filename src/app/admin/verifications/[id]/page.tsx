@@ -19,7 +19,7 @@ export default async function VerificationDetail({ params }: { params: Promise<{
   if (!d) notFound();
   const { v, b, owner } = d;
   const open = !["approved", "rejected"].includes(v.status);
-  const sel = "rounded border border-border-strong p-2 text-sm";
+  const sel = "adm-control";
   return (
     <div>
       <AdminPageHeader title={`Verification: ${b.name}`} breadcrumbs={[{ label: "Verifications", href: "/admin/verifications" }, { label: b.name }]} description={<>Status <Badge tone="info">{v.status.replace(/_/g, " ")}</Badge> · requested level <strong>{v.requestedLevel.replace(/_/g, " ")}</strong> · current label <Badge tone={verificationTone(b.verificationLevel)}>{b.verificationLevel.replace(/_/g, " ")}</Badge></>} actions={
@@ -38,38 +38,38 @@ export default async function VerificationDetail({ params }: { params: Promise<{
         <section className="card p-4">
           <h2 className="mb-2 font-bold">Business details</h2>
           <dl className="space-y-1 text-sm">
-            <div><dt className="inline font-semibold">Name: </dt><dd className="inline">{b.name} (<Link href={`/supplier/${b.slug}`} className="text-primary hover:underline">public profile</Link> · <Link href={`/admin/businesses/${b.id}`} className="text-primary hover:underline">admin</Link>)</dd></div>
-            <div><dt className="inline font-semibold">Type: </dt><dd className="inline">{b.businessType}</dd></div>
-            <div><dt className="inline font-semibold">City: </dt><dd className="inline">{d.city?.nameEn ?? "—"}</dd></div>
-            <div><dt className="inline font-semibold">Address: </dt><dd className="inline">{b.addressLine ?? "—"}</dd></div>
-            <div><dt className="inline font-semibold">Registration no.: </dt><dd className="inline num">{b.registrationNumber ?? "—"}</dd></div>
-            <div><dt className="inline font-semibold">Contact person: </dt><dd className="inline">{b.contactPersonName ?? "—"}</dd></div>
-            <div><dt className="inline font-semibold">Public phone: </dt><dd className="inline num">{formatPhoneDisplay(b.publicPhone) || "—"}</dd></div>
-            <div><dt className="inline font-semibold">WhatsApp: </dt><dd className="inline num">{formatPhoneDisplay(b.whatsappNumber) || "—"}</dd></div>
-            <div><dt className="inline font-semibold">Website: </dt><dd className="inline">{b.website ?? "—"}</dd></div>
-            <div><dt className="inline font-semibold">Years in business: </dt><dd className="inline num">{b.yearsInBusiness ?? "—"}</dd></div>
-            <div><dt className="inline font-semibold">Description: </dt><dd className="inline">{b.description ?? "—"}</dd></div>
+            <div><dt className="inline font-semibold">Name</dt><dd className="inline">{b.name} (<Link href={`/supplier/${b.slug}`} className="adm-link">public profile</Link> · <Link href={`/admin/businesses/${b.id}`} className="adm-link">admin</Link>)</dd></div>
+            <div><dt className="inline font-semibold">Type</dt><dd className="inline">{b.businessType}</dd></div>
+            <div><dt className="inline font-semibold">City</dt><dd className="inline">{d.city?.nameEn ?? "—"}</dd></div>
+            <div><dt className="inline font-semibold">Address</dt><dd className="inline">{b.addressLine ?? "—"}</dd></div>
+            <div><dt className="inline font-semibold">Registration no.</dt><dd className="inline num">{b.registrationNumber ?? "—"}</dd></div>
+            <div><dt className="inline font-semibold">Contact person</dt><dd className="inline">{b.contactPersonName ?? "—"}</dd></div>
+            <div><dt className="inline font-semibold">Public phone</dt><dd className="inline num">{formatPhoneDisplay(b.publicPhone) || "—"}</dd></div>
+            <div><dt className="inline font-semibold">WhatsApp</dt><dd className="inline num">{formatPhoneDisplay(b.whatsappNumber) || "—"}</dd></div>
+            <div><dt className="inline font-semibold">Website</dt><dd className="inline">{b.website ?? "—"}</dd></div>
+            <div><dt className="inline font-semibold">Years in business</dt><dd className="inline num">{b.yearsInBusiness ?? "—"}</dd></div>
+            <div><dt className="inline font-semibold">Description</dt><dd className="inline">{b.description ?? "—"}</dd></div>
           </dl>
         </section>
         <section className="card p-4">
           <h2 className="mb-2 font-bold">Owner</h2>
           <dl className="space-y-1 text-sm">
-            <div><dt className="inline font-semibold">Name: </dt><dd className="inline"><Link href={`/admin/users/${owner.id}`} className="text-primary hover:underline">{owner.name}</Link></dd></div>
-            <div><dt className="inline font-semibold">Phone: </dt><dd className="inline num">{formatPhoneDisplay(owner.phone)} {owner.phoneVerifiedAt ? <Badge tone="success">verified</Badge> : <Badge tone="warning">unverified</Badge>}</dd></div>
-            <div><dt className="inline font-semibold">Account status: </dt><dd className="inline">{owner.status}</dd></div>
-            <div><dt className="inline font-semibold">Joined: </dt><dd className="inline num">{formatDate(owner.createdAt)}</dd></div>
+            <div><dt className="inline font-semibold">Name</dt><dd className="inline"><Link href={`/admin/users/${owner.id}`} className="adm-link">{owner.name}</Link></dd></div>
+            <div><dt className="inline font-semibold">Phone</dt><dd className="inline num">{formatPhoneDisplay(owner.phone)} {owner.phoneVerifiedAt ? <Badge tone="success">verified</Badge> : <Badge tone="warning">unverified</Badge>}</dd></div>
+            <div><dt className="inline font-semibold">Account status</dt><dd className="inline">{owner.status}</dd></div>
+            <div><dt className="inline font-semibold">Joined</dt><dd className="inline num">{formatDate(owner.createdAt)}</dd></div>
           </dl>
         </section>
       </div>
-      <h2 className="mb-2 mt-6 font-bold">Documents (private)</h2>
-      <p className="mb-2 text-sm text-text-muted">Files open through the authenticated private file route and are never public. Set a retention date so documents are purged after review.</p>
+      <h2 className="adm-section">Documents (private)</h2>
+      <p className="mb-2 text-sm text-muted">Files open through the authenticated private file route and are never public. Set a retention date so documents are purged after review.</p>
       <Table>
         <thead><tr><Th>Type</Th><Th>File</Th><Th>Uploaded</Th><Th>Retention until</Th><Th>Actions</Th></tr></thead>
         <tbody>
           {d.docs.length ? d.docs.map((doc) => (
             <tr key={doc.id}>
               <Td>{doc.documentType}</Td>
-              <Td><a href={`/files/private/${doc.storagePath}`} target="_blank" rel="noopener" className="text-primary hover:underline">{doc.originalFilename}</a> <span className="text-xs text-text-muted num">({Math.round(doc.sizeBytes / 1024)} KB, {doc.mimeType})</span></Td>
+              <Td><a href={`/files/private/${doc.storagePath}`} target="_blank" rel="noopener" className="adm-link">{doc.originalFilename}</a> <span className="text-xs text-muted num">({Math.round(doc.sizeBytes / 1024)} KB, {doc.mimeType})</span></Td>
               <Td className="num">{formatDateTime(doc.createdAt)}</Td>
               <Td className="num">{doc.retentionUntil ? formatDate(doc.retentionUntil) : "—"}</Td>
               <Td>
@@ -84,7 +84,7 @@ export default async function VerificationDetail({ params }: { params: Promise<{
           )) : <EmptyRow colSpan={5}>No documents attached.</EmptyRow>}
         </tbody>
       </Table>
-      <h2 className="mb-2 mt-6 font-bold">Request history for this business</h2>
+      <h2 className="adm-section">Request history for this business</h2>
       <Table>
         <thead><tr><Th>Submitted</Th><Th>Requested</Th><Th>Status</Th><Th>Reviewed</Th><Th>Reason</Th></tr></thead>
         <tbody>

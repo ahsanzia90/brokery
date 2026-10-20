@@ -5,7 +5,7 @@ import { Badge } from "@/components/ui/badge";
 import { buttonClass } from "@/components/ui/button";
 import { addAliasAction, addGradeAction, addVarietyAction, removeAliasAction, updateGradeAction, updateVarietyAction } from "../actions";
 
-const inp = "min-h-[40px] rounded-[var(--radius)] border border-border-strong bg-surface px-2 py-1 text-sm";
+const inp = "min-h-[40px] rounded-[var(--radius)] border border-line-strong bg-surface px-2 py-1 text-sm";
 
 export async function VarietyManager({ commodityId }: { commodityId: string }) {
   const rows = await db.select().from(commodityVarieties).where(eq(commodityVarieties.commodityId, commodityId)).orderBy(asc(commodityVarieties.sortOrder), asc(commodityVarieties.nameEn));
@@ -14,13 +14,13 @@ export async function VarietyManager({ commodityId }: { commodityId: string }) {
       <h2 className="mb-2 font-bold">Types / varieties ({rows.length})</h2>
       <div className="space-y-2">
         {rows.map((v) => (
-          <form key={v.id} action={updateVarietyAction} className="flex flex-wrap items-center gap-2 border-b border-border pb-2">
+          <form key={v.id} action={updateVarietyAction} className="flex flex-wrap items-center gap-2 border-b border-line pb-2">
             <input type="hidden" name="commodityId" value={commodityId} />
             <input type="hidden" name="id" value={v.id} />
             <input name="nameEn" defaultValue={v.nameEn} className={`${inp} w-44`} aria-label="Name (English)" />
             <input name="nameUr" defaultValue={v.nameUr ?? ""} dir="rtl" className={`${inp} w-36`} aria-label="Name (Urdu)" />
             <input name="aliasesRoman" defaultValue={v.aliasesRoman.join(", ")} placeholder="roman aliases" className={`${inp} w-44`} aria-label="Roman aliases" />
-            <code className="text-xs text-text-muted">{v.slug}</code>
+            <code className="text-xs text-muted">{v.slug}</code>
             <Badge tone={v.status === "active" ? "success" : "neutral"}>{v.status}</Badge>
             <span className="ms-auto flex gap-1">
               <button name="op" value="save" className={buttonClass("outline", "sm")}>
@@ -59,12 +59,12 @@ export async function GradeManager({ commodityId }: { commodityId: string }) {
       <h2 className="mb-2 font-bold">Grades / specifications ({rows.length})</h2>
       <div className="space-y-2">
         {rows.map((g) => (
-          <form key={g.id} action={updateGradeAction} className="flex flex-wrap items-center gap-2 border-b border-border pb-2">
+          <form key={g.id} action={updateGradeAction} className="flex flex-wrap items-center gap-2 border-b border-line pb-2">
             <input type="hidden" name="commodityId" value={commodityId} />
             <input type="hidden" name="id" value={g.id} />
             <input name="nameEn" defaultValue={g.nameEn} className={`${inp} w-44`} aria-label="Name (English)" />
             <input name="nameUr" defaultValue={g.nameUr ?? ""} dir="rtl" className={`${inp} w-36`} aria-label="Name (Urdu)" />
-            <span className="text-xs text-text-muted">{vName(g.varietyId)}</span>
+            <span className="text-xs text-muted">{vName(g.varietyId)}</span>
             <Badge tone={g.status === "active" ? "success" : "neutral"}>{g.status}</Badge>
             <span className="ms-auto flex gap-1">
               <button name="op" value="save" className={buttonClass("outline", "sm")}>
@@ -101,12 +101,12 @@ export async function AliasManager({ commodityId }: { commodityId: string }) {
   return (
     <section id="aliases" className="card p-4">
       <h2 className="mb-1 font-bold">Search aliases ({rows.length})</h2>
-      <p className="mb-2 text-xs text-text-muted">Local names, spellings and regional trade terms (e.g. “Zero 9”). Entries tagged “auto” are generated from names. Unapproved aliases are not used in search.</p>
+      <p className="mb-2 text-xs text-muted">Local names, spellings and regional trade terms (e.g. “Zero 9”). Entries tagged “auto” are generated from names. Unapproved aliases are not used in search.</p>
       <ul className="flex flex-wrap gap-2">
         {rows.map((a) => (
-          <li key={a.id} className={`inline-flex items-center gap-1 rounded-full border px-2 py-0.5 text-sm ${a.isApproved ? "border-border" : "border-warning bg-warning-soft"}`}>
+          <li key={a.id} className={`inline-flex items-center gap-1 rounded-full border px-2 py-0.5 text-sm ${a.isApproved ? "border-line" : "border-warning bg-warning-soft"}`}>
             <span dir={a.language === "ur" ? "rtl" : "ltr"}>{a.alias}</span>
-            <span className="text-xs text-text-muted">
+            <span className="text-xs text-muted">
               {a.language}
               {a.region ? ` · ${a.region}` : ""}
               {a.varietyId ? ` · ${varieties.find((v) => v.id === a.varietyId)?.nameEn ?? "variety"}` : ""}

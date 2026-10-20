@@ -18,14 +18,16 @@ export function ContactForm({ defaults }: { defaults: { name: string; contact: s
   }
   const fe = state && !state.ok ? state.fieldErrors ?? {} : {};
   return (
-    <form action={action} className="card p-5" noValidate>
-      {state && !state.ok && <Alert tone="danger" className="mb-4">{state.error === "rate_limited" ? t("error.rateLimited") : t("form.fixErrors")}</Alert>}
-      <Field label={t("common.name")} required htmlFor="c-name" error={fe.name ? t("form.required") : null}>
-        <Input id="c-name" name="name" defaultValue={defaults.name} required minLength={2} maxLength={80} autoComplete="name" />
-      </Field>
-      <Field label={t("browse.contactHow")} required htmlFor="c-contact" error={fe.contact ? t("form.invalid") : null}>
-        <Input id="c-contact" name="contact" defaultValue={defaults.contact} required minLength={5} maxLength={200} className="font-latin" />
-      </Field>
+    <form action={action} className="rounded-[var(--r-xl)] border border-line bg-surface p-6 md:p-8" noValidate>
+      {state && !state.ok && <Alert tone="danger" className="mb-5">{state.error === "rate_limited" ? t("error.rateLimited") : t("form.fixErrors")}</Alert>}
+      <div className="grid gap-x-5 sm:grid-cols-2">
+        <Field label={t("common.name")} required htmlFor="c-name" error={fe.name ? t("form.required") : null}>
+          <Input id="c-name" name="name" defaultValue={defaults.name} required minLength={2} maxLength={80} autoComplete="name" />
+        </Field>
+        <Field label={t("browse.contactHow")} required htmlFor="c-contact" error={fe.contact ? t("form.invalid") : null}>
+          <Input id="c-contact" name="contact" defaultValue={defaults.contact} required minLength={5} maxLength={200} className="font-latin" />
+        </Field>
+      </div>
       <Field label={t("contact.subject")} required htmlFor="c-subject" error={fe.subject ? t("form.required") : null}>
         <Input id="c-subject" name="subject" required minLength={3} maxLength={150} />
       </Field>

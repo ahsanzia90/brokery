@@ -42,9 +42,26 @@ export default async function NewRfqPage({ searchParams }: { searchParams: Promi
     .sort((a, b) => Number(b.isMajor) - Number(a.isMajor) || a.name.localeCompare(b.name));
 
   return (
-    <div className="container-page max-w-2xl py-6">
-      <PageHeader title={t("rfq.title")} subtitle={t("rfq.sub")} />
-      <RfqForm prefill={prefill} cities={cities} isAuthenticated={Boolean(user && user.status === "active")} initialQuery={sp.q} restore={sp.restore === "1"} />
+    <div className="container-page py-8 md:py-12">
+      <div className="mx-auto grid max-w-5xl gap-8 lg:grid-cols-[1fr_300px] lg:gap-14">
+        <div className="max-w-2xl">
+          <PageHeader eyebrow={t("nav.buy")} title={t("rfq.title")} subtitle={t("rfq.sub")} />
+          <RfqForm prefill={prefill} cities={cities} isAuthenticated={Boolean(user && user.status === "active")} initialQuery={sp.q} restore={sp.restore === "1"} />
+        </div>
+        <aside className="hidden self-start lg:block">
+          <div className="panel panel-lavender">
+            <ol className="space-y-6">
+              {[1, 2, 3].map((n) => (
+                <li key={n}>
+                  <span className="step-no">0{n}.</span>
+                  <h2 className="mt-1 text-[17px] font-bold leading-snug text-ink">{t(`home.how.${n}.title`)}</h2>
+                  <p className="mt-1 text-[14px] text-ink-2">{t(`home.how.${n}.body`)}</p>
+                </li>
+              ))}
+            </ol>
+          </div>
+        </aside>
+      </div>
     </div>
   );
 }

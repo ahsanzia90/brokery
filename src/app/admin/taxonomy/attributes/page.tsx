@@ -41,14 +41,14 @@ export default async function AttributesPage({ searchParams }: { searchParams: P
           {rows.map(({ a, uses }) => (
             <tr key={a.id}>
               <Td>
-                {a.nameEn} {a.nameUr && <span className="text-text-muted" lang="ur">({a.nameUr})</span>}
+                {a.nameEn} {a.nameUr && <span className="text-muted" lang="ur">({a.nameUr})</span>}
               </Td>
               <Td><code className="text-xs">{a.key}</code></Td>
               <Td>{a.type}</Td>
               <Td>{a.unitLabel ?? ""}</Td>
-              <Td>{a.isFilterable ? <Badge tone="success">yes</Badge> : <span className="text-text-muted">no</span>}</Td>
+              <Td>{a.isFilterable ? <Badge tone="success">yes</Badge> : <span className="text-muted">no</span>}</Td>
               <Td className="num">{uses}</Td>
-              <Td><Link href={`/admin/taxonomy/attributes/${a.id}/edit`} className="text-primary hover:underline">Edit</Link></Td>
+              <Td><Link href={`/admin/taxonomy/attributes/${a.id}/edit`} className="adm-link">Edit</Link></Td>
             </tr>
           ))}
         </tbody>

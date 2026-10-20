@@ -1,0 +1,60 @@
+/* Admin-only utility classes (imported by the admin layout). */
+.adm-control {
+  height: 36px; border: 1px solid var(--line-strong); border-radius: var(--r-sm); background: var(--surface);
+  padding: 0 10px; font-size: 13px; color: var(--ink); box-shadow: var(--shadow-xs); font-family: inherit;
+}
+.adm-control:focus { outline: none; border-color: var(--brand-700); box-shadow: 0 0 0 3px rgba(15, 91, 61, 0.12); }
+select.adm-control { appearance: none; padding-inline-end: 28px; background-repeat: no-repeat; background-position: right 8px center;
+  background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='14' height='14' viewBox='0 0 24 24' fill='none' stroke='%2368746d' stroke-width='2.2' stroke-linecap='round' stroke-linejoin='round'><path d='m6 9 6 6 6-6'/></svg>"); }
+textarea.adm-control { height: auto; min-height: 96px; padding: 8px 10px; line-height: 1.5; }
+.adm-field { display: block; }
+.adm-field > span:first-child, .adm-label { display: block; font-size: 12px; font-weight: 600; color: var(--muted); margin-bottom: 4px; }
+.adm-field .adm-control { width: 100%; }
+.adm-btn-primary {
+  display: inline-flex; align-items: center; gap: 6px; height: 36px; padding: 0 14px; border-radius: var(--r-sm);
+  background: var(--brand-800); color: #fff; font-size: 13px; font-weight: 600; border: 1px solid var(--brand-800); white-space: nowrap;
+}
+.adm-btn-primary:hover { background: var(--brand-900); }
+.adm-btn-outline {
+  display: inline-flex; align-items: center; gap: 6px; height: 36px; padding: 0 12px; border-radius: var(--r-sm);
+  background: var(--surface); color: var(--ink); font-size: 13px; font-weight: 600; border: 1px solid var(--line-strong); white-space: nowrap;
+}
+.adm-btn-outline:hover { background: var(--surface-2); }
+.adm-btn-reset {
+  display: inline-flex; align-items: center; gap: 6px; height: 36px; padding: 0 12px; border-radius: var(--r-sm);
+  background: var(--lime-100); color: var(--lime-900); font-size: 13px; font-weight: 600; border: 1px solid var(--lime-500); white-space: nowrap;
+}
+.adm-btn-reset:hover { background: var(--lime-400); }
+.adm-link { color: var(--brand-800); font-weight: 600; }
+.adm-link:hover { text-decoration: underline; text-underline-offset: 3px; }
+.adm-check { display: inline-flex; align-items: center; gap: 8px; height: 36px; padding: 0 10px; border: 1px solid var(--line-strong); border-radius: var(--r-sm); background: var(--surface); font-size: 13px; color: var(--ink-2); cursor: pointer; }
+.adm-check input { accent-color: var(--brand-800); width: 15px; height: 15px; }
+.adm-kbd { font-family: ui-monospace, SFMono-Regular, Menlo, monospace; font-size: 12px; background: var(--surface-2); padding: 1px 6px; border-radius: 4px; border: 1px solid var(--line); }
+/* sticky form footer */
+.adm-footer { position: sticky; bottom: 0; z-index: 5; display: flex; justify-content: flex-end; gap: 8px; margin-top: 16px; padding: 12px 0; background: linear-gradient(to top, var(--page-admin) 70%, transparent); }
+/* tree guide */
+.adm-tree li { position: relative; }
+.adm-tree ul { margin-inline-start: 22px; border-inline-start: 1px solid var(--line); padding-inline-start: 10px; }
+.adm-labeled { position: relative; display: inline-flex; align-items: center; }
+.adm-labeled > span { position: absolute; inset-inline-start: 10px; font-size: 13px; color: var(--muted); pointer-events: none; }
+.adm-labeled > .adm-control { padding-inline-start: var(--lbl, 70px); }
+.adm-table td a.adm-link, .adm-table td a.font-semibold { color: var(--ink); font-weight: 600; }
+.adm-table td a.adm-link:hover, .adm-table td a.font-semibold:hover { color: var(--brand-800); }
+
+.adm-control.adm-search { padding-inline-start: 32px; }
+.adm-table td.num, .adm-table td.whitespace-nowrap { white-space: nowrap; }
+/* legacy .card sections inside admin → panel look */
+.admin-root .card { border-radius: var(--r-md); box-shadow: var(--shadow-xs); }
+.admin-root .card > h2:first-child { font-size: 14px; font-weight: 600; color: var(--ink); margin: -16px -16px 16px; padding: 12px 20px; border-bottom: 1px solid var(--line); }
+.admin-root .card > h3 { font-size: 12px; font-weight: 600; color: var(--muted); text-transform: uppercase; letter-spacing: 0.04em; margin-top: 18px; margin-bottom: 6px; }
+.admin-root dl dt.inline { display: block; font-size: 12px; font-weight: 500; color: var(--muted); }
+.admin-root dl dd.inline { display: block; font-size: 14px; color: var(--ink); margin-top: 2px; }
+.admin-root dl.grid.gap-1 { gap: 12px 24px; }
+.admin-root dl.grid.gap-1 > div { min-width: 0; border-bottom: 1px solid var(--line); padding-bottom: 8px; }
+.admin-root h2.adm-section { font-size: 14px; font-weight: 600; color: var(--ink); margin: 20px 0 8px; }
+.admin-root dl.space-y-1 dt { font-size: 12px; color: var(--muted); font-weight: 500; }
+.admin-root dl.space-y-1 dd { font-size: 14px; color: var(--ink); }
+
+/* chips in admin read as labels: capitalised, 12px */
+.admin-root .ui-badge { text-transform: capitalize; font-size: 12px; line-height: 18px; padding-block: 2px; }
+.admin-root .ui-badge.font-latin { text-transform: none; }

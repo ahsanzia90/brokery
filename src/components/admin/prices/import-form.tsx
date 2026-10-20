@@ -9,9 +9,9 @@ export function ImportForm({ canPublish }: { canPublish: boolean }) {
   const [state, action, pending] = useActionState(importCsvAction, null);
   return (
     <div>
-      <form action={action} className="card p-5">
+      <form action={action} className="card p-4">
         <Field label="CSV file" required error={state && !state.ok && state.error === "file_required" ? "Choose a CSV file" : null}>
-          <input type="file" name="file" accept=".csv,text/csv" required className="block w-full text-base file:me-3 file:min-h-[44px] file:rounded-[var(--radius)] file:border file:border-border-strong file:bg-surface file:px-4 file:font-semibold" />
+          <input type="file" name="file" accept=".csv,text/csv" required className="block w-full text-base file:me-3 file:min-h-[44px] file:rounded-[var(--radius)] file:border file:border-line-strong file:bg-surface file:px-4 file:font-semibold" />
         </Field>
         {canPublish && <Checkbox name="publish" label="Publish valid rows immediately (otherwise they wait for review)" />}
         <Button type="submit" className="mt-4" loading={pending}>

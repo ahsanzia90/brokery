@@ -1,6 +1,7 @@
 "use client";
 import { useState, useTransition } from "react";
 import { useRouter } from "next/navigation";
+import { MessageCircle, Phone } from "lucide-react";
 import { revealContactAction, type RevealInput, type RevealResult } from "@/lib/contact/actions";
 import { useI18n } from "@/lib/i18n/client";
 import { Button } from "@/components/ui/button";
@@ -14,13 +15,14 @@ type Props = {
   whatsappAvailable: boolean;
   size?: "md" | "lg";
   className?: string;
+  stacked?: boolean;
 };
 
 /**
  * Call / WhatsApp buttons. The number is revealed only after a click (consent-checked
  * and rate-limited on the server) so contact details are never in the page source.
  */
-export function ContactButtons({ businessId, listingId, rfqId, quoteId, phoneAvailable, whatsappAvailable, size = "lg", className }: Props) {
+export function ContactButtons({ businessId, listingId, rfqId, quoteId, phoneAvailable, whatsappAvailable, size = "lg", className, stacked }: Props) {
   const { t } = useI18n();
   const router = useRouter();
   const [revealed, setRevealed] = useState<Partial<Record<"phone" | "whatsapp", RevealResult>>>({});
@@ -29,7 +31,7 @@ export function ContactButtons({ businessId, listingId, rfqId, quoteId, phoneAva
   const [busy, setBusy] = useState<"phone" | "whatsapp" | null>(null);
 
   if (!phoneAvailable && !whatsappAvailable && !rfqId) {
-    return <p className={`text-text-muted ${className ?? ""}`}>{t("supplier.contactHidden")}</p>;
+    return <p className={`text-[14px] text-muted ${className ?? ""}`}>{t("supplier.contactHidden")}</p>;
   }
 
   function reveal(channel: "phone" | "whatsapp") {
@@ -53,12 +55,13 @@ export function ContactButtons({ businessId, listingId, rfqId, quoteId, phoneAva
     });
   }
 
-  const btn = (channel: "phone" | "whatsapp", label: string, icon: string, variant: "primary" | "accent") => {
+  const h = size === "lg" ? "h-13 text-base" : "h-11 text-[15px]";
+  const btn = (channel: "phone" | "whatsapp", label: string, Icon: typeof Phone, cls: string) => {
     const r = revealed[channel];
     if (r) {
       return (
-        <a key={channel} href={r.href} target={channel === "whatsapp" ? "_blank" : undefined} rel="noopener" className={`inline-flex min-h-[56px] items-center justify-center gap-2 rounded-[var(--radius)] border px-5 text-lg font-bold ${variant === "primary" ? "border-primary bg-primary text-white" : "border-[#128c7e] bg-[#128c7e] text-white"}`}>
-          <span aria-hidden>{icon}</span>
+        <a key={channel} href={r.href} target={channel === "whatsapp" ? "_blank" : undefined} rel="noopener" className={`inline-flex ${h} flex-1 items-center justify-center gap-2 rounded-[var(--r-sm)] px-5 font-bold text-white ${cls}`}>
+          <Icon className="h-5 w-5" aria-hidden />
           <span className="font-latin num" dir="ltr">
             {r.display}
           </span>
@@ -66,20 +69,20 @@ export function ContactButtons({ businessId, listingId, rfqId, quoteId, phoneAva
       );
     }
     return (
-      <Button key={channel} type="button" size={size} variant={variant} onClick={() => reveal(channel)} loading={pending && busy === channel} className={variant === "accent" ? "!border-[#128c7e] !bg-[#128c7e] hover:!bg-[#0f7a6d]" : ""}>
-        <span aria-hidden>{icon}</span> {label}
+      <Button key={channel} type="button" size={size} variant="primary" onClick={() => reveal(channel)} loading={pending && busy === channel} className={`flex-1 !border-transparent ${cls}`}>
+        <Icon className="h-5 w-5" aria-hidden /> {label}
       </Button>
     );
   };
 
   return (
     <div className={className}>
-      <div className="flex flex-col gap-3 sm:flex-row">
-        {(phoneAvailable || rfqId) && btn("phone", t("action.call"), "📞", "primary")}
-        {(whatsappAvailable || rfqId) && btn("whatsapp", t("action.whatsapp"), "💬", "accent")}
+      <div className={`flex gap-2 ${stacked ? "flex-col" : "flex-col sm:flex-row"}`}>
+        {(phoneAvailable || rfqId) && btn("phone", t("action.call"), Phone, "!bg-brand-800 hover:!bg-brand-900")}
+        {(whatsappAvailable || rfqId) && btn("whatsapp", t("action.whatsapp"), MessageCircle, "!bg-[#1a9e60] hover:!bg-[#15804d]")}
       </div>
       {error && (
-        <p role="alert" className="mt-2 text-sm font-medium text-danger">
+        <p role="alert" className="mt-2 text-[13px] font-medium text-danger">
           {error}
         </p>
       )}

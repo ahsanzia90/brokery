@@ -51,7 +51,7 @@ export default async function ConfirmCategoryPage({ params, searchParams }: { pa
             <input type="hidden" name="id" value={id} />
             <label className="block">
               <span className="font-semibold">Merge into</span>
-              <select name="targetId" required defaultValue={str(sp, "target")} className="mt-1 w-full rounded-[var(--radius)] border border-border-strong px-3 py-2">
+              <select name="targetId" required defaultValue={str(sp, "target")} className="adm-control mt-1 w-full">
                 <option value="">Select target category…</option>
                 {targets.map((t) => (
                   <option key={t.id} value={t.id}>
@@ -62,7 +62,7 @@ export default async function ConfirmCategoryPage({ params, searchParams }: { pa
             </label>
             <label className="block">
               <span className="font-semibold">Reason (recorded in audit log)</span>
-              <textarea name="reason" required rows={2} className="mt-1 w-full rounded-[var(--radius)] border border-border-strong px-3 py-2" />
+              <textarea name="reason" required rows={2} className="adm-control mt-1 w-full" />
             </label>
             <div className="flex gap-3">
               <Button type="submit" variant="danger">
@@ -82,7 +82,7 @@ export default async function ConfirmCategoryPage({ params, searchParams }: { pa
           <input type="hidden" name="status" value={action === "active" ? "active" : "inactive"} />
           <label className="block">
             <span className="font-semibold">Reason (optional, recorded in audit log)</span>
-            <input name="reason" className="mt-1 w-full rounded-[var(--radius)] border border-border-strong px-3 py-2" />
+            <input name="reason" className="adm-control mt-1 w-full" />
           </label>
           <div className="flex gap-3">
             <Button type="submit" variant={action === "active" ? "primary" : "danger"}>

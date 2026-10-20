@@ -16,7 +16,7 @@ const tones: Record<Tone, string> = {
 /** Soft chip, like the reference tables: tinted background, no border, 13px semibold. */
 export function Badge({ tone = "neutral", children, className, title, dot }: { tone?: Tone; children: ReactNode; className?: string; title?: string; dot?: boolean }) {
   return (
-    <span title={title} className={cn("inline-flex items-center gap-1.5 rounded-full px-2.5 py-[3px] text-[13px] font-semibold leading-5 whitespace-nowrap", tones[tone], className)}>
+    <span title={title} className={cn("ui-badge inline-flex items-center gap-1.5 rounded-full px-2.5 py-[3px] text-[13px] font-semibold leading-5 whitespace-nowrap", tones[tone], className)}>
       {dot && <span className="h-1.5 w-1.5 rounded-full bg-current" aria-hidden />}
       {children}
     </span>

@@ -53,13 +53,13 @@ export function QuoteForm({ rfqId, units, defaultUnitId, existing, isOpen }: { r
         });
       }}
       noValidate
-      className="card p-5"
+      className="panel panel-mint"
     >
-      <h2 className="text-lg font-bold">{active ? t("enq.updateOffer") : t("rfq.respond")}</h2>
+      <h2 className="text-[20px] font-extrabold leading-tight text-ink">{active ? t("enq.updateOffer") : t("rfq.respond")}</h2>
       {general && <Alert tone="danger" className="my-3">{general}</Alert>}
-      <div className="mt-3 grid gap-x-4 sm:grid-cols-2">
+      <div className="mt-4 grid gap-x-4 sm:grid-cols-2">
         <Field label={t("enq.offerPrice")} htmlFor="qp" error={errors.priceAmount}>
-          <Input id="qp" type="number" inputMode="decimal" min={0} step="any" className="font-latin text-lg" value={v.priceAmount} onChange={(e) => setV((p) => ({ ...p, priceAmount: e.target.value }))} />
+          <Input id="qp" type="number" inputMode="decimal" min={0} step="any" className="font-latin text-[18px] font-bold" value={v.priceAmount} onChange={(e) => setV((p) => ({ ...p, priceAmount: e.target.value }))} />
         </Field>
         <Field label={t("wizard.priceUnit")} htmlFor="qpu" error={errors.priceUnitId}>
           <Select id="qpu" value={v.priceUnitId} onChange={(e) => setV((p) => ({ ...p, priceUnitId: e.target.value }))}>
@@ -92,7 +92,7 @@ export function QuoteForm({ rfqId, units, defaultUnitId, existing, isOpen }: { r
       <Field label={t("common.notes")} htmlFor="qn" hint={t("common.optional")}>
         <Textarea id="qn" value={v.notes} onChange={(e) => setV((p) => ({ ...p, notes: e.target.value }))} maxLength={2000} rows={3} />
       </Field>
-      <div className="flex flex-wrap gap-3">
+      <div className="flex flex-wrap items-center gap-3 border-t border-black/5 pt-4">
         <Button type="submit" size="lg" loading={pending}>
           {active ? t("enq.updateOffer") : t("action.respond")}
         </Button>

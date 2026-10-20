@@ -10,7 +10,7 @@ import { deleteRedirectAction, saveRedirectAction } from "../actions";
 import type { SearchParams } from "@/lib/admin/params";
 import { str } from "@/lib/admin/params";
 
-const inp = "min-h-[40px] w-full rounded-[var(--radius)] border border-border-strong bg-surface px-2 py-1 text-sm font-latin";
+const inp = "min-h-[40px] w-full rounded-[var(--radius)] border border-line-strong bg-surface px-2 py-1 text-sm font-latin";
 
 export default async function RedirectsPage({ searchParams }: { searchParams: Promise<SearchParams> }) {
   await requireAdminPage("seo.manage");
@@ -33,7 +33,7 @@ export default async function RedirectsPage({ searchParams }: { searchParams: Pr
           {rows.length === 0 && <EmptyRow colSpan={6}>No redirects.</EmptyRow>}
           {rows.map((r) => (
             <tr key={r.id}>
-              <td colSpan={4} className="border-b border-border px-3 py-2 align-top">
+              <td colSpan={4} className="border-b border-line px-3 py-2 align-top">
                 <form action={saveRedirectAction} className="grid gap-2 sm:grid-cols-[1fr_1fr_120px_90px_auto]">
                   <input type="hidden" name="id" value={r.id} />
                   <input name="sourcePath" defaultValue={r.sourcePath} className={inp} aria-label="Source" />

@@ -62,7 +62,7 @@ export function ActionButton({
         {children}
       </Button>
       {needsDialog && (
-        <dialog ref={ref} className="m-auto w-[min(92vw,480px)] rounded-[var(--radius-lg)] border border-border bg-surface p-0 backdrop:bg-black/40">
+        <dialog ref={ref} className="m-auto w-[min(92vw,460px)] rounded-[var(--r-lg)] border border-line bg-surface p-0 shadow-[var(--shadow-lg)]">
           <form
             method="dialog"
             className="p-5"
@@ -72,12 +72,12 @@ export function ActionButton({
               run({ ...(requireReason || reason ? { reason } : {}), ...(select ? { [select.name]: sel } : {}) });
             }}
           >
-            <h2 className="text-lg font-bold">{confirm?.title ?? String(children)}</h2>
-            {confirm?.body && <div className="mt-2 text-text-muted">{confirm.body}</div>}
+            <h2 className="text-[16px] font-semibold text-ink">{confirm?.title ?? String(children)}</h2>
+            {confirm?.body && <div className="mt-1.5 text-[13px] leading-relaxed text-muted">{confirm.body}</div>}
             {select && (
               <label className="mt-3 block">
-                <span className="block text-sm font-semibold">{select.label}</span>
-                <select value={sel} onChange={(e) => setSel(e.target.value)} className="mt-1 w-full rounded-[var(--radius)] border border-border-strong p-2">
+                <span className="adm-label">{select.label}</span>
+                <select value={sel} onChange={(e) => setSel(e.target.value)} className="adm-control w-full">
                   {select.options.map((o) => (
                     <option key={o.value} value={o.value}>
                       {o.label}
@@ -87,11 +87,11 @@ export function ActionButton({
               </label>
             )}
             <label className="mt-3 block">
-              <span className="block text-sm font-semibold">
+              <span className="adm-label">
                 {reasonLabel}
                 {requireReason ? " *" : " (optional)"}
               </span>
-              <textarea required={requireReason} value={reason} onChange={(e) => setReason(e.target.value)} rows={3} className="mt-1 w-full rounded-[var(--radius)] border border-border-strong p-2" />
+              <textarea required={requireReason} value={reason} onChange={(e) => setReason(e.target.value)} rows={3} className="adm-control w-full" />
             </label>
             <div className="mt-4 flex justify-end gap-2">
               <Button type="button" variant="outline" size="sm" onClick={() => ref.current?.close()}>

@@ -8,6 +8,7 @@ import { Button } from "@/components/ui/button";
 import { ConfirmButton } from "@/components/ui/confirm";
 import { useToast } from "@/components/ui/toast";
 import { formatPhoneDisplay, whatsappLink } from "@/lib/utils/phone";
+import { Check, MessageCircle, PhoneCall } from "lucide-react";
 
 export function QuoteActions({ rfqId, quoteId, status, rfqOpen, phone, whatsapp, reference }: { rfqId: string; quoteId: string; status: string; rfqOpen: boolean; phone: string | null; whatsapp: string | null; reference: string }) {
   const { t } = useI18n();
@@ -41,29 +42,29 @@ export function QuoteActions({ rfqId, quoteId, status, rfqOpen, phone, whatsapp,
   }
 
   return (
-    <div className="flex flex-col gap-2">
+    <div className="flex flex-wrap items-center gap-2">
       {(phone || whatsapp) ? (
-        <div className="flex flex-wrap gap-2">
+        <>
           {phone && (
-            <Button type="button" variant="primary" size="md" onClick={() => contact("phone")} disabled={!rfqOpen}>
-              📞 {t("action.call")}
+            <Button type="button" variant="primary" size="sm" onClick={() => contact("phone")} disabled={!rfqOpen}>
+              <PhoneCall className="h-4 w-4" aria-hidden /> {t("action.call")}
               {revealed === "phone" && <span className="font-latin">{formatPhoneDisplay(phone)}</span>}
             </Button>
           )}
           {whatsapp && (
-            <Button type="button" variant="secondary" size="md" onClick={() => contact("whatsapp")} disabled={!rfqOpen}>
-              💬 {t("action.whatsapp")}
+            <Button type="button" variant="secondary" size="sm" onClick={() => contact("whatsapp")} disabled={!rfqOpen}>
+              <MessageCircle className="h-4 w-4" aria-hidden /> {t("action.whatsapp")}
               {revealed === "whatsapp" && <span className="font-latin">{formatPhoneDisplay(whatsapp)}</span>}
             </Button>
           )}
-        </div>
+        </>
       ) : (
-        <p className="text-sm text-text-muted">{t("rfq.offer.contactHidden")}</p>
+        <p className="text-[13px] text-muted">{t("rfq.offer.contactHidden")}</p>
       )}
-      <div className="flex flex-wrap gap-2">
+      <span className="contents">
         {canAct && (
           <Button type="button" variant="outline" size="sm" loading={pending} onClick={() => run(() => acceptQuoteAction(rfqId, quoteId))}>
-            ✅ {t("rfq.offer.accept")}
+            <Check className="h-4 w-4" aria-hidden /> {t("rfq.offer.accept")}
           </Button>
         )}
         {canDecline && (
@@ -71,7 +72,7 @@ export function QuoteActions({ rfqId, quoteId, status, rfqOpen, phone, whatsapp,
             {t("rfq.offer.decline")}
           </ConfirmButton>
         )}
-      </div>
+      </span>
     </div>
   );
 }
