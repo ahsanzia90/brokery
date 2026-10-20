@@ -4,6 +4,7 @@ import type { Translator } from "@/lib/i18n/translate";
 import { Badge, listingStatusTone } from "@/components/ui/badge";
 import { ListingMedia, priceLabel } from "@/components/marketplace/cards";
 import { formatNumber } from "@/lib/utils/format";
+import { formatQuantity } from "@/lib/utils/format";
 
 export type SellerListingRowData = {
   id: string;
@@ -39,7 +40,7 @@ export function SellerListingRow({ l, t, actions, href }: { l: SellerListingRowD
           <Badge tone={listingStatusTone(l.status)}>{t(`listing.status.${l.status}`)}</Badge>
         </div>
         <p className="mt-0.5 text-[13px] text-muted num">
-          {formatNumber(l.quantity)} {l.unitSymbol} · {priceLabel(t, l)}
+          {formatQuantity(l.quantity, l.unitSymbol)} · {priceLabel(t, l)}
           {l.cityName ? (
             <>
               {" "}

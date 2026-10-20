@@ -5,6 +5,7 @@ import { AdminPageHeader, AdminPagination, EmptyRow, FilterBar, Labeled, SearchI
 import { Badge, rfqStatusTone } from "@/components/ui/badge";
 import { int, qs, str, type SearchParams } from "@/lib/admin/params";
 import { formatDate, formatNumber } from "@/lib/utils/format";
+import { formatQuantity } from "@/lib/utils/format";
 
 export const dynamic = "force-dynamic";
 
@@ -30,7 +31,7 @@ export default async function EnquiriesPage({ searchParams }: { searchParams: Pr
               <Td><Link href={`/admin/enquiries/${r.id}`} className="font-semibold adm-link num">{r.reference}</Link></Td>
               <Td><Link href={`/admin/users/${buyer.id}`} className="hover:underline">{buyer.name}</Link></Td>
               <Td>{commodity.nameEn}</Td>
-              <Td className="num">{formatNumber(r.quantity)} {unit.symbol}</Td>
+              <Td className="num">{formatQuantity(r.quantity, unit.symbol)}</Td>
               <Td>{city?.nameEn ?? "—"}</Td>
               <Td className="num">{Number(recipients)}</Td>
               <Td className="num">{Number(quotes)}</Td>

@@ -14,8 +14,17 @@ const ADMIN = "+923000000001";
 const BUYER = "+923000000003";
 const TITLE = `E2E Kainat rice ${Date.now()}`;
 
+/** Click Next and wait until the wizard actually shows the following step (retries once if a click landed before hydration). */
 async function nextStep(page: Page) {
-  await page.getByRole("button", { name: /^Next/ }).click();
+  const current = Number((await page.getByText(/Step \d of 6/i).first().textContent())?.match(/Step (\d)/)?.[1] ?? "0");
+  for (let attempt = 0; attempt < 3; attempt++) {
+    await page.getByRole("button", { name: /^Next/ }).click();
+    try {
+      await expect(page.getByText(new RegExp(`Step ${current + 1} of 6`, "i")).first()).toBeVisible({ timeout: 4000 });
+      return;
+    } catch {}
+  }
+  throw new Error(`wizard did not advance past step ${current}`);
 }
 
 test.describe.serial("listing → approval → RFQ → offer", () => {
@@ -26,6 +35,7 @@ test.describe.serial("listing → approval → RFQ → offer", () => {
     await signInAs(context, SELLER, baseURL!);
     await page.goto("/dashboard/seller/listings/new?commodity=rice");
     await expect(page.getByText(/Step 1 of 6|1 \/ 6/i).first()).toBeVisible({ timeout: 20_000 });
+    await page.waitForLoadState("networkidle");
     await page.getByLabel(/Listing title/i).fill(TITLE);
     await nextStep(page);
     await page.getByLabel(/Available quantity/i).fill("500");
@@ -73,6 +83,7 @@ test.describe.serial("listing → approval → RFQ → offer", () => {
   test("buyer posts a buying request for rice", async ({ page, context, baseURL }) => {
     await signInAs(context, BUYER, baseURL!);
     await page.goto("/rfq/new?commodity=rice");
+    await page.waitForLoadState("networkidle");
     // units are loaded per commodity; wait until the unit select has a value
     await expect(page.getByLabel(/^Unit/i)).not.toHaveValue("", { timeout: 30_000 });
     await page.getByLabel(/^Quantity/i).fill("2000");
@@ -89,6 +100,7 @@ test.describe.serial("listing → approval → RFQ → offer", () => {
     await page.goto("/dashboard/seller/enquiries");
     const id = rfqUrl.split("/").pop()!;
     await page.goto(`/dashboard/seller/enquiries/${id}`);
+    await page.waitForLoadState("networkidle");
     await page.getByLabel(/Your rate/i).fill("9800");
     const unit = page.getByLabel(/per unit|Price unit|Unit/i).first();
     await unit.selectOption({ index: 1 });

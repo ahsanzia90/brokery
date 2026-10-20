@@ -28,18 +28,18 @@ export function Header({ t, locale, user, brandName, currentPath, unreadCount, l
           {nav.map((n) => {
             const active = currentPath === n.href || currentPath.startsWith(n.href + "/");
             return (
-              <Link key={n.href} href={n.href} className={`rounded-[var(--r-sm)] px-3 py-2 text-[15px] font-semibold transition-colors ${active ? "bg-brand-50 text-brand-900" : "text-ink-2 hover:bg-surface-2 hover:text-ink"}`}>
+              <Link key={n.href} href={n.href} className={`whitespace-nowrap rounded-[var(--r-sm)] px-3 py-2 text-[15px] font-semibold transition-colors ${active ? "bg-brand-50 text-brand-900" : "text-ink-2 hover:bg-surface-2 hover:text-ink"}`}>
                 {n.label}
               </Link>
             );
           })}
         </nav>
         {!isHome && (
-          <div className="hidden max-w-md flex-1 md:block">
+          <div className="hidden min-w-0 max-w-xs flex-1 lg:block xl:max-w-md">
             <SearchBar size="sm" />
           </div>
         )}
-        <div className="ms-auto hidden items-center gap-2 md:flex">
+        <div className="ms-auto hidden shrink-0 items-center gap-2 md:flex">
           <LanguageSwitcher locale={locale} next={currentPath} compact />
           {user ? (
             <>

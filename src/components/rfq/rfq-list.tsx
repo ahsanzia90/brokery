@@ -6,6 +6,7 @@ import type { RfqListItem } from "@/lib/rfq/queries";
 import { Badge, rfqStatusTone } from "@/components/ui/badge";
 import { CommodityArt, artKeyFor, artTint } from "@/components/illustrations/commodity-art";
 import { formatDate, formatNumber } from "@/lib/utils/format";
+import { formatQuantity } from "@/lib/utils/format";
 
 export function RfqList({ items, t, locale }: { items: RfqListItem[]; t: Translator; locale: Locale }) {
   return (
@@ -27,7 +28,7 @@ export function RfqList({ items, t, locale }: { items: RfqListItem[]; t: Transla
                   <Badge tone={rfqStatusTone(r.status)}>{t(`rfq.status.${r.status}`)}</Badge>
                 </span>
                 <span className="mt-0.5 block text-[13px] text-muted num">
-                  {formatNumber(r.quantity)} {r.unitSymbol}
+                  {formatQuantity(r.quantity, r.unitSymbol)}
                   {r.cityName ? (
                     <>
                       {" "}

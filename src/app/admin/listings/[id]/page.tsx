@@ -7,6 +7,7 @@ import { ActionButton } from "@/components/admin/action-button";
 import { Badge, listingStatusTone, verificationTone } from "@/components/ui/badge";
 import { Alert } from "@/components/ui/alert";
 import { formatDate, formatDateTime, formatNumber, formatPKR } from "@/lib/utils/format";
+import { formatQuantity } from "@/lib/utils/format";
 import { formatPhoneDisplay } from "@/lib/utils/phone";
 import { approveListingAction, featureListingAction, flagPriceAction, hideListingAction, imageModerationAction, rejectListingAction, requestEditsAction } from "../actions";
 
@@ -42,7 +43,7 @@ export default async function AdminListingDetail({ params }: { params: Promise<{
             <div><dt className="inline font-semibold">Commodity</dt><dd className="inline">{commodity.nameEn} ({category.nameEn})</dd></div>
             <div><dt className="inline font-semibold">Variety</dt><dd className="inline">{variety?.nameEn ?? l.customVariety ?? "—"}{l.customVariety && <Badge tone="warning" className="ms-1">custom</Badge>}</dd></div>
             <div><dt className="inline font-semibold">Grade</dt><dd className="inline">{grade?.nameEn ?? l.customGrade ?? "—"}{l.customGrade && <Badge tone="warning" className="ms-1">custom</Badge>}</dd></div>
-            <div><dt className="inline font-semibold">Quantity</dt><dd className="inline num">{formatNumber(l.quantity)} {unit.symbol}{l.quantityKg ? ` (≈ ${formatNumber(l.quantityKg)} kg)` : ""}</dd></div>
+            <div><dt className="inline font-semibold">Quantity</dt><dd className="inline num">{formatQuantity(l.quantity, unit.symbol)}{l.quantityKg ? ` (≈ ${formatNumber(l.quantityKg)} kg)` : ""}</dd></div>
             <div><dt className="inline font-semibold">Price</dt><dd className="inline num">{l.priceAmount ? `${formatPKR(l.priceAmount)} / ${d.priceUnit?.symbol ?? "?"}` : "—"} ({l.priceType})</dd></div>
             <div><dt className="inline font-semibold">Min order</dt><dd className="inline num">{l.minOrderQuantity ? formatNumber(l.minOrderQuantity) : "—"}</dd></div>
             <div><dt className="inline font-semibold">City</dt><dd className="inline">{city?.nameEn ?? "—"} {l.pickupLocation ? `· ${l.pickupLocation}` : ""}</dd></div>

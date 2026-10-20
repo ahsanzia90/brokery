@@ -12,6 +12,7 @@ import { ListingRowActions } from "@/components/seller/listing-row-actions";
 import { ListingMedia } from "@/components/marketplace/cards";
 import { Facts } from "@/components/flows/form-section";
 import { formatDate, formatDateTime, formatNumber, formatPKR } from "@/lib/utils/format";
+import { formatQuantity } from "@/lib/utils/format";
 
 export default async function SellerListingPage({ params, searchParams }: { params: Promise<{ id: string }>; searchParams: Promise<{ saved?: string }> }) {
   const { id } = await params;
@@ -73,7 +74,7 @@ export default async function SellerListingPage({ params, searchParams }: { para
         <Facts
           columns={2}
           items={[
-            { label: t("common.quantity"), value: <span className="num">{formatNumber(l.quantity)} {row.unitSymbol}</span> },
+            { label: t("common.quantity"), value: <span className="num">{formatQuantity(l.quantity, row.unitSymbol)}</span> },
             { label: t("common.price"), value: <span className="num">{priceText}</span> },
             { label: `${t("listing.views")} / ${t("listing.contacts")}`, value: <span className="num">{l.viewCount} / {l.contactClickCount}</span> },
             { label: t("listing.expires"), value: <span className="num">{l.expiresAt ? formatDate(l.expiresAt, locale) : "—"}</span> },

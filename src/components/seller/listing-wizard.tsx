@@ -11,6 +11,7 @@ import { Alert } from "@/components/ui/alert";
 import { Check, ChevronLeft, ChevronRight, Save } from "lucide-react";
 import { Facts } from "@/components/flows/form-section";
 import { formatNumber, formatPKR } from "@/lib/utils/format";
+import { formatQuantity } from "@/lib/utils/format";
 import { formatPhoneLocal } from "@/lib/utils/phone";
 import { CommodityPicker, commodityLabel, type CommodityOption } from "./commodity-picker";
 import { ImageUploader, ListingDocumentUploader, type UploadedDoc, type UploadedImage } from "./uploaders";
@@ -526,7 +527,7 @@ export function ListingWizard({
               <div className="mb-5 rounded-[var(--r-md)] bg-tint-sand px-4 py-3 text-[14px]">
                 {s.quantity && s.unitId && (
                   <p className="text-[18px] font-extrabold text-ink num">
-                    {formatNumber(s.quantity)} {unitSymbol(s.unitId)}
+                    {formatQuantity(s.quantity, unitSymbol(s.unitId))}
                   </p>
                 )}
                 {form.units.find((u) => u.id === s.unitId)?.code === "maund" && <p className="text-[13px] text-ink-2">{t("unit.maundNote", { kg: form.maundKg })}</p>}
@@ -719,7 +720,7 @@ export function ListingWizard({
               <Facts
                 items={[
                   { label: t("wizard.summary.what"), value: <span>{[commodityLabel(commodity, locale), varietyName ? name(varietyName) : s.customVariety.trim(), gradeName ? name(gradeName) : s.customGrade.trim()].filter(Boolean).join(" · ")}<span className="block text-[14px] font-normal text-ink-2">“{s.title || suggestedTitle}”</span></span> },
-                  { label: t("wizard.summary.howMuch"), value: <span className="num">{formatNumber(s.quantity)} {unitSymbol(s.unitId)}{s.minOrderQuantity ? <span className="block text-[13px] font-normal text-ink-2">{t("common.minOrder")}: {formatNumber(s.minOrderQuantity)} {unitSymbol(s.minOrderUnitId)}</span> : null}</span> },
+                  { label: t("wizard.summary.howMuch"), value: <span className="num">{formatQuantity(s.quantity, unitSymbol(s.unitId))}{s.minOrderQuantity ? <span className="block text-[13px] font-normal text-ink-2">{t("common.minOrder")}: {formatQuantity(s.minOrderQuantity, unitSymbol(s.minOrderUnitId))}</span> : null}</span> },
                   { label: t("wizard.summary.price"), value: <span className="num">{s.priceType === "fixed" || s.priceType === "negotiable" ? `${formatPKR(s.priceAmount)} / ${unitSymbol(s.priceUnitId)}` : t(`wizard.price.${s.priceType}`)}<span className="block text-[13px] font-normal text-ink-2">{t(`wizard.price.${s.priceType}`)}</span></span> },
                   { label: t("wizard.summary.where"), value: [cities.find((c) => c.id === s.cityId) && name(cities.find((c) => c.id === s.cityId)!), markets.find((m) => m.id === s.marketId) && name(markets.find((m) => m.id === s.marketId)!), s.pickupLocation, t(`listing.delivery.${s.deliveryAvailable}`)].filter(Boolean).join(" · ") },
                   { label: t("wizard.summary.details"), value: `${s.images.length} ${t("common.photos").toLowerCase()} · ${s.documents.length} ${t("wizard.documents").toLowerCase()}${s.packaging ? ` · ${s.packaging}` : ""}` },

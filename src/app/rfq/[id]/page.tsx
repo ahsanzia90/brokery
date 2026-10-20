@@ -14,6 +14,7 @@ import { CommodityArt, artKeyFor, artTint } from "@/components/illustrations/com
 import { Alert } from "@/components/ui/alert";
 import { EmptyState } from "@/components/ui/empty-state";
 import { formatDate, formatDateTime, formatNumber, formatPKR } from "@/lib/utils/format";
+import { formatQuantity } from "@/lib/utils/format";
 import { QuoteActions, RfqCloseControls } from "@/components/rfq/quote-actions";
 
 export const metadata: Metadata = { title: "Buying request", ...NOINDEX };
@@ -80,7 +81,7 @@ export default async function RfqDetailPage({ params, searchParams }: { params: 
               {rfq.gradeName ? ` (${rfq.gradeName})` : ""}
             </h1>
             <p className="mt-1 text-[14px] text-muted num">
-              {formatNumber(rfq.quantity)} {rfq.unitSymbol}
+              {formatQuantity(rfq.quantity, rfq.unitSymbol)}
               {rfq.cityName ? ` · ${rfq.cityName}` : ""} · {formatDate(rfq.createdAt, locale)} · {t("rfq.recipientsCount", { count: rfq.recipientCount })}
             </p>
           </div>
@@ -132,7 +133,7 @@ export default async function RfqDetailPage({ params, searchParams }: { params: 
                     </div>
                     <dl className="mt-4 grid grid-cols-2 gap-x-4 gap-y-3 border-t border-line pt-4 text-[14px] sm:grid-cols-4">
                       {q.quantity && (
-                        <div><dt className="text-[12px] font-semibold uppercase tracking-wide text-muted">{t("common.quantity")}</dt><dd className="mt-0.5 num">{formatNumber(q.quantity)} {q.quantityUnitSymbol ?? ""}</dd></div>
+                        <div><dt className="text-[12px] font-semibold uppercase tracking-wide text-muted">{t("common.quantity")}</dt><dd className="mt-0.5 num">{formatQuantity(q.quantity, q.quantityUnitSymbol)}</dd></div>
                       )}
                       {q.validUntil && (
                         <div><dt className="text-[12px] font-semibold uppercase tracking-wide text-muted">{t("rfq.validUntil")}</dt><dd className="mt-0.5 num">{formatDate(q.validUntil, locale)}</dd></div>
@@ -161,7 +162,7 @@ export default async function RfqDetailPage({ params, searchParams }: { params: 
               {[
                 [t("common.commodity"), `${rfq.commodityName}${rfq.varietyName ? ` — ${rfq.varietyName}` : ""}${rfq.gradeName ? ` (${rfq.gradeName})` : ""}`],
                 rfq.customSpecification ? [t("common.grade"), rfq.customSpecification] : null,
-                [t("common.quantity"), `${formatNumber(rfq.quantity)} ${rfq.unitSymbol}`],
+                [t("common.quantity"), `${formatQuantity(rfq.quantity, rfq.unitSymbol)}`],
                 [t("common.location"), [rfq.marketName, rfq.cityName, rfq.provinceName].filter(Boolean).join(", ") || t("common.any")],
                 rfq.requiredBy ? [t("rfq.requiredBy"), formatDate(rfq.requiredBy, locale)] : null,
                 rfq.targetPrice ? [t("rfq.targetPrice"), `${formatPKR(rfq.targetPrice)} / ${rfq.targetPriceUnitSymbol ?? ""}`] : null,

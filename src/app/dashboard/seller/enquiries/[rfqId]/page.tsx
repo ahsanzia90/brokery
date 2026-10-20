@@ -11,6 +11,7 @@ import { QuoteForm } from "@/components/seller/quote-form";
 import { Facts } from "@/components/flows/form-section";
 import { CommodityArt, artKeyFor, artTint } from "@/components/illustrations/commodity-art";
 import { formatDate, formatNumber, formatPKR } from "@/lib/utils/format";
+import { formatQuantity } from "@/lib/utils/format";
 import { formatPhoneDisplay, whatsappLink } from "@/lib/utils/phone";
 
 export default async function SellerEnquiryDetailPage({ params }: { params: Promise<{ rfqId: string }> }) {
@@ -26,7 +27,7 @@ export default async function SellerEnquiryDetailPage({ params }: { params: Prom
   const artKey = artKeyFor(d.commodity.slug ?? null, d.commodity.nameEn);
   const facts = [
     { label: t("common.commodity"), value: [name(d.commodity), d.varietyName, d.gradeName, d.rfq.customSpecification].filter(Boolean).join(" · ") },
-    { label: t("common.quantity"), value: <span className="num">{formatNumber(d.rfq.quantity)} {d.unitSymbol}</span> },
+    { label: t("common.quantity"), value: <span className="num">{formatQuantity(d.rfq.quantity, d.unitSymbol)}</span> },
     { label: t("common.city"), value: d.city ? name(d.city) : null },
     { label: t("rfq.requiredBy"), value: d.rfq.requiredBy ? formatDate(d.rfq.requiredBy, locale) : null },
     { label: t("enq.targetPrice"), value: d.rfq.targetPrice ? <span className="num">{formatPKR(d.rfq.targetPrice)}{d.targetUnitSymbol ? ` / ${d.targetUnitSymbol}` : ""}</span> : null },

@@ -12,6 +12,7 @@ import { AttentionList, DashHeader, StatStrip } from "@/components/flows/dashboa
 import { SellerListingRow } from "@/components/flows/listing-row";
 import { ListingRowActions } from "@/components/seller/listing-row-actions";
 import { formatNumber, formatDate } from "@/lib/utils/format";
+import { formatQuantity } from "@/lib/utils/format";
 
 export default async function SellerOverviewPage() {
   const { user, business, t, locale } = await getSellerContext("/dashboard/seller");
@@ -111,7 +112,7 @@ export default async function SellerOverviewPage() {
                     <Link href={`/dashboard/seller/enquiries/${r.rfqId}`} className="flex items-center justify-between gap-3 py-3 hover:bg-surface-2">
                       <span className="min-w-0">
                         <span className="block truncate text-[15px] font-bold text-ink">
-                          {t("enq.needs", { name: r.buyerFirstName })} {name({ nameEn: r.commodityName, nameUr: r.commodityNameUr })} · <span className="num">{formatNumber(r.quantity)} {r.unitSymbol}</span>
+                          {t("enq.needs", { name: r.buyerFirstName })} {name({ nameEn: r.commodityName, nameUr: r.commodityNameUr })} · <span className="num">{formatQuantity(r.quantity, r.unitSymbol)}</span>
                         </span>
                         <span className="block text-[13px] text-muted num">
                           {r.cityName ? `${name({ nameEn: r.cityName, nameUr: r.cityNameUr })} · ` : ""}

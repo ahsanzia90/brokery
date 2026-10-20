@@ -15,7 +15,7 @@ import { CategoryCard, ChangeBadge, ListingCard, ListingMedia, RateChip, Supplie
 import { Check } from "lucide-react";
 import { HeroActions } from "@/components/marketplace/hero-actions";
 import { CommodityArt } from "@/components/illustrations/commodity-art";
-import { formatDate, formatNumber, formatPKR } from "@/lib/utils/format";
+import { formatDate, formatNumber, formatPKR, formatQuantity } from "@/lib/utils/format";
 
 export async function generateMetadata(): Promise<Metadata> {
   const brand = await getBrand();
@@ -128,7 +128,7 @@ export default async function HomePage() {
                   </div>
                   <div className="min-w-0">
                     <p className="truncate text-[15px] font-bold text-ink">{previewListing ? previewListing.title : t("home.sell.previewTitle")}</p>
-                    <p className="text-[13px] text-muted num">{previewListing ? `${formatNumber(previewListing.quantity)} ${previewListing.unitSymbol}${previewListing.cityName ? ` · ${previewListing.cityName}` : ""}` : t("home.sell.previewMeta")}</p>
+                    <p className="text-[13px] text-muted num">{previewListing ? `${formatQuantity(previewListing.quantity, previewListing.unitSymbol)}${previewListing.cityName ? ` · ${previewListing.cityName}` : ""}` : t("home.sell.previewMeta")}</p>
                     <p className="mt-1 flex items-center gap-1 text-[12px] font-semibold text-brand-800">
                       <BadgeCheck className="h-3.5 w-3.5" aria-hidden /> {previewListing ? previewListing.businessName : t("home.sell.previewBiz")}
                     </p>

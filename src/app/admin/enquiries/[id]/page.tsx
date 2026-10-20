@@ -8,6 +8,7 @@ import { JsonDetails } from "@/components/admin/json-details";
 import { Badge, rfqStatusTone, verificationTone } from "@/components/ui/badge";
 import { hasPermission } from "@/lib/authz/permissions";
 import { formatDate, formatDateTime, formatNumber, formatPKR } from "@/lib/utils/format";
+import { formatQuantity } from "@/lib/utils/format";
 import { formatPhoneDisplay } from "@/lib/utils/phone";
 import { closeRfqSpamAction } from "../actions";
 
@@ -29,7 +30,7 @@ export default async function EnquiryDetail({ params }: { params: Promise<{ id: 
           <dl className="space-y-1 text-sm">
             <div><dt className="inline font-semibold">Buyer</dt><dd className="inline"><Link href={`/admin/users/${buyer.id}`} className="adm-link">{buyer.name}</Link> · <span className="num">{formatPhoneDisplay(buyer.phone)}</span></dd></div>
             <div><dt className="inline font-semibold">Commodity</dt><dd className="inline">{commodity.nameEn}{r.customSpecification ? ` · ${r.customSpecification}` : ""}</dd></div>
-            <div><dt className="inline font-semibold">Quantity</dt><dd className="inline num">{formatNumber(r.quantity)} {unit.symbol}</dd></div>
+            <div><dt className="inline font-semibold">Quantity</dt><dd className="inline num">{formatQuantity(r.quantity, unit.symbol)}</dd></div>
             <div><dt className="inline font-semibold">City</dt><dd className="inline">{city?.nameEn ?? "—"}</dd></div>
             <div><dt className="inline font-semibold">Needed by</dt><dd className="inline num">{r.requiredBy ?? "—"}</dd></div>
             <div><dt className="inline font-semibold">Target price</dt><dd className="inline num">{r.targetPrice ? formatPKR(r.targetPrice) : "—"}</dd></div>

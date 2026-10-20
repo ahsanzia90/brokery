@@ -8,6 +8,7 @@ import { EmptyState } from "@/components/ui/empty-state";
 import { LinkButton } from "@/components/ui/button";
 import { DashHeader, SegmentedTabs } from "@/components/flows/dashboard-shell";
 import { formatDate, formatNumber, formatPKR } from "@/lib/utils/format";
+import { formatQuantity } from "@/lib/utils/format";
 
 const TABS = ["new", "responded", "declined"] as const;
 
@@ -35,7 +36,7 @@ export default async function SellerEnquiriesPage({ searchParams }: { searchPara
                       {t("enq.needs", { name: r.buyerFirstName })} {name({ nameEn: r.commodityName, nameUr: r.commodityNameUr })}
                     </span>
                     <span className="rounded-full bg-surface-2 px-2 py-0.5 text-[13px] font-semibold text-ink-2 num">
-                      {formatNumber(r.quantity)} {r.unitSymbol}
+                      {formatQuantity(r.quantity, r.unitSymbol)}
                     </span>
                     {r.isDirect ? <Badge tone="accent">{t("enq.direct")}</Badge> : null}
                   </div>
