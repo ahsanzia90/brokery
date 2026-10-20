@@ -18,8 +18,8 @@ export function ToastProvider({ children }: { children: ReactNode }) {
         {toasts.map((t) => (
           <div
             key={t.id}
-            className={`pointer-events-auto rounded-[var(--radius)] border px-4 py-3 text-base font-medium shadow-md ${
-              t.tone === "success" ? "bg-primary text-white border-primary" : t.tone === "error" ? "bg-danger text-white border-danger" : "bg-text text-white border-text"
+            className={`pointer-events-auto rounded-[var(--r-md)] px-4 py-3 text-[14px] font-semibold shadow-[var(--shadow-lg)] ${
+              t.tone === "success" ? "bg-brand-900 text-white" : t.tone === "error" ? "bg-danger text-white" : "bg-ink text-white"
             }`}
           >
             {t.message}

@@ -153,3 +153,14 @@ export async function getListingCountsByCategory(): Promise<Map<string, number>>
     .groupBy(commodities.categoryId);
   return new Map(rows.map((r) => [r.categoryId, r.n]));
 }
+
+/** Real counts for the trust row — never hard-coded. */
+export async function getPlatformCounts(): Promise<{ commodities: number; cities: number; suppliers: number; rates: number }> {
+  const [[c], [ci], [s], [r]] = await Promise.all([
+    db.select({ n: count() }).from(commodities).where(eq(commodities.status, "active")),
+    db.select({ n: count() }).from(locations).where(and(eq(locations.status, "active"), inArray(locations.type, ["city", "market"]))),
+    db.select({ n: count() }).from(businesses).where(eq(businesses.status, "active")),
+    db.select({ n: count() }).from(marketPrices).where(eq(marketPrices.status, "published")),
+  ]);
+  return { commodities: c.n, cities: ci.n, suppliers: s.n, rates: r.n };
+}

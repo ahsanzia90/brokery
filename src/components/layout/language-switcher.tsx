@@ -1,9 +1,10 @@
 import { LOCALE_LABELS, LOCALES, type Locale } from "@/lib/i18n/config";
 import { setLocaleAction } from "@/lib/i18n/actions";
 
-export function LanguageSwitcher({ locale, next, compact }: { locale: Locale; next: string; compact?: boolean }) {
+/** Segmented EN | اردو control. */
+export function LanguageSwitcher({ locale, next }: { locale: Locale; next: string; compact?: boolean }) {
   return (
-    <form action={setLocaleAction} className="flex items-center gap-1" aria-label="Language">
+    <form action={setLocaleAction} className="inline-flex rounded-full border border-line bg-surface p-0.5" aria-label="Language">
       <input type="hidden" name="next" value={next} />
       {LOCALES.map((l) => (
         <button
@@ -13,10 +14,10 @@ export function LanguageSwitcher({ locale, next, compact }: { locale: Locale; ne
           value={l}
           aria-pressed={l === locale}
           lang={l}
-          className={`min-h-[40px] rounded-full px-3 text-sm font-semibold ${l === locale ? "bg-primary text-white" : "bg-surface-muted text-text hover:bg-border"} ${l === "ur" ? "font-urdu" : "font-latin"}`}
-          style={l === "ur" ? { fontFamily: "var(--font-urdu)" } : undefined}
+          className={`h-8 rounded-full px-3 text-[13px] font-semibold leading-none transition-colors ${l === locale ? "bg-ink text-white" : "text-ink-2 hover:bg-surface-2"}`}
+          style={l === "ur" ? { fontFamily: "var(--font-urdu-body)" } : { fontFamily: "var(--font-sans)" }}
         >
-          {compact ? LOCALE_LABELS[l].native : LOCALE_LABELS[l].native}
+          {l === "en" ? "EN" : LOCALE_LABELS[l].native}
         </button>
       ))}
     </form>

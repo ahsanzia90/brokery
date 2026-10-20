@@ -5,7 +5,9 @@ import { useI18n } from "@/lib/i18n/client";
 
 type Suggestion = { type: "commodity" | "category" | "supplier" | "location" | "recent" | "popular"; label: string; sub?: string; href: string };
 
-export function SearchBar({ size = "md", autoFocus, initialQuery = "", placeholder }: { size?: "md" | "lg"; autoFocus?: boolean; initialQuery?: string; placeholder?: string }) {
+import { Search } from "lucide-react";
+
+export function SearchBar({ size = "md", autoFocus, initialQuery = "", placeholder }: { size?: "sm" | "md" | "lg"; autoFocus?: boolean; initialQuery?: string; placeholder?: string }) {
   const { t, locale } = useI18n();
   const router = useRouter();
   const [q, setQ] = useState(initialQuery);
@@ -61,7 +63,8 @@ export function SearchBar({ size = "md", autoFocus, initialQuery = "", placehold
     router.push(`/search?q=${encodeURIComponent(term)}`);
   }
 
-  const inputCls = size === "lg" ? "min-h-[60px] text-lg ps-4 pe-32" : "min-h-[48px] text-base ps-3.5 pe-24";
+  const inputCls = size === "lg" ? "h-16 text-[17px] ps-12 pe-32 rounded-[var(--r-md)] shadow-[var(--shadow-md)]" : size === "sm" ? "h-10 text-[14px] ps-10 pe-20 rounded-full" : "h-12 text-[15px] ps-11 pe-24 rounded-[var(--r-sm)]";
+  const iconCls = size === "lg" ? "start-4 h-5 w-5" : size === "sm" ? "start-3.5 h-4 w-4" : "start-3.5 h-4.5 w-4.5";
 
   return (
     <div ref={wrapRef} className="relative w-full">
@@ -102,14 +105,15 @@ export function SearchBar({ size = "md", autoFocus, initialQuery = "", placehold
           aria-controls={listId}
           aria-autocomplete="list"
           aria-activedescendant={active >= 0 ? `${listId}-${active}` : undefined}
-          className={`block w-full rounded-[var(--radius)] border border-border-strong bg-surface text-text shadow-sm placeholder:text-text-muted/70 focus:border-primary focus:outline-none focus:ring-2 focus:ring-primary/30 ${inputCls}`}
+          className={`block w-full border border-line-strong bg-surface text-ink placeholder:text-muted-2 focus:border-brand-700 focus:outline-none focus:ring-4 focus:ring-brand-800/10 ${inputCls}`}
         />
-        <button type="submit" className={`absolute inset-y-1.5 end-1.5 rounded-[8px] bg-primary px-4 font-semibold text-white hover:bg-primary-strong ${size === "lg" ? "text-base" : "text-sm"}`}>
+        <Search className={`pointer-events-none absolute top-1/2 -translate-y-1/2 text-muted ${iconCls}`} aria-hidden />
+        <button type="submit" className={`absolute top-1/2 end-1.5 -translate-y-1/2 font-semibold text-white hover:bg-brand-900 ${size === "lg" ? "h-12 rounded-[var(--r-sm)] bg-brand-800 px-5 text-[15px]" : size === "sm" ? "h-7 rounded-full bg-brand-800 px-3 text-[12px]" : "h-9 rounded-[6px] bg-brand-800 px-4 text-[14px]"}`}>
           {t("home.search.button")}
         </button>
       </form>
       {open && items.length > 0 && (
-        <ul id={listId} role="listbox" className="absolute z-30 mt-1 max-h-80 w-full overflow-auto rounded-[var(--radius)] border border-border bg-surface shadow-md">
+        <ul id={listId} role="listbox" className="absolute z-30 mt-2 max-h-80 w-full overflow-auto rounded-[var(--r-md)] border border-line bg-surface p-1.5 shadow-[var(--shadow-lg)]">
           {items.map((it, i) => (
             <li
               key={`${it.type}-${it.href}-${i}`}
@@ -122,13 +126,13 @@ export function SearchBar({ size = "md", autoFocus, initialQuery = "", placehold
                 router.push(it.href);
                 setOpen(false);
               }}
-              className={`flex cursor-pointer items-center justify-between gap-3 px-3.5 py-3 ${i === active ? "bg-primary-soft" : "hover:bg-surface-muted"}`}
+              className={`flex cursor-pointer items-center justify-between gap-3 rounded-[var(--r-sm)] px-3 py-2.5 ${i === active ? "bg-brand-50" : "hover:bg-surface-2"}`}
             >
               <span>
-                <span className="font-medium">{it.label}</span>
-                {it.sub && <span className="ms-2 text-sm text-text-muted">{it.sub}</span>}
+                <span className="text-[15px] font-medium text-ink">{it.label}</span>
+                {it.sub && <span className="ms-2 text-[13px] text-muted">{it.sub}</span>}
               </span>
-              <span className="text-xs uppercase tracking-wide text-text-muted">{t(`search.${it.type === "recent" ? "recent" : it.type === "popular" ? "popular" : it.type === "location" ? "inCity" : it.type === "supplier" ? "suppliers" : it.type === "category" ? "categories" : "commodities"}`).replace("{city}", "")}</span>
+              <span className="text-[11px] font-semibold uppercase tracking-wide text-muted-2">{t(`search.${it.type === "recent" ? "recent" : it.type === "popular" ? "popular" : it.type === "location" ? "inCity" : it.type === "supplier" ? "suppliers" : it.type === "category" ? "categories" : "commodities"}`).replace("{city}", "")}</span>
             </li>
           ))}
         </ul>

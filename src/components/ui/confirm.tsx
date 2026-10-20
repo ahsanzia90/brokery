@@ -33,7 +33,7 @@ export function ConfirmButton({
       <Button type="button" variant={variant === "danger" ? "outline" : variant} size="sm" onClick={() => ref.current?.showModal()}>
         {children}
       </Button>
-      <dialog ref={ref} className="m-auto w-[min(92vw,460px)] rounded-[var(--radius-lg)] border border-border bg-surface p-0 backdrop:bg-black/40" aria-labelledby={id}>
+      <dialog ref={ref} className="m-auto w-[min(92vw,460px)] rounded-[var(--r-lg)] border border-line bg-surface p-0 shadow-[var(--shadow-lg)]" aria-labelledby={id}>
         <form
           method="dialog"
           className="p-5"
@@ -49,14 +49,14 @@ export function ConfirmButton({
             }
           }}
         >
-          <h2 id={id} className="text-lg font-bold">
+          <h2 id={id} className="text-[18px] font-bold text-ink">
             {title}
           </h2>
-          {body && <div className="mt-2 text-text-muted">{body}</div>}
+          {body && <div className="mt-2 text-[14px] text-muted">{body}</div>}
           {requireReason && (
             <label className="mt-3 block">
               <span className="block text-sm font-semibold">{reasonLabel ?? "Reason"}</span>
-              <textarea required value={reason} onChange={(e) => setReason(e.target.value)} className="mt-1 w-full rounded-[var(--radius)] border border-border-strong p-2" rows={3} />
+              <textarea required value={reason} onChange={(e) => setReason(e.target.value)} className="mt-1 w-full rounded-[var(--r-sm)] border border-line-strong p-2 text-[14px]" rows={3} />
             </label>
           )}
           <div className="mt-5 flex justify-end gap-3">

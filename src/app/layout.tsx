@@ -1,6 +1,12 @@
 import type { Metadata, Viewport } from "next";
 import { headers } from "next/headers";
 import { and, count, eq, isNull } from "drizzle-orm";
+import "@fontsource-variable/plus-jakarta-sans";
+import "@fontsource-variable/inter";
+import "@fontsource/noto-nastaliq-urdu/400.css";
+import "@fontsource/noto-nastaliq-urdu/600.css";
+import "@fontsource/noto-naskh-arabic/400.css";
+import "@fontsource/noto-naskh-arabic/600.css";
 import "./globals.css";
 import { getLocale } from "@/lib/i18n/server";
 import { createTranslator, getMessages } from "@/lib/i18n/translate";
@@ -52,7 +58,7 @@ export default async function RootLayout({ children }: { children: React.ReactNo
 
   return (
     <html lang={locale} dir={dirFor(locale)}>
-      <body className="flex min-h-dvh flex-col">
+      <body className={`flex min-h-dvh flex-col ${isAdminArea ? "admin-root bg-page-admin" : ""}`}>
         <I18nProvider locale={locale} messages={getMessages(locale)}>
           <ToastProvider>
             {!isAdminArea && <Header t={t} locale={locale} user={user} brandName={brand.name} currentPath={currentPath} unreadCount={unread} logoPath={brand.logoPath} />}
