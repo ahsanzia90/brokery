@@ -51,3 +51,11 @@ export function relativeDays(d: Date | string, locale: "en" | "ur" = "en"): stri
   if (days === 1) return "yesterday";
   return `${days} days ago`;
 }
+
+/** "500 × 40 kg" for fixed-weight package units, otherwise "500 kg". */
+export function formatQuantity(quantity: number | string | null | undefined, unitSymbol: string | null | undefined): string {
+  const q = formatNumber(quantity);
+  if (!q) return "";
+  if (!unitSymbol) return q;
+  return /^\d/.test(unitSymbol) ? `${q} × ${unitSymbol}` : `${q} ${unitSymbol}`;
+}

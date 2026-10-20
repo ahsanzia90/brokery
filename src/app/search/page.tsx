@@ -88,9 +88,11 @@ export default async function SearchPage({ searchParams }: Props) {
       <PageHeader title={title} subtitle={total > 0 ? t("common.results", { count: total }) : undefined} />
 
       {matched && (
-        <Link href={`/commodities/${matched.slug}${cityLoc ? `/city/${cityLoc.slug}` : ""}`} className="group mb-8 flex items-center gap-4 rounded-[var(--r-lg)] bg-tint-mint p-4 transition-colors hover:bg-brand-100 md:p-5">
-          <span className="flex h-14 w-14 shrink-0 items-center justify-center rounded-[var(--r-md)] bg-white/70">
-            <CommodityArt artKey={artKeyFor(matched.slug, matched.nameEn)} className="h-10 w-10" />
+        <Link href={`/commodities/${matched.slug}${cityLoc ? `/city/${cityLoc.slug}` : ""}`} className="group mb-8 flex flex-col gap-3 rounded-[var(--r-lg)] bg-tint-mint p-4 transition-colors hover:bg-brand-100 sm:flex-row sm:items-center sm:gap-4 md:p-5">
+          <span className="flex items-center gap-3 sm:contents">
+            <span className="flex h-14 w-14 shrink-0 items-center justify-center rounded-[var(--r-md)] bg-white/70">
+              <CommodityArt artKey={artKeyFor(matched.slug, matched.nameEn)} className="h-10 w-10" />
+            </span>
           </span>
           <span className="min-w-0 flex-1">
             <span className="block text-[13px] font-semibold uppercase tracking-wide text-brand-700">{t("search.commodities")}</span>

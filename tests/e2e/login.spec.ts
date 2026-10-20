@@ -17,7 +17,7 @@ test("phone OTP sign-in creates an account and asks for a profile", async ({ pag
   await page.waitForTimeout(800);
   const code = latestOtpFromLog(LOG, PHONE);
   expect(code).toMatch(/^\d{6}$/);
-  await page.getByLabel(/6-digit code/i).fill(code!);
+  await page.getByLabel(/6-digit code 1$/i).fill(code!); // six boxes; typing all digits into the first spreads them
   await page.getByRole("button", { name: /^Verify$/i }).click();
   await expect(page).toHaveURL(/\/onboarding/);
   await page.getByLabel(/^Name/i).fill("Test Buyer");
@@ -31,7 +31,7 @@ test("wrong OTP shows remaining attempts", async ({ page }) => {
   await page.getByLabel(/Mobile number/i).fill(`0301 ${SUFFIX}`);
   await page.getByRole("button", { name: /Send code/i }).click();
   await expect(page.getByText(/Code sent to/i)).toBeVisible();
-  await page.getByLabel(/6-digit code/i).fill("000000");
+  await page.getByLabel(/6-digit code 1$/i).fill("000000");
   await page.getByRole("button", { name: /^Verify$/i }).click();
   await expect(page.getByRole("alert").filter({ hasText: /attempts left|not correct/i })).toBeVisible();
 });

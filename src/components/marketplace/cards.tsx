@@ -2,7 +2,7 @@ import Link from "next/link";
 import { ArrowDownRight, ArrowUpRight, MapPin, ShieldCheck } from "lucide-react";
 import type { Locale } from "@/lib/i18n/config";
 import type { Translator } from "@/lib/i18n/translate";
-import { formatNumber, formatPKR, formatDate, daysBetween } from "@/lib/utils/format";
+import { formatQuantity, formatNumber, formatPKR, formatDate, daysBetween } from "@/lib/utils/format";
 import { Badge, verificationTone } from "@/components/ui/badge";
 import { CommodityArt, artKeyFor, artTint } from "@/components/illustrations/commodity-art";
 
@@ -103,7 +103,7 @@ export function ListingCard({ l, t }: { l: ListingCardData; t: Translator }) {
         </h3>
         <p className="mt-1 text-[16px] font-extrabold text-ink num">{priceLabel(t, l)}</p>
         <p className="flex items-center gap-1 text-[13px] text-muted num">
-          <span>{formatNumber(l.quantity)} {l.unitSymbol}</span>
+          <span>{formatQuantity(l.quantity, l.unitSymbol)}</span>
           {l.cityName && (
             <>
               <span aria-hidden>·</span>

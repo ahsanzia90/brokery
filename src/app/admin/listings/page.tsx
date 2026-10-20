@@ -7,6 +7,7 @@ import { humanize } from "@/lib/utils/labels";
 import { Alert } from "@/components/ui/alert";
 import { int, qs, str, type SearchParams } from "@/lib/admin/params";
 import { formatDate, formatNumber, formatPKR } from "@/lib/utils/format";
+import { formatQuantity } from "@/lib/utils/format";
 import { bulkApproveAction } from "./actions";
 
 export const dynamic = "force-dynamic";
@@ -47,7 +48,7 @@ export default async function AdminListingsPage({ searchParams }: { searchParams
                 {f.status === "pending_review" && <Td><input type="checkbox" name="ids" value={l.id} aria-label={`Select ${l.title}`} /></Td>}
                 <Td><Link href={`/admin/listings/${l.id}`} className="font-semibold adm-link">{l.title}</Link>{Number(reports) > 0 && <Badge tone="danger" className="ms-2">{Number(reports)} reports</Badge>}</Td>
                 <Td>{commodity.nameEn}</Td>
-                <Td className="num">{formatNumber(l.quantity)} {unit.symbol}</Td>
+                <Td className="num">{formatQuantity(l.quantity, unit.symbol)}</Td>
                 <Td className="num">{l.priceAmount ? formatPKR(l.priceAmount) : <span className="text-muted">{humanize(l.priceType)}</span>}</Td>
                 <Td>{city?.nameEn ?? "—"}</Td>
                 <Td><Link href={`/admin/businesses/${biz.id}`} className="hover:underline">{biz.name}</Link> <Badge tone={verificationTone(biz.verificationLevel)}>{biz.verificationLevel.replace(/_/g, " ")}</Badge></Td>

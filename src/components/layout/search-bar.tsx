@@ -63,7 +63,7 @@ export function SearchBar({ size = "md", autoFocus, initialQuery = "", placehold
     router.push(`/search?q=${encodeURIComponent(term)}`);
   }
 
-  const inputCls = size === "lg" ? "h-16 text-[17px] ps-12 pe-32 rounded-[var(--r-md)] shadow-[var(--shadow-md)]" : size === "sm" ? "h-10 text-[14px] ps-10 pe-20 rounded-full" : "h-12 text-[15px] ps-11 pe-24 rounded-[var(--r-sm)]";
+  const inputCls = size === "lg" ? "h-16 text-[17px] ps-12 pe-32 rounded-[var(--r-md)] shadow-[var(--shadow-md)]" : size === "sm" ? "h-10 text-[14px] ps-10 pe-4 rounded-full" : "h-12 text-[15px] ps-11 pe-24 rounded-[var(--r-sm)]";
   const iconCls = size === "lg" ? "start-4 h-5 w-5" : size === "sm" ? "start-3.5 h-4 w-4" : "start-3.5 h-4.5 w-4.5";
 
   return (
@@ -108,7 +108,7 @@ export function SearchBar({ size = "md", autoFocus, initialQuery = "", placehold
           className={`block w-full border border-line-strong bg-surface text-ink placeholder:text-muted-2 focus:border-brand-700 focus:outline-none focus:ring-4 focus:ring-brand-800/10 ${inputCls}`}
         />
         <Search className={`pointer-events-none absolute top-1/2 -translate-y-1/2 text-muted ${iconCls}`} aria-hidden />
-        <button type="submit" className={`absolute top-1/2 end-1.5 -translate-y-1/2 font-semibold text-white hover:bg-brand-900 ${size === "lg" ? "h-12 rounded-[var(--r-sm)] bg-brand-800 px-5 text-[15px]" : size === "sm" ? "h-7 rounded-full bg-brand-800 px-3 text-[12px]" : "h-9 rounded-[6px] bg-brand-800 px-4 text-[14px]"}`}>
+        <button type="submit" className={size === "sm" ? "sr-only" : `absolute top-1/2 end-1.5 -translate-y-1/2 font-semibold text-white hover:bg-brand-900 ${size === "lg" ? "h-12 rounded-[var(--r-sm)] bg-brand-800 px-5 text-[15px]" : "h-9 rounded-[6px] bg-brand-800 px-4 text-[14px]"}`}>
           {t("home.search.button")}
         </button>
       </form>

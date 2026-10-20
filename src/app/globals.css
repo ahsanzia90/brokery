@@ -180,7 +180,8 @@ html[lang="ur"] .font-latin, html[lang="ur"] input[type="tel"], html[lang="ur"] 
 @media (prefers-reduced-motion: reduce) { * { animation-duration: 0.01ms !important; transition-duration: 0.01ms !important; } }
 ::selection { background: var(--lime-400); color: var(--brand-950); }
 
-/* ---------- layout helpers ---------- */
+/* ---------- layout helpers (components layer: utilities override them) ---------- */
+@layer components {
 .container-page { width: 100%; max-width: 1200px; margin-inline: auto; padding-inline: 16px; }
 @media (min-width: 640px) { .container-page { padding-inline: 24px; } }
 @media (min-width: 1024px) { .container-page { padding-inline: 32px; } }
@@ -205,6 +206,8 @@ html[lang="ur"] .font-latin, html[lang="ur"] input[type="tel"], html[lang="ur"] 
 /* tinted photo/illustration tile */
 .tile { position: relative; overflow: hidden; border-radius: var(--r-lg); background: var(--tint-sand); }
 .tile img { width: 100%; height: 100%; object-fit: cover; }
+
+}
 
 /* ---------- prose ---------- */
 .prose-simple { max-width: 68ch; }

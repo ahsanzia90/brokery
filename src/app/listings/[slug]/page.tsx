@@ -12,6 +12,7 @@ import { isFavorited } from "@/lib/favorites/queries";
 import { track } from "@/lib/analytics/track";
 import { lname } from "@/lib/data/browse-helpers";
 import { formatDate, formatNumber, formatPKR } from "@/lib/utils/format";
+import { formatQuantity } from "@/lib/utils/format";
 import { BRAND_DEFAULTS } from "@/lib/config/brand";
 import { Breadcrumbs } from "@/components/ui/breadcrumbs";
 import { Section } from "@/components/ui/section";
@@ -45,7 +46,7 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
   return buildMetadata({
     path: `/listings/${d.listing.slug}`,
     title: `${d.listing.title}${d.location.city ? ` in ${d.location.city}` : ""}`,
-    description: `${d.commodity.nameEn}${d.variety ? ` ${d.variety.nameEn}` : ""}: ${formatNumber(d.listing.quantity)} ${d.unit.symbol} available from ${d.business.name}${d.location.city ? `, ${d.location.city}` : ""}${price}. Contact the supplier or request a quote.`,
+    description: `${d.commodity.nameEn}${d.variety ? ` ${d.variety.nameEn}` : ""}: ${formatQuantity(d.listing.quantity, d.unit.symbol)} available from ${d.business.name}${d.location.city ? `, ${d.location.city}` : ""}${price}. Contact the supplier or request a quote.`,
     noindex: d.listing.status !== "published",
     image: d.images[0] ? `/files/public/${d.images[0].storagePath}` : null,
   });
@@ -96,7 +97,7 @@ export default async function ListingDetailPage({ params }: Props) {
   const gradeText = d.grade ? lname(locale, d.grade) : d.listing.customGrade ? `${d.listing.customGrade} (${t("browse.customSpec")})` : null;
 
   const facts = [
-    { label: t("common.quantity"), value: `${formatNumber(d.listing.quantity)} ${d.unit.symbol}${d.listing.quantityKg ? ` (≈ ${formatNumber(d.listing.quantityKg)} kg)` : ""}` },
+    { label: t("common.quantity"), value: `${formatQuantity(d.listing.quantity, d.unit.symbol)}${d.listing.quantityKg ? ` (≈ ${formatNumber(d.listing.quantityKg)} kg)` : ""}` },
     ...(d.listing.minOrderQuantity ? [{ label: t("common.minOrder"), value: `${formatNumber(d.listing.minOrderQuantity)} ${d.minOrderUnit?.symbol ?? d.unit.symbol}` }] : []),
     { label: t("common.location"), value: locationText || t("common.notAvailable") },
     { label: t("common.delivery"), value: t(`listing.delivery.${d.listing.deliveryAvailable}`) },
