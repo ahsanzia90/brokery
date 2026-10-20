@@ -1,13 +1,15 @@
 "use client";
 import Link from "next/link";
 import { useState } from "react";
+import { usePathname } from "next/navigation";
 import { BadgeCheck, BookOpen, CornerDownRight, FileText, Flag, FolderTree, Globe, Inbox, LayoutDashboard, LayoutTemplate, LineChart, MapPin, Menu, MessageSquareText, Package, Scale, ScrollText, Settings, SlidersHorizontal, Store, ToggleLeft, Upload, Users, X, type LucideIcon } from "lucide-react";
 import type { AdminNavItem } from "@/lib/admin/nav";
 
 const ICONS: Record<string, LucideIcon> = { BadgeCheck, BookOpen, CornerDownRight, FileText, Flag, FolderTree, Globe, Inbox, LayoutDashboard, LayoutTemplate, LineChart, MapPin, MessageSquareText, Package, Scale, ScrollText, Settings, SlidersHorizontal, Store, ToggleLeft, Upload, Users };
 
-export function AdminNav({ items, currentPath }: { items: AdminNavItem[]; currentPath: string }) {
+export function AdminNav({ items }: { items: AdminNavItem[] }) {
   const [open, setOpen] = useState(false);
+  const currentPath = usePathname() ?? "/admin";
   const groups = [...new Set(items.map((i) => i.group))];
   const isActive = (href: string) => (href === "/admin" ? currentPath === "/admin" : currentPath === href || (currentPath.startsWith(href + "/") && !items.some((o) => o.href !== href && o.href.startsWith(href + "/") && currentPath.startsWith(o.href))));
   return (

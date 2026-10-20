@@ -4,10 +4,12 @@ import { useEffect, useState } from "react";
 import { Menu, X } from "lucide-react";
 import type { Locale } from "@/lib/i18n/config";
 import { LanguageSwitcher } from "./language-switcher";
+import { useCurrentPath } from "@/components/ui/active-link";
 import { buttonClass } from "@/components/ui/button";
 
-export function MobileMenu({ labels, nav, user, locale, currentPath, unreadCount }: { labels: Record<string, string>; nav: Array<{ href: string; label: string }>; user: { isSeller: boolean; isAdmin: boolean } | null; locale: Locale; currentPath: string; unreadCount: number }) {
+export function MobileMenu({ labels, nav, user, locale, unreadCount }: { labels: Record<string, string>; nav: Array<{ href: string; label: string }>; user: { isSeller: boolean; isAdmin: boolean } | null; locale: Locale; unreadCount: number }) {
   const [open, setOpen] = useState(false);
+  const currentPath = useCurrentPath();
   useEffect(() => {
     document.body.style.overflow = open ? "hidden" : "";
     return () => {
@@ -63,7 +65,7 @@ export function MobileMenu({ labels, nav, user, locale, currentPath, unreadCount
           </div>
           <div className="mt-6 flex items-center justify-between border-t border-line pt-4">
             <span className="text-[14px] font-medium text-muted">{labels.language}</span>
-            <LanguageSwitcher locale={locale} next={currentPath} />
+            <LanguageSwitcher locale={locale} />
           </div>
         </div>
       )}

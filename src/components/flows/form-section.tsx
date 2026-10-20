@@ -3,10 +3,10 @@ import type { ReactNode } from "react";
 /** Grouped form section: numbered-free, title + helper on the left of a divider, fields below. */
 export function FormSection({ title, description, children, first }: { title: ReactNode; description?: ReactNode; children: ReactNode; first?: boolean }) {
   return (
-    <section className={first ? "" : "mt-8 border-t border-line pt-8"}>
-      <h2 className="text-[17px] font-bold text-ink">{title}</h2>
-      {description && <p className="mt-1 mb-4 max-w-xl text-[14px] text-muted">{description}</p>}
-      {!description && <div className="mb-4" />}
+    <section className={first ? "" : "mt-12 border-t border-line pt-10"}>
+      <h2 className="text-[20px] font-bold text-ink">{title}</h2>
+      {description && <p className="mt-1.5 mb-6 max-w-xl text-[15px] leading-relaxed text-muted">{description}</p>}
+      {!description && <div className="mb-6" />}
       {children}
     </section>
   );

@@ -967,5 +967,6 @@
   "wizard.short.6": "Review",
   "rfq.form.what": "Type and grade",
   "rfq.offer.lowest": "Lowest",
-  "browse.cityCount": "{count} cities"
+  "browse.cityCount": "{count} cities",
+  "rfq.form.customSpec": "Grade not in the list? Describe it (optional)"
 }

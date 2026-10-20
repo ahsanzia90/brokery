@@ -1,32 +1,33 @@
 import Link from "next/link";
 import type { ComponentType } from "react";
-import { Bell, Briefcase, ClipboardList, FileText, Heart, Inbox, LayoutDashboard, Package, Settings, ShieldCheck, ArrowLeftRight } from "lucide-react";
+import { FileText, ArrowLeftRight } from "lucide-react";
 import type { Translator } from "@/lib/i18n/translate";
 import type { CurrentUser } from "@/lib/auth/session";
 import { enableSellerAction } from "@/lib/auth/actions";
+import { ShellNavLink, type ShellItem } from "./shell-nav-link";
 
 type Mode = "buyer" | "seller";
-type Item = { href: string; label: string; Icon: ComponentType<{ className?: string; strokeWidth?: number }>; exact?: boolean; badge?: number };
+type Item = ShellItem;
 
 export function dashboardItems(mode: Mode, t: Translator, badges: Partial<Record<string, number>> = {}): Item[] {
   if (mode === "seller") {
     return [
-      { href: "/dashboard/seller", label: t("dash.nav.overview"), Icon: LayoutDashboard, exact: true },
-      { href: "/dashboard/seller/listings", label: t("dash.nav.listings"), Icon: Package, badge: badges.listings },
-      { href: "/dashboard/seller/enquiries", label: t("dash.nav.enquiries"), Icon: Inbox, badge: badges.enquiries },
-      { href: "/dashboard/seller/business", label: t("dash.nav.business"), Icon: Briefcase },
-      { href: "/dashboard/seller/verification", label: t("dash.nav.verification"), Icon: ShieldCheck },
-      { href: "/favorites", label: t("dash.nav.favorites"), Icon: Heart },
-      { href: "/notifications", label: t("dash.nav.notifications"), Icon: Bell, badge: badges.notifications },
-      { href: "/account", label: t("dash.nav.account"), Icon: Settings },
+      { href: "/dashboard/seller", label: t("dash.nav.overview"), icon: "LayoutDashboard", exact: true },
+      { href: "/dashboard/seller/listings", label: t("dash.nav.listings"), icon: "Package", badge: badges.listings },
+      { href: "/dashboard/seller/enquiries", label: t("dash.nav.enquiries"), icon: "Inbox", badge: badges.enquiries },
+      { href: "/dashboard/seller/business", label: t("dash.nav.business"), icon: "Briefcase" },
+      { href: "/dashboard/seller/verification", label: t("dash.nav.verification"), icon: "ShieldCheck" },
+      { href: "/favorites", label: t("dash.nav.favorites"), icon: "Heart" },
+      { href: "/notifications", label: t("dash.nav.notifications"), icon: "Bell", badge: badges.notifications },
+      { href: "/account", label: t("dash.nav.account"), icon: "Settings" },
     ];
   }
   return [
-    { href: "/dashboard/buyer", label: t("dash.nav.overview"), Icon: LayoutDashboard, exact: true },
-    { href: "/dashboard/buyer/requests", label: t("dash.nav.requests"), Icon: ClipboardList, badge: badges.requests },
-    { href: "/favorites", label: t("dash.nav.favorites"), Icon: Heart },
-    { href: "/notifications", label: t("dash.nav.notifications"), Icon: Bell, badge: badges.notifications },
-    { href: "/account", label: t("dash.nav.account"), Icon: Settings },
+    { href: "/dashboard/buyer", label: t("dash.nav.overview"), icon: "LayoutDashboard", exact: true },
+    { href: "/dashboard/buyer/requests", label: t("dash.nav.requests"), icon: "ClipboardList", badge: badges.requests },
+    { href: "/favorites", label: t("dash.nav.favorites"), icon: "Heart" },
+    { href: "/notifications", label: t("dash.nav.notifications"), icon: "Bell", badge: badges.notifications },
+    { href: "/account", label: t("dash.nav.account"), icon: "Settings" },
   ];
 }
 
@@ -34,9 +35,8 @@ export function dashboardItems(mode: Mode, t: Translator, badges: Partial<Record
  * Signed-in shell: left rail on desktop, horizontally scrolling segmented tabs on mobile,
  * with a buyer ⇄ seller mode switch. Pure layout; pages render their own headers.
  */
-export function DashboardShell({ mode, currentPath, t, user, badges, children, title }: { mode: Mode; currentPath: string; t: Translator; user: CurrentUser; badges?: Partial<Record<string, number>>; children: React.ReactNode; title?: string }) {
+export function DashboardShell({ mode, t, user, badges, children, title }: { mode: Mode; currentPath?: string; t: Translator; user: CurrentUser; badges?: Partial<Record<string, number>>; children: React.ReactNode; title?: string }) {
   const items = dashboardItems(mode, t, badges);
-  const isActive = (it: Item) => (it.exact ? currentPath === it.href : currentPath === it.href || currentPath.startsWith(it.href + "/"));
   const otherMode: Mode = mode === "seller" ? "buyer" : "seller";
   const switchHref = otherMode === "seller" ? "/dashboard/seller" : "/dashboard/buyer";
   return (
@@ -66,18 +66,11 @@ export function DashboardShell({ mode, currentPath, t, user, badges, children, t
             {/* mobile: scrolling tabs */}
             <div className="md:hidden">
             <ul className="scroll-x -mx-4 px-4">
-              {items.map((it) => {
-                const active = isActive(it);
-                return (
-                  <li key={it.href}>
-                    <Link href={it.href} aria-current={active ? "page" : undefined} className={`inline-flex h-10 items-center gap-1.5 rounded-full border px-3.5 text-[13px] font-semibold ${active ? "border-ink bg-ink text-white" : "border-line bg-surface text-ink-2"}`}>
-                      <it.Icon className="h-4 w-4" strokeWidth={2} />
-                      {it.label}
-                      {it.badge ? <span className={`rounded-full px-1.5 text-[11px] num ${active ? "bg-lime-500 text-brand-950" : "bg-danger text-white"}`}>{it.badge}</span> : null}
-                    </Link>
-                  </li>
-                );
-              })}
+              {items.map((it) => (
+                <li key={it.href}>
+                  <ShellNavLink item={it} variant="tab" />
+                </li>
+              ))}
               {user.isSeller ? (
                 <li>
                   <Link href={switchHref} className="inline-flex h-10 items-center gap-1.5 rounded-full border border-dashed border-line-strong px-3.5 text-[13px] font-semibold text-brand-800">
@@ -89,18 +82,11 @@ export function DashboardShell({ mode, currentPath, t, user, badges, children, t
             </div>
             {/* desktop: rail */}
             <ul className="hidden space-y-0.5 md:block">
-              {items.map((it) => {
-                const active = isActive(it);
-                return (
-                  <li key={it.href}>
-                    <Link href={it.href} aria-current={active ? "page" : undefined} className={`flex h-10 items-center gap-3 rounded-[var(--r-sm)] px-3 text-[14px] font-semibold transition-colors ${active ? "bg-brand-50 text-brand-900" : "text-ink-2 hover:bg-surface-2 hover:text-ink"}`}>
-                      <it.Icon className={`h-[18px] w-[18px] ${active ? "text-brand-800" : "text-muted"}`} strokeWidth={2} />
-                      <span className="flex-1 truncate">{it.label}</span>
-                      {it.badge ? <span className="rounded-full bg-danger px-1.5 text-[11px] font-bold leading-[18px] text-white num">{it.badge}</span> : null}
-                    </Link>
-                  </li>
-                );
-              })}
+              {items.map((it) => (
+                <li key={it.href}>
+                  <ShellNavLink item={it} variant="rail" />
+                </li>
+              ))}
             </ul>
           </nav>
           {mode === "seller" && (

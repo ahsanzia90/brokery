@@ -332,7 +332,7 @@ export function RfqForm({ prefill, cities, isAuthenticated, initialQuery, restor
               </Field>
             )}
           </div>
-          <Field label={`${t("common.grade")} / ${t("common.notListed")} (${t("common.optional")})`} htmlFor="customSpecification">
+          <Field label={t("rfq.form.customSpec")} htmlFor="customSpecification">
             <Input id="customSpecification" value={draft.customSpecification} maxLength={300} onChange={(e) => set("customSpecification", e.target.value)} placeholder={t("listing.custom.grade")} />
           </Field>
         </FormSection>

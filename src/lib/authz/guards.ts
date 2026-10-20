@@ -39,7 +39,7 @@ export async function requireUserPage(nextPath?: string): Promise<CurrentUser> {
 
 export async function requireAdminPage(permission?: Permission): Promise<CurrentUser> {
   const user = await getCurrentUser();
-  if (!user) redirect(`/login?next=${encodeURIComponent("/admin")}`);
+  if (!user) redirect("/admin/login");
   if (!isAdmin(user.roles)) redirect("/forbidden");
   if (permission && !hasPermission(user.roles, permission)) redirect("/admin/forbidden");
   return user;

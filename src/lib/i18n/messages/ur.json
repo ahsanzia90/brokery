@@ -967,5 +967,6 @@
   "wizard.short.6": "جائزہ",
   "rfq.form.what": "قسم اور گریڈ",
   "rfq.offer.lowest": "سب سے کم",
-  "browse.cityCount": "{count} شہر"
+  "browse.cityCount": "{count} شہر",
+  "rfq.form.customSpec": "گریڈ فہرست میں نہیں؟ یہاں لکھیں (اختیاری)"
 }
