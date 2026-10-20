@@ -57,6 +57,7 @@ export async function verifyOtpAction(_prev: unknown, formData: FormData): Promi
     if (user.status === "deactivated") updates.status = "active"; // signing in reactivates within retention window
     await db.update(profiles).set(updates).where(eq(profiles.id, user.id));
   }
+  await maybeBootstrapAdmin(user.id, phone);
   await createSession(user.id);
   const next = safeNext(formData.get("next"));
   const needsProfile = isNew || !user.name;
@@ -103,6 +104,22 @@ export async function completeProfileAction(_prev: unknown, formData: FormData):
   const next = safeNext(formData.get("next"));
   const target = isSeller && (next === "/" || next === "/dashboard/buyer") ? "/dashboard/seller" : next;
   redirect(target);
+}
+
+/**
+ * Hosted setups without a terminal: the number in BOOTSTRAP_ADMIN_PHONE becomes super admin
+ * on its first sign-in, but only while the platform has no super admin at all.
+ */
+async function maybeBootstrapAdmin(userId: string, phone: string): Promise<void> {
+  const configured = process.env.BOOTSTRAP_ADMIN_PHONE;
+  if (!configured) return;
+  const { normalizePakistanPhone } = await import("@/lib/utils/phone");
+  if (normalizePakistanPhone(configured) !== phone) return;
+  const [existing] = await db.select({ id: userRoles.id }).from(userRoles).where(eq(userRoles.role, "super_admin")).limit(1);
+  if (existing) return;
+  await db.insert(userRoles).values({ userId, role: "super_admin" }).onConflictDoNothing();
+  const { audit } = await import("@/lib/audit");
+  await audit({ actorId: userId, action: "roles.bootstrap_super_admin", entityType: "user", entityId: userId, reason: "BOOTSTRAP_ADMIN_PHONE first sign-in" });
 }
 
 export async function logoutAction() {

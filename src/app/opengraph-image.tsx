@@ -2,6 +2,7 @@ import { ImageResponse } from "next/og";
 import { getBrand } from "@/lib/config/settings";
 
 export const runtime = "nodejs";
+export const dynamic = "force-dynamic"; // brand name comes from the database
 export const alt = "Pakistan Commodity Market";
 export const size = { width: 1200, height: 630 };
 export const contentType = "image/png";

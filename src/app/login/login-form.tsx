@@ -8,7 +8,7 @@ import { Field, Input } from "@/components/ui/form";
 import { Alert } from "@/components/ui/alert";
 import { formatPhoneDisplay } from "@/lib/utils/phone";
 
-export function LoginForm({ next, otpConfigured }: { next: string; otpConfigured: boolean }) {
+export function LoginForm({ next, otpConfigured, demoMode }: { next: string; otpConfigured: boolean; demoMode?: boolean }) {
   const { t } = useI18n();
   const router = useRouter();
   const [reqState, reqAction, reqPending] = useActionState(requestOtpAction, null);
@@ -49,6 +49,7 @@ export function LoginForm({ next, otpConfigured }: { next: string; otpConfigured
     return (
       <form action={reqAction} noValidate>
         {!otpConfigured && <Alert tone="warning" className="mb-4">{t("auth.deliveryNotConfigured")}</Alert>}
+        {demoMode && <Alert tone="info" className="mb-4">{t("auth.demoMode")}</Alert>}
         <Field label={t("auth.phoneLabel")} required htmlFor="phone" error={reqError()}>
           <div className="flex items-stretch gap-2" dir="ltr">
             <span className="inline-flex items-center rounded-[var(--radius)] border border-border-strong bg-surface-muted px-3 font-semibold font-latin">+92</span>

@@ -859,5 +859,6 @@
   "price.filterRates": "ریٹ فلٹر کریں",
   "price.rateCount": "{count} شائع شدہ ریٹ",
   "price.findSuppliersFor": "{name} کے سپلائر تلاش کریں",
-  "price.requestQuoteFor": "{name} کے ریٹ مانگیں"
+  "price.requestQuoteFor": "{name} کے ریٹ مانگیں",
+  "auth.demoMode": "ڈیمو موڈ: یہ سرور SMS نہیں بھیجتا۔ سائٹ آپریٹر سرور لاگ سے کوڈ دیکھ کر آپ کو بتا سکتا ہے۔"
 }

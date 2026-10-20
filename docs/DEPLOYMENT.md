@@ -1,5 +1,35 @@
 # Deployment
 
+## 0. Fastest path: free hosting with no local installation (Vercel + Neon)
+
+1. **Database** — create a free project at https://neon.tech, copy its connection string
+   (`postgresql://…neon.tech/neondb?sslmode=require`).
+2. **Hosting** — at https://vercel.com, "Add New → Project", import the GitHub repository.
+   Framework is detected as Next.js; `vercel.json` already sets the build command
+   (`db:migrate && db:seed && build`) and a daily cron for `/api/cron`.
+3. **Environment variables** (Vercel → Project → Settings → Environment Variables):
+
+   | Name | Value |
+   | --- | --- |
+   | `DATABASE_URL` | the Neon connection string |
+   | `DATABASE_SSL` | `true` |
+   | `AUTH_SECRET` | any random text ≥ 32 characters |
+   | `NEXT_PUBLIC_SITE_URL` | `https://<your-project>.vercel.app` (update if you add a domain) |
+   | `BOOTSTRAP_ADMIN_PHONE` | your mobile number, e.g. `03001234567` |
+   | `CRON_SECRET` | any random text (Vercel sends it to the cron route automatically) |
+   | `OTP_PROVIDER` | `console` for a demo (see below) or `twilio`/`http` with credentials |
+   | `OTP_CONSOLE_ALLOW_IN_PRODUCTION` | `true` only for a demo |
+
+4. Deploy. The first build runs migrations and the seed against Neon.
+5. Open `/login`, enter the bootstrap phone number. In demo mode the code is printed in
+   **Vercel → Project → Logs** (filter for `[OTP]`). After sign-in that account is super
+   admin and `/admin` is available.
+
+Demo mode means login codes are visible in your private hosting logs, so only you can sign
+people in. Before a public launch, switch `OTP_PROVIDER` to a real SMS provider and set
+`OTP_CONSOLE_ALLOW_IN_PRODUCTION=false`. Uploads on Vercel need `STORAGE_PROVIDER=s3`
+(Cloudflare R2 has a free tier); without it, listings work but photo upload fails gracefully.
+
 ## 1. Environments
 
 Use at least two: **development** (local PostgreSQL, `OTP_PROVIDER=console`, local storage)

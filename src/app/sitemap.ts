@@ -4,7 +4,8 @@ import { db } from "@/db";
 import { businesses, categories, commodities, commodityVarieties, contentPages, listings, locations, marketPrices, seoMetadata } from "@/db/schema";
 import { BRAND_DEFAULTS } from "@/lib/config/brand";
 
-export const revalidate = 3600;
+// Rendered on demand so builds never depend on database availability; cached one hour.
+export const dynamic = "force-dynamic";
 
 /**
  * Canonical, indexable pages only. Variety, commodity+city and city-directory pages

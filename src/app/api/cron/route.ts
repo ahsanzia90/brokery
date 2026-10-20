@@ -80,6 +80,7 @@ export async function POST(req: Request) {
   return NextResponse.json({ ok: true, ranAt: new Date().toISOString(), ...report });
 }
 
-export async function GET() {
-  return NextResponse.json({ ok: false, error: "Use POST with Authorization: Bearer <CRON_SECRET>" }, { status: 405 });
+/** Vercel Cron and similar schedulers call GET; same authorization applies. */
+export async function GET(req: Request) {
+  return POST(req);
 }

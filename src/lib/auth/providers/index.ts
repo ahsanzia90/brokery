@@ -8,17 +8,27 @@ export interface OtpProvider {
   send(phoneE164: string, code: string, ttlSeconds: number): Promise<OtpDeliveryResult>;
 }
 
-/** Development only: prints the code to the server log. Refuses to run in production. */
+/**
+ * Prints the code to the server log instead of sending an SMS.
+ * Development default. In production it is refused unless OTP_CONSOLE_ALLOW_IN_PRODUCTION=true
+ * is set explicitly (for a hosted demo/staging where the operator reads codes from the
+ * hosting provider's private logs). Never enable it on a public launch.
+ */
+export function consoleOtpAllowed(): boolean {
+  return process.env.NODE_ENV !== "production" || process.env.OTP_CONSOLE_ALLOW_IN_PRODUCTION === "true";
+}
+
 class ConsoleProvider implements OtpProvider {
   name = "console";
   get configured() {
-    return process.env.NODE_ENV !== "production";
+    return consoleOtpAllowed();
   }
   async send(phone: string, code: string): Promise<OtpDeliveryResult> {
-    if (process.env.NODE_ENV === "production") {
+    if (!consoleOtpAllowed()) {
       return { ok: false, provider: this.name, error: "console OTP provider is not allowed in production" };
     }
-    console.log(`\n[OTP][dev-only] code for ${phone}: ${code}\n`);
+    const tag = process.env.NODE_ENV === "production" ? "[OTP][DEMO MODE – codes in logs, do not use for a public launch]" : "[OTP][dev-only]";
+    console.log(`\n${tag} code for ${phone}: ${code}\n`);
     return { ok: true, provider: this.name };
   }
 }

@@ -859,5 +859,6 @@
   "price.filterRates": "Filter rates",
   "price.rateCount": "{count} published rates",
   "price.findSuppliersFor": "Find {name} suppliers",
-  "price.requestQuoteFor": "Request {name} quotes"
+  "price.requestQuoteFor": "Request {name} quotes",
+  "auth.demoMode": "Demo mode: this server does not send SMS. The site operator reads the code from the server logs and can tell you the code."
 }
