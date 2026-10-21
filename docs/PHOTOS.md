@@ -12,9 +12,9 @@ Images uploaded in Admin → Taxonomy on a category or commodity always take pre
 
 1. Put files in `assets/photos/` named exactly as below (`.jpg`, `.png` or `.webp`). Landscape,
    at least 1400px wide, the commodity filling most of the frame, natural light, no text overlays.
-2. Run `npm run images:build`. It writes optimised `public/images/commodities/<key>.webp` files and
-   updates `src/lib/visual/manifest.json`.
-3. Commit `assets/photos`, `public/images/commodities` and the manifest, then deploy.
+2. Commit the files (on GitHub: open the `assets/photos` folder → **Add file → Upload files**).
+3. Vercel runs `npm run images:build` during every deployment, so the optimised WebP files and the
+   manifest are generated automatically. (Locally, run `npm run images:build` yourself.)
 
 Use photographs you own or that are licensed for commercial use (your own mandi shots are best;
 CC0 / Unsplash-licensed images are fine). Keep a note of the source for each file.
