@@ -1,3 +1,4 @@
+import { CommodityVisual, PhotoBanner } from "@/components/marketplace/commodity-visual";
 import type { Metadata } from "next";
 import Link from "next/link";
 import { ArrowRight, BadgeCheck, Handshake, MapPin, Percent, Wallet } from "lucide-react";
@@ -14,7 +15,6 @@ import { buttonClass } from "@/components/ui/button";
 import { CategoryCard, ChangeBadge, ListingCard, ListingMedia, RateChip, SupplierCard } from "@/components/marketplace/cards";
 import { Check } from "lucide-react";
 import { HeroActions } from "@/components/marketplace/hero-actions";
-import { CommodityArt } from "@/components/illustrations/commodity-art";
 import { formatDate, formatNumber, formatPKR, formatQuantity } from "@/lib/utils/format";
 
 export async function generateMetadata(): Promise<Metadata> {
@@ -52,6 +52,9 @@ export default async function HomePage() {
       <section className="relative overflow-hidden" aria-labelledby="hero-q">
         <div className="pointer-events-none absolute inset-x-0 top-0 -z-10 h-[520px] bg-[radial-gradient(900px_420px_at_15%_-10%,var(--tint-mint),transparent_60%),radial-gradient(700px_380px_at_90%_0%,var(--tint-lavender),transparent_60%)]" aria-hidden />
         <div className="container-page pt-10 pb-6 md:pt-16 md:pb-10">
+          <div className="mx-auto mb-8 hidden max-h-[300px] overflow-hidden rounded-[var(--r-xl)] has-[img]:block" aria-hidden>
+            <PhotoBanner photoKey="hero-mandi" className="max-h-[300px]" />
+          </div>
           <div className="mx-auto max-w-3xl text-center">
             <p className="eyebrow">{t("home.eyebrow")}</p>
             <h1 id="hero-q" className="mt-3 text-[34px] font-extrabold leading-[1.08] text-ink md:text-[56px]">
@@ -124,7 +127,7 @@ export default async function HomePage() {
                 <div className="border-b border-line px-4 py-2.5 text-[12px] font-bold uppercase tracking-wide text-muted">{t("home.sell.preview")}</div>
                 <div className="flex items-center gap-3 px-4 py-3">
                   <div className="h-16 w-20 shrink-0 overflow-hidden rounded-[var(--r-sm)]">
-                    {previewListing ? <ListingMedia imagePath={previewListing.imagePath} alt="" commoditySlug={previewListing.commoditySlug} commodityName={previewListing.commodityName} /> : <div className="flex h-full w-full items-center justify-center bg-tint-sand"><CommodityArt artKey="grains" className="h-12 w-12" /></div>}
+                    {previewListing ? <ListingMedia imagePath={previewListing.imagePath} alt="" commoditySlug={previewListing.commoditySlug} commodityName={previewListing.commodityName} /> : <div className="flex h-full w-full items-center justify-center bg-tint-sand"><CommodityVisual artKey="grains" className="h-12 w-12" /></div>}
                   </div>
                   <div className="min-w-0">
                     <p className="truncate text-[15px] font-bold text-ink">{previewListing ? previewListing.title : t("home.sell.previewTitle")}</p>

@@ -61,6 +61,11 @@ export const SETTING_GROUPS: Array<{ group: string; description?: string; keys: 
     keys: [{ key: "rfq.expiry_days", label: "Buying request expiry (days)", type: "number", group: "Buying requests" }],
   },
   {
+    group: "Appearance",
+    description: "Photo mode shows real photographs of commodities (from the photo library or uploaded images) instead of illustrations wherever one exists. Preview without switching everyone: open /api/visual?mode=photos.",
+    keys: [{ key: "ui.photos_enabled", label: "Photo mode (recommended once the photo library is filled)", type: "boolean", group: "Appearance", help: "Photos come from assets/photos → npm run images:build, or from images uploaded on categories and commodities." }],
+  },
+  {
     group: "SEO",
     keys: [
       { key: "seo.default_title_suffix", label: "Default title suffix", type: "text", group: "SEO" },

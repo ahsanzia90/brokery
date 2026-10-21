@@ -13,6 +13,8 @@ import { I18nProvider } from "@/lib/i18n/client";
 import { ToastProvider } from "@/components/ui/toast";
 import { getBrand, getSettings } from "@/lib/config/settings";
 import { BRAND_DEFAULTS } from "@/lib/config/brand";
+import { getVisualMode } from "@/lib/visual/mode";
+import { VisualModeProvider } from "@/lib/visual/client";
 
 export async function generateMetadata(): Promise<Metadata> {
   const brand = await getBrand();
@@ -31,12 +33,14 @@ export const viewport: Viewport = { width: "device-width", initialScale: 1, them
 
 /** Root layout: document shell and providers only. Site chrome lives in (site)/layout.tsx, admin chrome in admin/(panel)/layout.tsx. */
 export default async function RootLayout({ children }: { children: React.ReactNode }) {
-  const locale = await getLocale();
+  const [locale, visual] = await Promise.all([getLocale(), getVisualMode()]);
   return (
-    <html lang={locale} dir={dirFor(locale)}>
+    <html lang={locale} dir={dirFor(locale)} data-visual={visual}>
       <body className="flex min-h-dvh flex-col">
         <I18nProvider locale={locale} messages={getMessages(locale)}>
-          <ToastProvider>{children}</ToastProvider>
+          <VisualModeProvider mode={visual}>
+            <ToastProvider>{children}</ToastProvider>
+          </VisualModeProvider>
         </I18nProvider>
       </body>
     </html>

@@ -1,3 +1,4 @@
+import { CommodityVisual } from "@/components/marketplace/commodity-visual";
 import Link from "next/link";
 import { notFound, redirect } from "next/navigation";
 import { ChevronLeft, MessageCircle, PhoneCall } from "lucide-react";
@@ -9,7 +10,7 @@ import { Alert } from "@/components/ui/alert";
 import { buttonClass } from "@/components/ui/button";
 import { QuoteForm } from "@/components/seller/quote-form";
 import { Facts } from "@/components/flows/form-section";
-import { CommodityArt, artKeyFor, artTint } from "@/components/illustrations/commodity-art";
+import { artKeyFor, artTint } from "@/components/illustrations/commodity-art";
 import { formatDate, formatNumber, formatPKR } from "@/lib/utils/format";
 import { formatQuantity } from "@/lib/utils/format";
 import { formatPhoneDisplay, whatsappLink } from "@/lib/utils/phone";
@@ -40,7 +41,7 @@ export default async function SellerEnquiryDetailPage({ params }: { params: Prom
       </Link>
       <header className="flex gap-4 border-b border-line pb-5">
         <span className={`flex h-16 w-16 shrink-0 items-center justify-center rounded-[var(--r-md)] ${artTint[artKey]}`}>
-          <CommodityArt artKey={artKey} className="h-11 w-11" />
+          <CommodityVisual artKey={artKey} className="h-11 w-11" />
         </span>
         <div className="min-w-0 flex-1">
           <div className="flex flex-wrap items-center gap-2">

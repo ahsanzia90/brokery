@@ -1,4 +1,5 @@
 "use client";
+import { CommodityVisual } from "@/components/marketplace/commodity-visual";
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
@@ -8,7 +9,7 @@ import { Button } from "@/components/ui/button";
 import { Field, Input, RadioCard, Select, Textarea, inputClass } from "@/components/ui/form";
 import { Alert } from "@/components/ui/alert";
 import { Search, X } from "lucide-react";
-import { CommodityArt, artKeyFor, artTint } from "@/components/illustrations/commodity-art";
+import { artKeyFor, artTint } from "@/components/illustrations/commodity-art";
 import { FormSection, StickyActions } from "@/components/flows/form-section";
 
 type CommodityLite = { id: string; slug: string; nameEn: string; nameUr: string | null; categoryName?: string; categoryNameUr?: string | null };
@@ -266,7 +267,7 @@ export function RfqForm({ prefill, cities, isAuthenticated, initialQuery, restor
               <li key={c.id}>
                 <button type="button" onClick={() => { set("commodity", c); setErrors({}); }} className="flex min-h-[60px] w-full items-center gap-3 px-3 py-2 text-start hover:bg-surface-2">
                   <span className={`flex h-11 w-11 shrink-0 items-center justify-center rounded-[8px] ${artTint[k]}`}>
-                    <CommodityArt artKey={k} className="h-8 w-8" />
+                    <CommodityVisual artKey={k} className="h-8 w-8" />
                   </span>
                   <span className="min-w-0 flex-1">
                     <span className="block truncate text-[15px] font-semibold text-ink">{name(c)}</span>
@@ -296,7 +297,7 @@ export function RfqForm({ prefill, cities, isAuthenticated, initialQuery, restor
 
       <div className="mt-4 flex items-center gap-3 rounded-[var(--r-md)] border border-brand-800 bg-brand-50 p-3 ring-1 ring-brand-800">
         <span className={`flex h-14 w-14 shrink-0 items-center justify-center rounded-[var(--r-sm)] ${artTint[ck]}`}>
-          <CommodityArt artKey={ck} className="h-10 w-10" />
+          <CommodityVisual artKey={ck} className="h-10 w-10" />
         </span>
         <div className="min-w-0 flex-1">
           <p className="text-[12px] font-semibold uppercase tracking-wide text-brand-700">{t("common.commodity")}</p>

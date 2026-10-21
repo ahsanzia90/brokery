@@ -1,3 +1,4 @@
+import { CommodityVisual } from "@/components/marketplace/commodity-visual";
 import type { Metadata } from "next";
 import Link from "next/link";
 import { ArrowRight } from "lucide-react";
@@ -9,7 +10,7 @@ import { Breadcrumbs } from "@/components/ui/breadcrumbs";
 import { PageHeader } from "@/components/ui/section";
 import { JsonLd, breadcrumbJsonLd } from "@/lib/seo/jsonld";
 import { lname } from "@/lib/data/browse-helpers";
-import { CommodityArt, artKeyFor, artTint } from "@/components/illustrations/commodity-art";
+import { artKeyFor, artTint } from "@/components/illustrations/commodity-art";
 import { Chip } from "@/components/public/chip";
 
 export async function generateMetadata(): Promise<Metadata> {
@@ -38,7 +39,7 @@ export default async function CategoriesPage() {
                   // eslint-disable-next-line @next/next/no-img-element
                   <img src={`/files/public/${c.imagePath}`} alt="" className="h-full w-full object-cover" loading="lazy" />
                 ) : (
-                  <CommodityArt artKey={key} className="h-14 w-14" />
+                  <CommodityVisual artKey={key} className="h-14 w-14" />
                 )}
               </Link>
               <div className="min-w-0 flex-1">

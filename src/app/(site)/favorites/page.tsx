@@ -1,3 +1,4 @@
+import { CommodityVisual } from "@/components/marketplace/commodity-visual";
 import type { Metadata } from "next";
 import Link from "next/link";
 import { ArrowRight, Heart } from "lucide-react";
@@ -8,7 +9,7 @@ import { getFavorites } from "@/lib/favorites/queries";
 import { EmptyState } from "@/components/ui/empty-state";
 import { LinkButton } from "@/components/ui/button";
 import { ListingCard, SupplierCard } from "@/components/marketplace/cards";
-import { CommodityArt, artKeyFor, artTint } from "@/components/illustrations/commodity-art";
+import { artKeyFor, artTint } from "@/components/illustrations/commodity-art";
 import { DashHeader, SegmentedTabs } from "@/components/flows/dashboard-shell";
 import { WithDashboardShell } from "@/components/flows/shell-page";
 
@@ -62,7 +63,7 @@ export default async function FavoritesPage({ searchParams }: { searchParams: Pr
             return (
               <li key={c.id} className="flex items-center gap-3 rounded-[var(--r-md)] border border-line bg-surface p-3">
                 <span className={`flex h-14 w-14 shrink-0 items-center justify-center rounded-[var(--r-sm)] ${artTint[k]}`}>
-                  <CommodityArt artKey={k} className="h-10 w-10" />
+                  <CommodityVisual artKey={k} className="h-10 w-10" />
                 </span>
                 <span className="min-w-0 flex-1">
                   <Link href={`/commodities/${c.slug}`} className="block truncate text-[16px] font-bold text-ink hover:text-brand-800">

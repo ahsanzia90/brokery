@@ -1,9 +1,10 @@
 "use client";
+import { CommodityVisual } from "@/components/marketplace/commodity-visual";
 import { useEffect, useId, useRef, useState } from "react";
 import { useI18n } from "@/lib/i18n/client";
 import { inputClass } from "@/components/ui/form";
 import { Search, X } from "lucide-react";
-import { CommodityArt, artKeyFor, artTint } from "@/components/illustrations/commodity-art";
+import { artKeyFor, artTint } from "@/components/illustrations/commodity-art";
 
 export type CommodityOption = { id: string; slug: string; nameEn: string; nameUr: string | null; categoryName?: string | null; categoryNameUr?: string | null };
 
@@ -44,7 +45,7 @@ export function CommodityPicker({ value, onChange, categoryId, autoFocus, placeh
     return (
       <div className="flex items-center gap-3 rounded-[var(--r-md)] border border-brand-800 bg-brand-50 p-3 ring-1 ring-brand-800">
         <span className={`flex h-14 w-14 shrink-0 items-center justify-center rounded-[var(--r-sm)] ${artTint[artKeyFor(value.slug, value.nameEn)]}`}>
-          <CommodityArt slug={value.slug} name={value.nameEn} className="h-10 w-10" />
+          <CommodityVisual slug={value.slug} name={value.nameEn} className="h-10 w-10" />
         </span>
         <div className="min-w-0 flex-1">
           <p className="text-[12px] font-semibold uppercase tracking-wide text-brand-700">{t("wizard.chosen")}</p>
@@ -97,7 +98,7 @@ export function CommodityPicker({ value, onChange, categoryId, autoFocus, placeh
                 className="flex w-full items-center gap-3 rounded-[var(--r-sm)] px-2.5 py-2 text-start hover:bg-surface-2"
               >
                 <span className={`flex h-10 w-10 shrink-0 items-center justify-center rounded-[8px] ${artTint[artKeyFor(c.slug, c.nameEn)]}`}>
-                  <CommodityArt slug={c.slug} name={c.nameEn} className="h-7 w-7" />
+                  <CommodityVisual slug={c.slug} name={c.nameEn} className="h-7 w-7" />
                 </span>
                 <span className="min-w-0 flex-1">
                   <span className="block truncate text-[15px] font-semibold text-ink">{commodityLabel(c, locale)}</span>

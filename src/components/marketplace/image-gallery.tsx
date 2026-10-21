@@ -1,6 +1,7 @@
 "use client";
+import { CommodityVisual } from "@/components/marketplace/commodity-visual";
 import { useState } from "react";
-import { CommodityArt, artKeyFor, artTint } from "@/components/illustrations/commodity-art";
+import { artKeyFor, artTint } from "@/components/illustrations/commodity-art";
 
 export function ImageGallery({ images, commoditySlug, commodityName }: { images: Array<{ src: string; alt: string }>; commoditySlug?: string | null; commodityName?: string | null }) {
   const [active, setActive] = useState(0);
@@ -8,7 +9,7 @@ export function ImageGallery({ images, commoditySlug, commodityName }: { images:
     const key = artKeyFor(commoditySlug, commodityName);
     return (
       <div className={`flex aspect-[16/10] w-full items-center justify-center rounded-[var(--r-lg)] md:aspect-[4/3] ${artTint[key]}`} aria-hidden>
-        <CommodityArt artKey={key} className="h-[48%] w-[48%]" />
+        <CommodityVisual artKey={key} className="h-[48%] w-[48%]" />
       </div>
     );
   }

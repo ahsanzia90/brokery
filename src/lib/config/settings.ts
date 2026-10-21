@@ -30,6 +30,7 @@ export const SETTING_DEFAULTS: SettingsMap = {
   "seo.default_description":
     "Find commodities, check published market rates and contact suppliers across Pakistan. Free B2B marketplace for buyers and sellers.",
   "analytics.enabled": true,
+  "ui.photos_enabled": false,
   "rate_limits.listing_create_per_day": 20,
   "rate_limits.rfq_create_per_day": 20,
   "rate_limits.contact_clicks_per_hour": 60,

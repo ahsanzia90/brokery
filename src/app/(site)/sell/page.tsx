@@ -1,3 +1,4 @@
+import { CommodityVisual } from "@/components/marketplace/commodity-visual";
 import type { Metadata } from "next";
 import Link from "next/link";
 import { BadgeCheck, Percent, ShieldCheck } from "lucide-react";
@@ -10,7 +11,6 @@ import { SellStart } from "@/components/seller/sell-start";
 import { PageHeader } from "@/components/ui/section";
 import { StepPanel } from "@/components/public/steps";
 import { Chip, ChipRow } from "@/components/public/chip";
-import { CommodityArt } from "@/components/illustrations/commodity-art";
 
 export async function generateMetadata(): Promise<Metadata> {
   const brand = await getBrand();
@@ -45,7 +45,7 @@ export default async function SellPage() {
               <div className="overflow-hidden rounded-[var(--r-md)] border border-black/5 bg-white">
                 <div className="flex items-center gap-3 px-4 py-3">
                   <div className="flex h-14 w-16 shrink-0 items-center justify-center rounded-[var(--r-sm)] bg-tint-sand">
-                    <CommodityArt artKey="grains" className="h-10 w-10" />
+                    <CommodityVisual artKey="grains" className="h-10 w-10" />
                   </div>
                   <div className="min-w-0">
                     <p className="truncate text-[14px] font-bold text-ink">{t("home.sell.previewTitle")}</p>

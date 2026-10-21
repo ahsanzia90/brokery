@@ -1,3 +1,4 @@
+import { CommodityVisual } from "@/components/marketplace/commodity-visual";
 import type { Metadata } from "next";
 import Link from "next/link";
 import { notFound } from "next/navigation";
@@ -10,7 +11,7 @@ import { Badge, rfqStatusTone } from "@/components/ui/badge";
 import { buttonClass } from "@/components/ui/button";
 import { ChevronRight, Inbox } from "lucide-react";
 import { VerificationLabel } from "@/components/marketplace/cards";
-import { CommodityArt, artKeyFor, artTint } from "@/components/illustrations/commodity-art";
+import { artKeyFor, artTint } from "@/components/illustrations/commodity-art";
 import { Alert } from "@/components/ui/alert";
 import { EmptyState } from "@/components/ui/empty-state";
 import { formatDate, formatDateTime, formatNumber, formatPKR } from "@/lib/utils/format";
@@ -68,7 +69,7 @@ export default async function RfqDetailPage({ params, searchParams }: { params: 
       <header className="flex flex-col gap-4 border-b border-line pb-5 sm:flex-row sm:items-start sm:justify-between">
         <div className="flex gap-4">
           <span className={`flex h-16 w-16 shrink-0 items-center justify-center rounded-[var(--r-md)] ${artTint[ck]}`}>
-            <CommodityArt artKey={ck} className="h-11 w-11" />
+            <CommodityVisual artKey={ck} className="h-11 w-11" />
           </span>
           <div className="min-w-0">
             <div className="flex flex-wrap items-center gap-2">

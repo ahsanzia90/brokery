@@ -1,9 +1,9 @@
+import { CommodityVisual } from "@/components/marketplace/commodity-visual";
 import type { Metadata } from "next";
 import { getT } from "@/lib/i18n/server";
 import { NOINDEX } from "@/lib/seo/metadata";
 import { SearchBar } from "@/components/layout/search-bar";
 import { LinkButton } from "@/components/ui/button";
-import { CommodityArt } from "@/components/illustrations/commodity-art";
 
 export const metadata: Metadata = { title: "Page not found", ...NOINDEX };
 
@@ -13,7 +13,7 @@ export default async function NotFound() {
   return (
     <div className="container-page py-10 md:py-16">
       <div className="panel panel-sand mx-auto max-w-2xl text-center !py-12">
-        <CommodityArt artKey="generic" className="mx-auto h-24 w-24" />
+        <CommodityVisual artKey="generic" className="mx-auto h-24 w-24" />
         <p className="eyebrow mt-4">404</p>
         <h1 className="mt-2 text-[28px] font-extrabold text-ink md:text-[36px]">{t("error.404.title")}</h1>
         <p className="mx-auto mt-2 max-w-md text-[15px] text-ink-2">{t("error.404.body")}</p>

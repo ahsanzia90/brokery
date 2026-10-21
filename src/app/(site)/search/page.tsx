@@ -1,3 +1,4 @@
+import { CommodityVisual } from "@/components/marketplace/commodity-visual";
 import type { Metadata } from "next";
 import Link from "next/link";
 import { ArrowRight, SearchX } from "lucide-react";
@@ -22,7 +23,7 @@ import { SupplierCard } from "@/components/marketplace/cards";
 import { ListingFilters } from "@/components/marketplace/listing-filters";
 import { ListingResults } from "@/components/marketplace/listing-results";
 import { Chip, ChipRow } from "@/components/public/chip";
-import { CommodityArt, artKeyFor } from "@/components/illustrations/commodity-art";
+import { artKeyFor } from "@/components/illustrations/commodity-art";
 import { MissingCommodityForm } from "./missing-commodity-form";
 
 export const metadata: Metadata = { title: "Search", ...NOINDEX };
@@ -91,7 +92,7 @@ export default async function SearchPage({ searchParams }: Props) {
         <Link href={`/commodities/${matched.slug}${cityLoc ? `/city/${cityLoc.slug}` : ""}`} className="group mb-8 flex flex-col gap-3 rounded-[var(--r-lg)] bg-tint-mint p-4 transition-colors hover:bg-brand-100 sm:flex-row sm:items-center sm:gap-4 md:p-5">
           <span className="flex items-center gap-3 sm:contents">
             <span className="flex h-14 w-14 shrink-0 items-center justify-center rounded-[var(--r-md)] bg-white/70">
-              <CommodityArt artKey={artKeyFor(matched.slug, matched.nameEn)} className="h-10 w-10" />
+              <CommodityVisual artKey={artKeyFor(matched.slug, matched.nameEn)} className="h-10 w-10" />
             </span>
           </span>
           <span className="min-w-0 flex-1">

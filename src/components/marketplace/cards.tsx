@@ -1,10 +1,11 @@
+import { CommodityVisual } from "@/components/marketplace/commodity-visual";
+import { CategoryTile } from "@/components/marketplace/category-tile";
 import Link from "next/link";
 import { ArrowDownRight, ArrowUpRight, MapPin, ShieldCheck } from "lucide-react";
 import type { Locale } from "@/lib/i18n/config";
 import type { Translator } from "@/lib/i18n/translate";
 import { formatQuantity, formatNumber, formatPKR, formatDate, daysBetween } from "@/lib/utils/format";
 import { Badge, verificationTone } from "@/components/ui/badge";
-import { CommodityArt, artKeyFor, artTint } from "@/components/illustrations/commodity-art";
 
 /* ---------- Shared view models (plain objects; safe to pass to client components) ---------- */
 export type ListingCardData = {
@@ -71,16 +72,7 @@ export function priceLabel(t: Translator, l: { priceType: ListingCardData["price
 
 /** Listing image or a tinted illustration placeholder for the commodity. */
 export function ListingMedia({ imagePath, alt, commoditySlug, commodityName, className = "" }: { imagePath?: string | null; alt: string; commoditySlug?: string | null; commodityName?: string | null; className?: string }) {
-  if (imagePath) {
-    // eslint-disable-next-line @next/next/no-img-element
-    return <img src={`/files/public/${imagePath}`} alt={alt} loading="lazy" className={`h-full w-full object-cover ${className}`} />;
-  }
-  const key = artKeyFor(commoditySlug, commodityName);
-  return (
-    <div className={`flex h-full w-full items-center justify-center ${artTint[key]} ${className}`}>
-      <CommodityArt artKey={key} className="h-[56%] w-[56%] opacity-90" />
-    </div>
-  );
+  return <CommodityVisual fill imagePath={imagePath} alt={alt} slug={commoditySlug} name={commodityName} className={className} />;
 }
 
 export function ListingCard({ l, t }: { l: ListingCardData; t: Translator }) {
@@ -244,22 +236,7 @@ export function RateChip({ p, locale }: { p: PriceRowData; locale: Locale }) {
 
 export function CategoryCard({ c, locale, href }: { c: CategoryCardData; locale: Locale; href?: string }) {
   const name = locale === "ur" && c.nameUr ? c.nameUr : c.nameEn;
-  const key = artKeyFor(c.slug, c.nameEn);
-  return (
-    <Link href={href ?? `/categories/${c.slug}`} className={`group relative flex min-h-[164px] flex-col justify-end overflow-hidden rounded-[var(--r-lg)] p-4 pt-[92px] transition-[transform,box-shadow] hover:-translate-y-0.5 hover:shadow-[var(--shadow-md)] ${c.imagePath ? "bg-ink" : artTint[key]}`}>
-      {c.imagePath ? (
-        // eslint-disable-next-line @next/next/no-img-element
-        <img src={`/files/public/${c.imagePath}`} alt="" className="absolute inset-0 h-full w-full object-cover opacity-90 transition-transform duration-500 group-hover:scale-[1.04]" loading="lazy" />
-      ) : (
-        <CommodityArt artKey={key} className="absolute -end-2 -top-1 h-[96px] w-[96px] opacity-95 transition-transform duration-500 group-hover:scale-105 rtl:-start-2 rtl:end-auto" />
-      )}
-      {c.imagePath && <span className="absolute inset-0 bg-gradient-to-t from-black/60 via-black/10 to-transparent" aria-hidden />}
-      <span className="relative">
-        <span className={`block text-[15px] font-bold leading-tight ${c.imagePath ? "text-white" : "text-ink"}`}>{name}</span>
-        {typeof c.count === "number" && c.count > 0 && <span className={`mt-0.5 block text-[12px] num ${c.imagePath ? "text-white/80" : "text-muted"}`}>{c.count} {c.count === 1 ? "listing" : "listings"}</span>}
-      </span>
-    </Link>
-  );
+  return <CategoryTile c={{ slug: c.slug, name, nameEn: c.nameEn, imagePath: c.imagePath, count: c.count, countLabel: c.count === 1 ? "listing" : "listings" }} href={href} />;
 }
 
 export function isStale(observationDate: string | Date, staleDays: number): boolean {

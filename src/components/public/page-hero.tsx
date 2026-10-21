@@ -1,5 +1,6 @@
+import { CommodityVisual } from "@/components/marketplace/commodity-visual";
 import type { ReactNode } from "react";
-import { CommodityArt, artKeyFor, artTint, type ArtKey } from "@/components/illustrations/commodity-art";
+import { artKeyFor, artTint, type ArtKey } from "@/components/illustrations/commodity-art";
 import { cn } from "@/components/ui/cn";
 
 /**
@@ -13,12 +14,7 @@ export function PageHero({ eyebrow, title, altName, intro, actions, imagePath, a
     <section className={cn("rounded-[var(--r-xl)] p-5 md:p-8", bg)}>
       <div className="grid grid-cols-[auto_1fr] items-start gap-4 md:gap-7 md:items-center">
         <div className="relative h-[72px] w-[72px] shrink-0 overflow-hidden rounded-[var(--r-md)] bg-white/60 md:h-40 md:w-40 md:rounded-[var(--r-lg)]">
-          {imagePath ? (
-            // eslint-disable-next-line @next/next/no-img-element
-            <img src={`/files/public/${imagePath}`} alt="" className="h-full w-full object-cover" />
-          ) : (
-            <CommodityArt artKey={key} className="h-full w-full p-3" />
-          )}
+          <CommodityVisual fill imagePath={imagePath} artKey={key} slug={slug} name={name} />
         </div>
         <div className="min-w-0">
           {eyebrow && <p className="eyebrow">{eyebrow}</p>}

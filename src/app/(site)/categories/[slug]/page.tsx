@@ -1,3 +1,4 @@
+import { CommodityVisual } from "@/components/marketplace/commodity-visual";
 import type { Metadata } from "next";
 import Link from "next/link";
 import { permanentRedirect } from "next/navigation";
@@ -20,7 +21,7 @@ import { LinkButton } from "@/components/ui/button";
 import { PageHero } from "@/components/public/page-hero";
 import { Chip, ChipRow } from "@/components/public/chip";
 import { GuideCard } from "@/components/public/guide-card";
-import { CommodityArt, artKeyFor, artTint } from "@/components/illustrations/commodity-art";
+import { artKeyFor, artTint } from "@/components/illustrations/commodity-art";
 
 type Props = { params: Promise<{ slug: string }> };
 
@@ -96,7 +97,7 @@ export default async function CategoryPage({ params }: Props) {
                 <li key={s.id}>
                   <Link href={`/categories/${s.slug}`} className="group flex items-center gap-3 rounded-[var(--r-md)] border border-line bg-surface p-3 transition-colors hover:border-brand-700">
                     <span className={`flex h-12 w-12 shrink-0 items-center justify-center rounded-[var(--r-sm)] ${artTint[key]}`}>
-                      <CommodityArt artKey={key} className="h-9 w-9" />
+                      <CommodityVisual artKey={key} className="h-9 w-9" />
                     </span>
                     <span className="min-w-0 flex-1">
                       <span className="block truncate text-[15px] font-semibold text-ink group-hover:text-brand-900">{lname(locale, s)}</span>

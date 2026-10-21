@@ -1,10 +1,11 @@
+import { CommodityVisual } from "@/components/marketplace/commodity-visual";
 import Link from "next/link";
 import { ChevronRight, MapPin } from "lucide-react";
 import type { Translator } from "@/lib/i18n/translate";
 import type { Locale } from "@/lib/i18n/config";
 import type { RfqListItem } from "@/lib/rfq/queries";
 import { Badge, rfqStatusTone } from "@/components/ui/badge";
-import { CommodityArt, artKeyFor, artTint } from "@/components/illustrations/commodity-art";
+import { artKeyFor, artTint } from "@/components/illustrations/commodity-art";
 import { formatDate, formatNumber } from "@/lib/utils/format";
 import { formatQuantity } from "@/lib/utils/format";
 
@@ -17,7 +18,7 @@ export function RfqList({ items, t, locale }: { items: RfqListItem[]; t: Transla
           <li key={r.id}>
             <Link href={`/rfq/${r.id}`} className="flex items-center gap-3 px-4 py-3.5 hover:bg-surface-2">
               <span className={`flex h-12 w-12 shrink-0 items-center justify-center rounded-[var(--r-sm)] ${artTint[key]}`}>
-                <CommodityArt artKey={key} className="h-8 w-8" />
+                <CommodityVisual artKey={key} className="h-8 w-8" />
               </span>
               <span className="min-w-0 flex-1">
                 <span className="flex flex-wrap items-center gap-x-2 gap-y-0.5">
