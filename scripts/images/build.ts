@@ -32,7 +32,7 @@ const OFFLINE = process.env.PHOTO_OFFLINE === "1";
 const MAX_W = 1400;
 const MIN_W = 600;
 const MIN_W_FALLBACK = 300;
-const TIMEOUT_MS = 25_000;
+const TIMEOUT_MS = 15_000;
 const CONCURRENCY = 4;
 
 type Candidate = { unsplash?: string; pexels?: number; url?: string; title?: string; author?: string; licence?: string };
@@ -75,7 +75,16 @@ async function fetchBytes(url: string): Promise<Buffer> {
   const ctrl = new AbortController();
   const timer = setTimeout(() => ctrl.abort(), TIMEOUT_MS);
   try {
-    const res = await fetch(url, { redirect: "follow", signal: ctrl.signal, headers: { "user-agent": "mandilink-image-build/1.0 (+https://github.com/ahsanzia90/brokery)" } });
+    const res = await fetch(url, {
+      redirect: "follow",
+      signal: ctrl.signal,
+      headers: {
+        // Some hosts refuse obvious scripts; identify as a regular browser fetching an image.
+        "user-agent": "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/124.0 Safari/537.36",
+        accept: "image/avif,image/webp,image/jpeg,image/png,image/*;q=0.9,*/*;q=0.5",
+        "accept-language": "en",
+      },
+    });
     if (!res.ok) throw new Error(`HTTP ${res.status}`);
     const type = res.headers.get("content-type") ?? "";
     if (!type.startsWith("image/")) throw new Error(`not an image (${type || "no content-type"})`);
@@ -107,6 +116,9 @@ async function writeWebp(input: Buffer | string, key: string) {
     .toFile(path.join(OUT, `${key}.webp`));
 }
 
+let unsplashFailures = 0;
+let unsplashBlocked = false;
+
 async function buildKey(key: string, candidates: Candidate[]): Promise<Credit | null> {
   const own = localFile(SRC, key);
   if (own) {
@@ -116,6 +128,7 @@ async function buildKey(key: string, candidates: Candidate[]): Promise<Credit | 
   for (const c of candidates) {
     const r = resolveCandidate(c);
     if (!r) continue;
+    if (r.source === "Unsplash" && unsplashBlocked) continue; // every Unsplash download is refused on this host; skip the rest
     try {
       const bytes = await fetchBytes(r.url);
       if (!(await usable(bytes))) throw new Error("image too small or unreadable");
@@ -124,6 +137,7 @@ async function buildKey(key: string, candidates: Candidate[]): Promise<Credit | 
     } catch (e) {
       const msg = e instanceof Error ? e.message : String(e);
       if (!OFFLINE) console.warn(`  · ${key}: ${r.source} ${c.unsplash ?? c.pexels ?? c.url} failed (${msg})`);
+      if (!OFFLINE && /^HTTP 4/.test(msg) && r.source === "Unsplash" && ++unsplashFailures >= 3) unsplashBlocked = true;
     }
   }
   const fb = localFile(FALLBACK, key);
@@ -186,6 +200,7 @@ async function main() {
 
   console.log(`${credits.length} photos in manifest (${credits.filter((c) => c.origin === "download").length} downloaded, ${credits.filter((c) => c.origin === "local").length} own, ${credits.filter((c) => c.origin === "fallback").length} fallback).`);
   if (missing.length) console.log(`No photo for: ${missing.join(", ")} (illustration will be shown).`);
+  if (unsplashBlocked) console.log("Note: Unsplash refused downloads from this host; only Pexels/own/fallback photos were used.");
 }
 
 main().catch((e) => {

@@ -15,7 +15,8 @@ key in this order:
 
 1. **Your own photo** in `assets/photos/<key>.jpg` (also `.png`, `.webp`, `.avif`). Always wins.
 2. **Curated downloads** listed in `assets/photos/sources.json`: freely licensed photographs from
-   Unsplash and Pexels, chosen per key with one or two alternates. They are fetched at build time
+   Pexels (with Unsplash as a last resort, since Unsplash's download endpoint refuses build servers),
+   chosen per key with one or two alternates. They are fetched at build time
    (the build server has internet access), checked to be real images of a usable size, resized and
    converted to WebP. Downloads are cached in `.next/cache/photos`, so unchanged keys do not hit the
    network on later builds.
