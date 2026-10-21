@@ -1,0 +1,197 @@
+{
+  "$comment": "Curated, freely licensed photographs downloaded during `npm run images:build` (Vercel has internet; this list is tried only when assets/photos/<key>.jpg is absent). Candidates are tried in order; the first that downloads and passes validation is used. Unsplash: https://unsplash.com/license · Pexels: https://www.pexels.com/license/",
+  "sources": [
+    { "key": "hero-mandi", "candidates": [
+      { "unsplash": "ZbgPa-S42QM", "title": "Fresh produce piled high at a vibrant market stall" },
+      { "unsplash": "D6qTM9JvxtY", "title": "A large assortment of vegetables on display at a market" }
+    ]},
+    { "key": "hero-trucks", "candidates": [
+      { "pexels": 17358983, "title": "Bags with cargo in truck" },
+      { "unsplash": "d8pVZOQ7qN0", "title": "Truck art, Pakistan" }
+    ]},
+    { "key": "rice", "candidates": [
+      { "unsplash": "CjOkMxiOGOE", "title": "Shallow focus of rice grains", "author": "Kai Pilger" },
+      { "pexels": 4187621, "title": "Rice in close up photography", "author": "Polina Tankilevitch" }
+    ]},
+    { "key": "wheat", "candidates": [
+      { "unsplash": "f6EXfPGbRss", "title": "A close up of wheat", "author": "Wolfgang Hasselmann" },
+      { "unsplash": "CM5SDsXOfH4", "title": "A close up of a bunch of wheat", "author": "Nikolett Emmert" }
+    ]},
+    { "key": "maize", "candidates": [
+      { "pexels": 1459331, "title": "Bunch of corn cob", "author": "Livier Garcia" },
+      { "pexels": 3739642, "title": "Corn cobs", "author": "Hasan Ma'ruf" },
+      { "unsplash": "fbiMfwF_LyA", "title": "Corn field during day" }
+    ]},
+    { "key": "pulses", "candidates": [
+      { "unsplash": "5352eOUYay4", "title": "A bowl filled with chickpeas", "author": "Karyna Panchenko" }
+    ]},
+    { "key": "grains", "candidates": [
+      { "unsplash": "1tsmABGdT0g", "title": "Flour sacks" }
+    ]},
+    { "key": "sugar", "candidates": [
+      { "unsplash": "9A28d24Pyd4", "title": "Sugar cane field with a blue sky", "author": "Emmanuel Appiah" }
+    ]},
+    { "key": "oilseeds", "candidates": [
+      { "unsplash": "eYLAzx1oBAU", "title": "A large sunflower in a field of sunflowers", "author": "Radek Skrzypczak" },
+      { "unsplash": "zlXEuOAWW2s", "title": "Field of bright yellow rapeseed flowers in bloom", "author": "T Y" }
+    ]},
+    { "key": "fodder", "candidates": [
+      { "unsplash": "uwtaf2l_qLQ", "title": "A field full of round bales of hay", "author": "Fabrício Severo" },
+      { "unsplash": "XcqYkTNGYsc", "title": "A field full of hay bales under a cloudy sky", "author": "Nick Fewings" }
+    ]},
+    { "key": "mango", "candidates": [
+      { "unsplash": "7DrqdqKTroY", "title": "A pile of ripe mangoes with red and green colors", "author": "Daniel Dan" }
+    ]},
+    { "key": "kinnow", "candidates": [
+      { "unsplash": "DkVPpKLgxsM", "title": "Wooden crate filled with orange fruits", "author": "Rachid Oucharia" },
+      { "unsplash": "_MYcIi9DgYQ", "title": "Orange fruits (mandarin harvest)", "author": "Erol Ahmed" }
+    ]},
+    { "key": "fruits", "candidates": [
+      { "unsplash": "zg27Rrb94vk", "title": "Fresh produce displayed in wooden crates at a market" },
+      { "unsplash": "XPltBlxfChk", "title": "Fresh vegetables displayed in wooden crates at market" }
+    ]},
+    { "key": "potato", "candidates": [
+      { "pexels": 67103, "title": "Sack of potatoes", "author": "Torsten Dettlaff" },
+      { "unsplash": "R6jzDKIM-0c", "title": "A group of potatoes" }
+    ]},
+    { "key": "onion", "candidates": [
+      { "unsplash": "dmlyEy_VK30", "title": "A pile of red onions sitting next to each other", "author": "Engin Akyurt" },
+      { "unsplash": "U4YdDVliDlA", "title": "Onion lot", "author": "Thomas Martinsen" }
+    ]},
+    { "key": "tomato", "candidates": [
+      { "pexels": 11895396, "title": "Close-up shot of fresh red tomatoes on plastic crate" },
+      { "unsplash": "4_TruUQJWnY", "title": "Basket of tomatoes and vegetables" }
+    ]},
+    { "key": "vegetables", "candidates": [
+      { "unsplash": "D6qTM9JvxtY", "title": "A large assortment of vegetables on display at a market" },
+      { "unsplash": "sIZj69V2Mho", "title": "A bunch of fruits and vegetables on display at a market", "author": "wei" }
+    ]},
+    { "key": "spices", "candidates": [
+      { "unsplash": "Ap-TDt2U3hI", "title": "Spices market" },
+      { "unsplash": "VJnEbeFE--U", "title": "Red chilli lot", "author": "Heijo Reinl" }
+    ]},
+    { "key": "edible-oil", "candidates": [
+      { "unsplash": "-YoasoprGFo", "title": "Bottles of pure olive oil on a shelf", "author": "Zoshua Colah" }
+    ]},
+    { "key": "food-ingredients", "candidates": [
+      { "unsplash": "1tsmABGdT0g", "title": "Flour sacks" },
+      { "unsplash": "FqiIhxej3WI", "title": "A pile of red peppers sitting on top of a table" }
+    ]},
+    { "key": "cattle", "candidates": [
+      { "unsplash": "LXaVt1A0XnA", "title": "Cow, Karachi" }
+    ]},
+    { "key": "goats", "candidates": [
+      { "unsplash": "lVcl3-NV-fg", "title": "Herd of goats on green grass field during daytime", "author": "chris robert" },
+      { "unsplash": "tqXeLOBzJsI", "title": "Herd of goats on field during daytime", "author": "Jorge Salvador" }
+    ]},
+    { "key": "poultry", "candidates": [
+      { "unsplash": "Mpm69Pad_-8", "title": "Chicken poultry", "author": "Artem Beliaikin" }
+    ]},
+    { "key": "animal-products", "candidates": [
+      { "unsplash": "p1RQPfzCM5U", "title": "Seven brown eggs on tray" },
+      { "unsplash": "YUK1ekmWonk", "title": "A basket filled with brown eggs on top of a table" }
+    ]},
+    { "key": "fertilizer", "candidates": [
+      { "pexels": 18185333, "title": "Young man with a bucket spreading fertilizer on a crop field" },
+      { "pexels": 15388810, "title": "Man putting fertilizer on the rice field" }
+    ]},
+    { "key": "seeds", "candidates": [
+      { "unsplash": "weeX8nLLTgs", "title": "Person hand holding a wheat", "author": "Daniel Dvorský" },
+      { "unsplash": "HrmSDx-G-jk", "title": "A person's hand touching a wheat field", "author": "Julia Ivanina" }
+    ]},
+    { "key": "crop-protection", "candidates": [
+      { "unsplash": "EmbHgnc96hI", "title": "A tractor plowing a field with dust", "author": "Salokhiddin Fasikh" }
+    ]},
+    { "key": "farm-supplies", "candidates": [
+      { "unsplash": "YENDy2iLQFo", "title": "A tractor pulling a plow behind it in a field", "author": "Isaac Lind" },
+      { "unsplash": "5Yl2TSsqMXk", "title": "A red tractor plowing a field under a blue sky", "author": "Kern Morris" }
+    ]},
+    { "key": "steel-bars", "candidates": [
+      { "unsplash": "XRuBqN8o7Pg", "title": "Steel rebar" },
+      { "pexels": 46167, "title": "Steel bars" }
+    ]},
+    { "key": "steel-coils", "candidates": [
+      { "pexels": 8940223, "title": "Close-up of a roll of aluminum in a factory" }
+    ]},
+    { "key": "non-ferrous", "candidates": [
+      { "unsplash": "McflLY35lmw", "title": "Man in white button up shirt holding copper wire" },
+      { "pexels": 8940223, "title": "Close-up of a roll of aluminum in a factory" }
+    ]},
+    { "key": "minerals", "candidates": [
+      { "unsplash": "3IhjUMEGaGw", "title": "Himalayan rock salt", "author": "Yash Shah" },
+      { "pexels": 2624400, "title": "Close-up photo of Himalayan salt" }
+    ]},
+    { "key": "metals", "candidates": [
+      { "pexels": 46167, "title": "Steel bars" },
+      { "unsplash": "XRuBqN8o7Pg", "title": "Steel rebar" }
+    ]},
+    { "key": "cement", "candidates": [
+      { "unsplash": "rc5crEySTXo", "title": "Cement bags", "author": "Tim Johnson" },
+      { "pexels": 29519165, "title": "Stack of cement bags in warehouse setting" }
+    ]},
+    { "key": "bricks", "candidates": [
+      { "unsplash": "FziQRMsr4mw", "title": "Karangmangu red bricks", "author": "Rohmat" },
+      { "unsplash": "s9t2XPFwIwY", "title": "A pile of red bricks sitting on top of a cement slab" }
+    ]},
+    { "key": "sand-aggregate", "candidates": [
+      { "unsplash": "OiywY3XKTsQ", "title": "A pile of cement next to a pile of sand", "author": "set.sj" },
+      { "unsplash": "pQG5XPC8LNU", "title": "Close-up of gravel and sand texture" }
+    ]},
+    { "key": "construction", "candidates": [
+      { "unsplash": "iwx30aGxO8E", "title": "Construction workers observe a crane lifting materials", "author": "John Kakuk" },
+      { "unsplash": "wdYyYY9F0Ts", "title": "Construction site with piles of gravel and debris", "author": "Serg Karpow" }
+    ]},
+    { "key": "chemicals", "candidates": [
+      { "unsplash": "_hOkO9ooc0A", "title": "A row of blue barrels sitting on top of pallets" }
+    ]},
+    { "key": "plastics", "candidates": [
+      { "unsplash": "O0IjGbFT4tY", "title": "A close up of a plastic bag filled with lots of bubbles" }
+    ]},
+    { "key": "rubber", "candidates": [
+      { "unsplash": "KEaZffWNhyM", "title": "Stacks of old used car tires piled up", "author": "Engin Akyurt" },
+      { "unsplash": "vVLrfAzmWYw", "title": "Bunch of tires", "author": "Imthaz Ahamed" }
+    ]},
+    { "key": "cotton", "candidates": [
+      { "unsplash": "x0_yX5VXDjc", "title": "Cotton" },
+      { "unsplash": "7tCyoE0mgD8", "title": "Cotton plant" }
+    ]},
+    { "key": "yarn", "candidates": [
+      { "unsplash": "qNanlaiUXMo", "title": "Four assorted-color yarn thread spools", "author": "Olesia Buiar" },
+      { "unsplash": "J7toInsQdo4", "title": "A bunch of spools of thread are hanging on a wall" }
+    ]},
+    { "key": "fabric", "candidates": [
+      { "unsplash": "rEb9iHOF638", "title": "Stacked fabric rolls in various colors and patterns", "author": "Bernd Dittrich" }
+    ]},
+    { "key": "paper", "candidates": [
+      { "unsplash": "dto4Fap3bm8", "title": "A pile of rolled up rolls of paper", "author": "Lucy Francesca Yanamango Veliz" },
+      { "unsplash": "qmxzyEJ1PSQ", "title": "Grayscale photo of rolled papers", "author": "Nathan Dumlao" }
+    ]},
+    { "key": "packaging", "candidates": [
+      { "unsplash": "6N6EXN0x_E4", "title": "A room filled with many stacked cardboard boxes", "author": "Declan Sun" },
+      { "unsplash": "GCWOrIT29TE", "title": "Three cardboard boxes stacked on top of each other" }
+    ]},
+    { "key": "timber", "candidates": [
+      { "unsplash": "MYwmJyN6D3g", "title": "A pile of logs stacked on top of each other", "author": "Robert Bye" }
+    ]},
+    { "key": "coal", "candidates": [
+      { "unsplash": "kAv3w4ftDEM", "title": "A close up of a pile of coal", "author": "Anthony Ievlev" },
+      { "unsplash": "iB4Hs5HyDv8", "title": "A close up of a pile of black coal", "author": "Trevor Vannoy" }
+    ]},
+    { "key": "energy", "candidates": [
+      { "unsplash": "hp6Xj7LyZ1E", "title": "A large solar farm with many rows of solar panels", "author": "Harisankar" },
+      { "unsplash": "NH2Pj1fBuio", "title": "An aerial view of a large solar farm", "author": "Benoît Deschasaux" }
+    ]},
+    { "key": "scrap", "candidates": [
+      { "unsplash": "Xo0GJNqE6JI", "title": "Scrap metal", "author": "Bob Brewer" },
+      { "unsplash": "JcIhFttQJHw", "title": "Scrap yard" }
+    ]},
+    { "key": "machinery", "candidates": [
+      { "unsplash": "G_XmzeIiwMY", "title": "Old industrial lathe machine with metal shavings", "author": "Zoshua Colah" },
+      { "unsplash": "LeMks09eu4U", "title": "A man working on a machine in a factory", "author": "Mick Henson" }
+    ]},
+    { "key": "generic", "candidates": [
+      { "unsplash": "mFUIel9hWos", "title": "A warehouse filled with lots of boxes and bags", "author": "Manh LE" },
+      { "unsplash": "6N6EXN0x_E4", "title": "A room filled with many stacked cardboard boxes", "author": "Declan Sun" }
+    ]}
+  ]
+}

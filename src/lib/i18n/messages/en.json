@@ -968,5 +968,9 @@
   "rfq.form.what": "Type and grade",
   "rfq.offer.lowest": "Lowest",
   "browse.cityCount": "{count} cities",
-  "rfq.form.customSpec": "Grade not in the list? Describe it (optional)"
+  "rfq.form.customSpec": "Grade not in the list? Describe it (optional)",
+  "footer.photoCredits": "Photo credits",
+  "credits.sub": "Photographs shown in photo mode come from these photographers and sources. Photos uploaded by the marketplace team replace them.",
+  "credits.none": "No library photographs are in use yet.",
+  "credits.bundled": "Bundled with the site (freely licensed)."
 }

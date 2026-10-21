@@ -12,7 +12,7 @@ import { JsonLd, breadcrumbJsonLd } from "@/lib/seo/jsonld";
 type Props = { params: Promise<{ slug: string }> };
 
 /** Reserved top-level routes that must never be served as content pages. */
-const RESERVED = new Set(["admin", "api", "login", "onboarding", "dashboard", "account", "favorites", "notifications", "rfq", "sell", "buy", "search", "prices", "suppliers", "supplier", "listings", "commodities", "categories", "markets", "guides", "contact", "files", "forbidden"]);
+const RESERVED = new Set(["admin", "api", "login", "onboarding", "dashboard", "account", "favorites", "notifications", "rfq", "sell", "buy", "search", "prices", "suppliers", "supplier", "listings", "commodities", "categories", "markets", "guides", "contact", "files", "forbidden", "photo-credits"]);
 
 export async function generateMetadata({ params }: Props): Promise<Metadata> {
   const { slug } = await params;

@@ -1,0 +1,42 @@
+[
+  {
+    "key": "fruits",
+    "origin": "fallback",
+    "source": "assets/photos/fallback/fruits.jpg"
+  },
+  {
+    "key": "kinnow",
+    "origin": "fallback",
+    "source": "assets/photos/fallback/kinnow.jpg"
+  },
+  {
+    "key": "mango",
+    "origin": "fallback",
+    "source": "assets/photos/fallback/mango.jpg"
+  },
+  {
+    "key": "onion",
+    "origin": "fallback",
+    "source": "assets/photos/fallback/onion.jpg"
+  },
+  {
+    "key": "potato",
+    "origin": "fallback",
+    "source": "assets/photos/fallback/potato.jpg"
+  },
+  {
+    "key": "tomato",
+    "origin": "fallback",
+    "source": "assets/photos/fallback/tomato.jpg"
+  },
+  {
+    "key": "vegetables",
+    "origin": "fallback",
+    "source": "assets/photos/fallback/vegetables.jpg"
+  },
+  {
+    "key": "wheat",
+    "origin": "fallback",
+    "source": "assets/photos/fallback/wheat.jpg"
+  }
+]

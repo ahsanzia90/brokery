@@ -51,6 +51,7 @@ export function Footer({ t, locale, brandName, categories }: { t: Translator; lo
             <li><Link href="/contact" className={link}>{t("footer.contact")}</Link></li>
             <li><Link href="/privacy-policy" className={link}>{t("footer.privacy")}</Link></li>
             <li><Link href="/terms-of-use" className={link}>{t("footer.terms")}</Link></li>
+            <li><Link href="/photo-credits" className={link}>{t("footer.photoCredits")}</Link></li>
           </ul>
         </div>
       </div>

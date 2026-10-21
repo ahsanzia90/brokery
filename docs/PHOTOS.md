@@ -8,16 +8,38 @@ it for yourself only by opening `/api/visual?mode=photos` (`/api/visual?mode=def
 Where a photo is missing, the illustration is used, so you can fill the library gradually.
 Images uploaded in Admin → Taxonomy on a category or commodity always take precedence.
 
-## How to add photos
+## Where the photos come from
 
-1. Put files in `assets/photos/` named exactly as below (`.jpg`, `.png` or `.webp`). Landscape,
-   at least 1400px wide, the commodity filling most of the frame, natural light, no text overlays.
-2. Commit the files (on GitHub: open the `assets/photos` folder → **Add file → Upload files**).
-3. Vercel runs `npm run images:build` during every deployment, so the optimised WebP files and the
-   manifest are generated automatically. (Locally, run `npm run images:build` yourself.)
+The library is filled automatically. During every deployment `npm run images:build` resolves each
+key in this order:
 
-Use photographs you own or that are licensed for commercial use (your own mandi shots are best;
-CC0 / Unsplash-licensed images are fine). Keep a note of the source for each file.
+1. **Your own photo** in `assets/photos/<key>.jpg` (also `.png`, `.webp`, `.avif`). Always wins.
+2. **Curated downloads** listed in `assets/photos/sources.json`: freely licensed photographs from
+   Unsplash and Pexels, chosen per key with one or two alternates. They are fetched at build time
+   (the build server has internet access), checked to be real images of a usable size, resized and
+   converted to WebP. Downloads are cached in `.next/cache/photos`, so unchanged keys do not hit the
+   network on later builds.
+3. **Bundled fallback** in `assets/photos/fallback/<key>.jpg`: a handful of smaller, verified photos
+   used only if every download for that key fails.
+
+A key with nothing available keeps its illustration. Every build also writes
+`src/lib/visual/credits.json` and `public/images/commodities/CREDITS.md`, and the public page
+`/photo-credits` lists the photographer, source page and licence of each photo in use.
+
+Images uploaded in Admin → Taxonomy on a category or commodity always take precedence over all of the above.
+
+## Replacing a photo with your own
+
+1. Put the file in `assets/photos/` named exactly as in the list below. Landscape, at least 1400px
+   wide, the commodity filling most of the frame, natural light, no text overlays.
+2. Commit it (on GitHub: open the `assets/photos` folder → **Add file → Upload files**) and redeploy.
+
+To change which download is used for a key, edit its entry in `assets/photos/sources.json`
+(`{ "unsplash": "<photo id>" }`, `{ "pexels": <photo id> }` or `{ "url": "https://…" }`, with optional
+`title`, `author`, `licence`). Use photographs you own or that are licensed for commercial use.
+
+Build locally with `npm run images:build`; add `PHOTO_OFFLINE=1` to skip the network and use only
+local files and cached downloads.
 
 ## File list
 
