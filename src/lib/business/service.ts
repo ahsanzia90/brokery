@@ -9,6 +9,7 @@ import { normalizePakistanPhone } from "@/lib/utils/phone";
 import { audit } from "@/lib/audit";
 import { notify } from "@/lib/notifications";
 import { track } from "@/lib/analytics/track";
+import { attachOpenRfqsToBusiness } from "./quote-service";
 import { getBusinessForUser, getOpenVerification, userCanManageBusiness } from "./queries";
 
 export const BUSINESS_TYPES = ["trader", "wholesaler", "manufacturer", "farmer", "importer", "exporter", "distributor", "broker", "mill", "other"] as const;
@@ -125,6 +126,14 @@ export async function upsertBusiness(actor: Actor, raw: BusinessInput): Promise<
     }
     await tx.delete(businessCommodities).where(eq(businessCommodities.businessId, businessId));
     if (d.commodityIds.length) await tx.insert(businessCommodities).values(d.commodityIds.map((commodityId) => ({ businessId, commodityId }))).onConflictDoNothing();
+    // Requests posted before this seller listed these commodities are attached now, so the inbox is not empty.
+    const attached = await attachOpenRfqsToBusiness(businessId, d.commodityIds, tx);
+    if (attached > 0) {
+      await notify(
+        { userId: actor.userId, type: "new_rfq", title: `${attached} open buyer request${attached === 1 ? "" : "s"} match your commodities`, body: "Open them to send your offers.", linkPath: "/dashboard/seller/enquiries", entityType: "business", entityId: businessId },
+        tx,
+      );
+    }
     if (d.showPhonePublicly || d.showWhatsappPublicly || d.showAddressPublicly) {
       await tx.insert(userConsents).values({ userId: actor.userId, consentType: "contact_sharing", version: "2026-10", metadata: { phone: d.showPhonePublicly, whatsapp: d.showWhatsappPublicly, address: d.showAddressPublicly } });
     }

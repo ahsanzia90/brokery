@@ -3,7 +3,8 @@ import Link from "next/link";
 import { notFound, redirect } from "next/navigation";
 import { ChevronLeft, MessageCircle, PhoneCall } from "lucide-react";
 import { getSellerContext } from "@/lib/business/context";
-import { getIncomingRfqDetail, markRecipientViewed } from "@/lib/business/quote-service";
+import { getIncomingRfqDetail, getRfqPreviewForSeller, markRecipientViewed } from "@/lib/business/quote-service";
+import { JoinRfqButton } from "@/components/seller/join-rfq-button";
 import { getUnits } from "@/lib/data/taxonomy";
 import { Badge, rfqStatusTone } from "@/components/ui/badge";
 import { Alert } from "@/components/ui/alert";
@@ -21,10 +22,52 @@ export default async function SellerEnquiryDetailPage({ params }: { params: Prom
   if (!business) redirect("/dashboard/seller");
   const actor = { userId: user.id, businessId: business.id };
   const d = await getIncomingRfqDetail(actor, rfqId);
-  if (!d) notFound();
+  const name = (r: { nameEn: string; nameUr: string | null }) => (locale === "ur" && r.nameUr ? r.nameUr : r.nameEn);
+  if (!d) {
+    // Open request for a commodity this seller has not listed yet: show the essentials and offer to add it.
+    const p = await getRfqPreviewForSeller(actor, rfqId);
+    if (!p) notFound();
+    const pk = artKeyFor(p.commodity.slug ?? null, p.commodity.nameEn);
+    return (
+      <div className="max-w-3xl">
+        <Link href="/dashboard/seller/enquiries?tab=open" className="mb-4 inline-flex items-center gap-1 text-[13px] font-semibold text-muted hover:text-ink">
+          <ChevronLeft className="h-4 w-4 rtl:rotate-180" aria-hidden /> {t("enq.title")}
+        </Link>
+        <header className="flex gap-4 border-b border-line pb-5">
+          <span className={`flex h-16 w-16 shrink-0 items-center justify-center rounded-[var(--r-md)] ${artTint[pk]}`}>
+            <CommodityVisual artKey={pk} className="h-11 w-11" />
+          </span>
+          <div className="min-w-0 flex-1">
+            <Badge tone="neutral">{t("enq.notInProfile")}</Badge>
+            <h1 className="mt-1 text-[24px] font-extrabold leading-tight text-ink">
+              {t("enq.needs", { name: p.buyerFirstName })} {name(p.commodity)}
+            </h1>
+            <p className="mt-1 text-[13px] text-muted num">
+              <span className="font-latin">{p.rfq.reference}</span> · {formatDate(p.rfq.createdAt, locale)}
+            </p>
+          </div>
+        </header>
+        <div className="mt-6">
+          <Facts
+            columns={2}
+            items={[
+              { label: t("common.commodity"), value: name(p.commodity) },
+              { label: t("common.quantity"), value: <span className="num">{formatQuantity(p.rfq.quantity, p.unitSymbol)}</span> },
+              { label: t("common.city"), value: p.city ? name(p.city) : null },
+              { label: t("rfq.requiredBy"), value: p.rfq.requiredBy ? formatDate(p.rfq.requiredBy, locale) : null },
+            ].filter((f) => f.value)}
+          />
+        </div>
+        <div className="panel panel-mint mt-6">
+          <h2 className="text-[20px] font-extrabold leading-tight text-ink">{t("enq.joinTitle", { commodity: name(p.commodity) })}</h2>
+          <p className="mt-2 max-w-lg text-[15px] text-ink-2">{t("enq.joinBody")}</p>
+          <JoinRfqButton rfqId={rfqId} label={t("enq.joinAction", { commodity: name(p.commodity) })} />
+        </div>
+      </div>
+    );
+  }
   await markRecipientViewed(actor, rfqId);
   const units = await getUnits();
-  const name = (r: { nameEn: string; nameUr: string | null }) => (locale === "ur" && r.nameUr ? r.nameUr : r.nameEn);
   const artKey = artKeyFor(d.commodity.slug ?? null, d.commodity.nameEn);
   const facts = [
     { label: t("common.commodity"), value: [name(d.commodity), d.varietyName, d.gradeName, d.rfq.customSpecification].filter(Boolean).join(" · ") },

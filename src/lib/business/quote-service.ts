@@ -1,8 +1,8 @@
 import "server-only";
 import { and, desc, eq, inArray, sql } from "drizzle-orm";
 import { z } from "zod";
-import { db } from "@/db";
-import { businessCommodities, commodities, enquiryEvents, locations, profiles, rfqRecipients, rfqs, supplierQuotes, units } from "@/db/schema";
+import { db, type Tx } from "@/db";
+import { businessCommodities, businessMembers, businesses, commodities, enquiryEvents, locations, profiles, rfqRecipients, rfqs, supplierQuotes, units } from "@/db/schema";
 import { getUnits } from "@/lib/data/taxonomy";
 import { notify } from "@/lib/notifications";
 import { track } from "@/lib/analytics/track";
@@ -51,9 +51,61 @@ async function eligibility(actor: QuoteActor, rfqId: string): Promise<{ rfq: typ
     .limit(1);
   if (!supplies) {
     const [hasListing] = await db.execute(sql`SELECT 1 FROM listings WHERE business_id = ${actor.businessId} AND commodity_id = ${rfq.commodityId} AND status = 'published' LIMIT 1`).then((r) => r.rows);
-    if (!hasListing) return { error: "forbidden" };
+    if (!hasListing) return { error: "not_supplier" };
   }
   return { rfq, recipient: null };
+}
+
+/**
+ * Link every open, non-direct request for the given commodities to a business that did not
+ * exist (or did not supply them) when the request was posted. Called when a seller saves
+ * their commodity list, so new sellers see existing demand instead of an empty inbox.
+ * Returns the number of requests newly attached.
+ */
+export async function attachOpenRfqsToBusiness(businessId: string, commodityIds: string[], tx: Tx | typeof db = db): Promise<number> {
+  if (!commodityIds.length) return 0;
+  const [biz] = await tx.select({ ownerId: businesses.ownerId, status: businesses.status }).from(businesses).where(eq(businesses.id, businessId)).limit(1);
+  if (!biz || biz.status !== "active") return 0;
+  const members = await tx.select({ userId: businessMembers.userId }).from(businessMembers).where(eq(businessMembers.businessId, businessId));
+  const ownUsers = [biz.ownerId, ...members.map((m) => m.userId)];
+  const open = await tx
+    .select({ id: rfqs.id })
+    .from(rfqs)
+    .where(
+      and(
+        inArray(rfqs.commodityId, commodityIds),
+        inArray(rfqs.status, [...OPEN_RFQ]),
+        sql`${rfqs.targetBusinessId} IS NULL`,
+        sql`(${rfqs.expiresAt} IS NULL OR ${rfqs.expiresAt} > now())`,
+        sql`${rfqs.buyerId} NOT IN (${sql.join(ownUsers.map((u) => sql`${u}`), sql`, `)})`,
+        sql`NOT EXISTS (SELECT 1 FROM rfq_recipients x WHERE x.rfq_id = ${rfqs.id} AND x.business_id = ${businessId})`,
+      ),
+    )
+    .limit(200);
+  if (!open.length) return 0;
+  await tx
+    .insert(rfqRecipients)
+    .values(open.map((r) => ({ rfqId: r.id, businessId, state: "notified" as const, matchReason: "commodity", notifiedAt: new Date() })))
+    .onConflictDoNothing();
+  await tx.insert(enquiryEvents).values(open.map((r) => ({ rfqId: r.id, eventType: "matched", metadata: { count: 1, late: true, businessId } })));
+  return open.length;
+}
+
+/** Add a commodity to the seller's profile and attach the request so they can respond to it. */
+export async function joinRfq(actor: QuoteActor, rfqId: string): Promise<ActionResult> {
+  if (!(await userCanManageBusiness(actor.userId, actor.businessId))) return { ok: false, error: "forbidden" };
+  const [rfq] = await db.select({ id: rfqs.id, commodityId: rfqs.commodityId, status: rfqs.status, targetBusinessId: rfqs.targetBusinessId }).from(rfqs).where(eq(rfqs.id, rfqId)).limit(1);
+  if (!rfq) return { ok: false, error: "not_found" };
+  if (rfq.targetBusinessId && rfq.targetBusinessId !== actor.businessId) return { ok: false, error: "forbidden" };
+  if (!(OPEN_RFQ as readonly string[]).includes(rfq.status)) return { ok: false, error: "closed" };
+  await db.transaction(async (tx) => {
+    await tx.insert(businessCommodities).values({ businessId: actor.businessId, commodityId: rfq.commodityId }).onConflictDoNothing();
+    await tx
+      .insert(rfqRecipients)
+      .values({ rfqId, businessId: actor.businessId, state: "viewed", matchReason: "commodity", notifiedAt: new Date(), viewedAt: new Date() })
+      .onConflictDoNothing();
+  });
+  return { ok: true };
 }
 
 export async function sendQuote(actor: QuoteActor, rfqId: string, raw: QuoteInput): Promise<ActionResult<{ quoteId: string }>> {
@@ -204,6 +256,90 @@ export async function getIncomingRfqs(businessId: string, tab: "new" | "responde
     quotePrice: x.quotePrice,
     quoteUnitSymbol: x.quoteUnitSymbol,
   }));
+}
+
+export type OpenRfqRow = IncomingRfq & { supplies: boolean };
+
+/**
+ * Every open request that is not a private enquiry to another supplier, newest first,
+ * flagged with whether this business already supplies the commodity.
+ */
+export async function getOpenRfqsForBrowsing(businessId: string): Promise<OpenRfqRow[]> {
+  const rows = await db
+    .select({
+      r: rfqs,
+      recipientState: rfqRecipients.state,
+      matchReason: rfqRecipients.matchReason,
+      commodityName: commodities.nameEn,
+      commodityNameUr: commodities.nameUr,
+      unitSymbol: units.symbol,
+      cityName: locations.nameEn,
+      cityNameUr: locations.nameUr,
+      buyerName: profiles.name,
+      quoteStatus: supplierQuotes.status,
+      quotePrice: supplierQuotes.priceAmount,
+      quoteUnitSymbol: sql<string | null>`(SELECT symbol FROM units u2 WHERE u2.id = ${supplierQuotes.priceUnitId})`,
+      supplies: sql<boolean>`EXISTS (SELECT 1 FROM business_commodities bc WHERE bc.business_id = ${businessId} AND bc.commodity_id = ${rfqs.commodityId})
+        OR EXISTS (SELECT 1 FROM listings l WHERE l.business_id = ${businessId} AND l.commodity_id = ${rfqs.commodityId} AND l.status = 'published')`,
+    })
+    .from(rfqs)
+    .innerJoin(commodities, eq(commodities.id, rfqs.commodityId))
+    .innerJoin(units, eq(units.id, rfqs.unitId))
+    .leftJoin(locations, eq(locations.id, rfqs.cityId))
+    .innerJoin(profiles, eq(profiles.id, rfqs.buyerId))
+    .leftJoin(rfqRecipients, and(eq(rfqRecipients.rfqId, rfqs.id), eq(rfqRecipients.businessId, businessId)))
+    .leftJoin(supplierQuotes, and(eq(supplierQuotes.rfqId, rfqs.id), eq(supplierQuotes.businessId, businessId)))
+    .where(
+      and(
+        inArray(rfqs.status, [...OPEN_RFQ]),
+        sql`(${rfqs.targetBusinessId} IS NULL OR ${rfqs.targetBusinessId} = ${businessId})`,
+        sql`(${rfqs.expiresAt} IS NULL OR ${rfqs.expiresAt} > now())`,
+        sql`${rfqs.buyerId} NOT IN (SELECT owner_id FROM businesses WHERE id = ${businessId} UNION SELECT user_id FROM business_members WHERE business_id = ${businessId})`,
+      ),
+    )
+    .orderBy(desc(rfqs.createdAt))
+    .limit(100);
+  return rows.map((x) => ({
+    rfqId: x.r.id,
+    reference: x.r.reference,
+    status: x.r.status,
+    recipientState: x.recipientState,
+    matchReason: x.matchReason,
+    isDirect: x.r.targetBusinessId === businessId,
+    commodityName: x.commodityName,
+    commodityNameUr: x.commodityNameUr,
+    quantity: x.r.quantity,
+    unitSymbol: x.unitSymbol,
+    cityName: x.cityName,
+    cityNameUr: x.cityNameUr,
+    requiredBy: x.r.requiredBy,
+    buyerFirstName: (x.buyerName || "Buyer").split(" ")[0],
+    createdAt: x.r.createdAt,
+    quoteStatus: x.quoteStatus,
+    quotePrice: x.quotePrice,
+    quoteUnitSymbol: x.quoteUnitSymbol,
+    supplies: Boolean(x.supplies),
+  }));
+}
+
+/**
+ * Minimal, non-sensitive view of an open request for a seller who does not (yet) supply the
+ * commodity, so they can decide whether to add it to their profile and respond.
+ */
+export async function getRfqPreviewForSeller(actor: QuoteActor, rfqId: string) {
+  const el = await eligibility(actor, rfqId);
+  if (!("error" in el) || el.error !== "not_supplier") return null;
+  const [row] = await db
+    .select({ r: rfqs, commodity: commodities, unitSymbol: units.symbol, city: locations, buyerName: profiles.name })
+    .from(rfqs)
+    .innerJoin(commodities, eq(commodities.id, rfqs.commodityId))
+    .innerJoin(units, eq(units.id, rfqs.unitId))
+    .leftJoin(locations, eq(locations.id, rfqs.cityId))
+    .innerJoin(profiles, eq(profiles.id, rfqs.buyerId))
+    .where(eq(rfqs.id, rfqId))
+    .limit(1);
+  if (!row) return null;
+  return { rfq: row.r, commodity: row.commodity, unitSymbol: row.unitSymbol, city: row.city, buyerFirstName: (row.buyerName || "Buyer").split(" ")[0] };
 }
 
 /** Detail for the seller: buyer phone only after responding and when the buyer allows it. */

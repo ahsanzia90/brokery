@@ -3,7 +3,7 @@ import { revalidatePath } from "next/cache";
 import { requireUser } from "@/lib/authz/guards";
 import { getBusinessForUser } from "@/lib/business/queries";
 import type { ActionResult } from "@/lib/validation/common";
-import { declineRfq, markRecipientViewed, sendQuote, withdrawQuote, type QuoteActor, type QuoteInput } from "@/lib/business/quote-service";
+import { declineRfq, joinRfq, markRecipientViewed, sendQuote, withdrawQuote, type QuoteActor, type QuoteInput } from "@/lib/business/quote-service";
 
 async function actor(): Promise<QuoteActor | ActionResult> {
   try {
@@ -52,4 +52,16 @@ export async function markRecipientViewedAction(rfqId: string): Promise<void> {
   const a = await actor();
   if (isErr(a)) return;
   await markRecipientViewed(a, rfqId);
+}
+
+/** Seller adds the request's commodity to their profile so they can respond to it. */
+export async function joinRfqAction(rfqId: string): Promise<ActionResult> {
+  const a = await actor();
+  if (isErr(a)) return a;
+  const res = await joinRfq(a, rfqId);
+  if (res.ok) {
+    revalidate(rfqId);
+    revalidatePath("/dashboard/seller/business");
+  }
+  return res;
 }

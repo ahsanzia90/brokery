@@ -972,5 +972,17 @@
   "footer.photoCredits": "Photo credits",
   "credits.sub": "Photographs shown in photo mode come from these photographers and sources. Photos uploaded by the marketplace team replace them.",
   "credits.none": "No library photographs are in use yet.",
-  "credits.bundled": "Bundled with the site (freely licensed)."
+  "credits.bundled": "Bundled with the site (freely licensed).",
+  "enq.tab.open": "All open requests",
+  "enq.noOpen": "No open buyer requests right now.",
+  "enq.noOpenBody": "New requests appear here as buyers post them. Keep your commodity list complete so matching requests land in your New tab.",
+  "enq.emptyNewBody": "Requests for the commodities in your business profile arrive here. You can also browse every open request and respond to any you can supply.",
+  "enq.browseOpen": "Browse all open requests",
+  "enq.youSupply": "You supply this",
+  "enq.notInProfile": "Not in your profile yet",
+  "enq.joinTitle": "Can you supply {commodity}?",
+  "enq.joinBody": "Add it to your business profile to see the full request and send your offer. Future requests for this commodity will reach you automatically.",
+  "enq.joinAction": "Add {commodity} and respond",
+  "seller.noBusinessRequests": "Buyer requests for the commodities you choose will appear in your dashboard as soon as your profile is saved.",
+  "dash.attn.browseOpen": "No new requests for your commodities. Browse all open buyer requests"
 }

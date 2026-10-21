@@ -24,6 +24,7 @@ export default async function SellerOverviewPage() {
           <span className="step-no">01.</span>
           <h2 className="mt-1 text-[22px] font-bold leading-tight text-ink">{t("seller.noBusinessTitle")}</h2>
           <p className="mt-2 max-w-md text-[15px] text-ink-2">{t("seller.noBusinessBody")}</p>
+          <p className="mt-2 max-w-md text-[14px] text-muted">{t("seller.noBusinessRequests")}</p>
           <LinkButton href="/dashboard/seller/business" size="lg" className="mt-6">
             {t("dash.setupBusiness")} <ArrowRight className="h-4 w-4 rtl:rotate-180" aria-hidden />
           </LinkButton>
@@ -36,6 +37,7 @@ export default async function SellerOverviewPage() {
 
   const attention: Array<{ label: string; href: string; Icon: typeof Inbox; tone?: "warning" | "info" | "success" }> = [];
   if (rfqsNew.length) attention.push({ label: t("dash.attn.newRfqs", { count: rfqsNew.length }), href: "/dashboard/seller/enquiries", Icon: Inbox, tone: "success" });
+  else attention.push({ label: t("dash.attn.browseOpen"), href: "/dashboard/seller/enquiries?tab=open", Icon: Inbox, tone: "info" });
   if (stats.pending) attention.push({ label: t("dash.attn.pendingListings", { count: stats.pending }), href: "/dashboard/seller/listings?status=pending_review", Icon: ClipboardCheck, tone: "warning" });
   if (business.verificationLevel === "none" || business.verificationLevel === "phone_verified") attention.push({ label: t("dash.attn.notVerified"), href: "/dashboard/seller/verification", Icon: ShieldCheck, tone: "info" });
   if (!business.description) attention.push({ label: t("dash.attn.noBusiness"), href: "/dashboard/seller/business", Icon: Briefcase, tone: "info" });

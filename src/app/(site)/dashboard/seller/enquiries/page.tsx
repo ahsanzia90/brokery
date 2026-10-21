@@ -2,7 +2,7 @@ import Link from "next/link";
 import { redirect } from "next/navigation";
 import { ChevronRight, MapPin } from "lucide-react";
 import { getSellerContext } from "@/lib/business/context";
-import { getIncomingRfqs } from "@/lib/business/quote-service";
+import { getIncomingRfqs, getOpenRfqsForBrowsing, type IncomingRfq } from "@/lib/business/quote-service";
 import { Badge, rfqStatusTone } from "@/components/ui/badge";
 import { EmptyState } from "@/components/ui/empty-state";
 import { LinkButton } from "@/components/ui/button";
@@ -10,21 +10,37 @@ import { DashHeader, SegmentedTabs } from "@/components/flows/dashboard-shell";
 import { formatDate, formatNumber, formatPKR } from "@/lib/utils/format";
 import { formatQuantity } from "@/lib/utils/format";
 
-const TABS = ["new", "responded", "declined"] as const;
+const TABS = ["new", "open", "responded", "declined"] as const;
 
 export default async function SellerEnquiriesPage({ searchParams }: { searchParams: Promise<{ tab?: string }> }) {
   const { tab: tabParam } = await searchParams;
   const { business, t, locale } = await getSellerContext("/dashboard/seller/enquiries");
   if (!business) redirect("/dashboard/seller");
   const tab = (TABS as readonly string[]).includes(tabParam ?? "") ? (tabParam as (typeof TABS)[number]) : "new";
-  const [rows, counts] = await Promise.all([getIncomingRfqs(business.id, tab), Promise.all(TABS.map((tb) => getIncomingRfqs(business.id, tb).then((r) => r.length)))]);
+  const load = (tb: (typeof TABS)[number]): Promise<Array<IncomingRfq & { supplies?: boolean }>> => (tb === "open" ? getOpenRfqsForBrowsing(business.id) : getIncomingRfqs(business.id, tb));
+  const [rows, counts] = await Promise.all([load(tab), Promise.all(TABS.map((tb) => load(tb).then((r) => r.length)))]);
   const name = (r: { nameEn: string; nameUr: string | null }) => (locale === "ur" && r.nameUr ? r.nameUr : r.nameEn);
+  const emptyTitle = tab === "open" ? t("enq.noOpen") : t("rfq.noIncoming");
+  const emptyBody = tab === "open" ? t("enq.noOpenBody") : t("enq.emptyNewBody");
   return (
     <div>
       <DashHeader title={t("enq.title")} description={t("enq.sub")} />
       <SegmentedTabs current={tab} tabs={TABS.map((tb, i) => ({ key: tb, href: `/dashboard/seller/enquiries?tab=${tb}`, label: t(`enq.tab.${tb}`), count: counts[i] }))} />
       {rows.length === 0 ? (
-        <EmptyState title={t("rfq.noIncoming")} body={t("biz.commoditiesHint")} action={<LinkButton href="/dashboard/seller/business" variant="outline" size="sm">{t("seller.nav.business")}</LinkButton>} />
+        <EmptyState
+          title={emptyTitle}
+          body={emptyBody}
+          action={
+            tab === "open" ? (
+              <LinkButton href="/dashboard/seller/business" variant="outline" size="sm">{t("seller.nav.business")}</LinkButton>
+            ) : (
+              <>
+                <LinkButton href="/dashboard/seller/enquiries?tab=open" size="sm">{t("enq.browseOpen")}</LinkButton>
+                <LinkButton href="/dashboard/seller/business" variant="outline" size="sm">{t("seller.nav.business")}</LinkButton>
+              </>
+            )
+          }
+        />
       ) : (
         <ul className="divide-y divide-line rounded-[var(--r-md)] border border-line bg-surface">
           {rows.map((r) => (
@@ -39,6 +55,7 @@ export default async function SellerEnquiriesPage({ searchParams }: { searchPara
                       {formatQuantity(r.quantity, r.unitSymbol)}
                     </span>
                     {r.isDirect ? <Badge tone="accent">{t("enq.direct")}</Badge> : null}
+                    {tab === "open" ? (r.supplies ? <Badge tone="success">{t("enq.youSupply")}</Badge> : <Badge tone="neutral">{t("enq.notInProfile")}</Badge>) : null}
                   </div>
                   <p className="mt-1 text-[13px] text-muted num">
                     {r.cityName ? (
